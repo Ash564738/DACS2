@@ -267,6 +267,8 @@ body {
 .gradient-border-svg {
     opacity: 0;
     transition: opacity 0.7s ease, stroke-dashoffset 0.7s ease-in-out, stroke 0.7s ease;
+    z-index: 0; 
+    border-radius: 15px;
 }
 .transition-stroke-dashoffset {
     stroke-dasharray: 1000;

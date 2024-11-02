@@ -17,16 +17,3 @@ dl, ol, ul {
   margin: 0;
   padding: 0;
 }
-  
-  /* Header */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #f8f8f8;
-  }
-  
-  .logo img {
-    object-fit: cover;
-  }
