@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+body {
+  font-family: Arial, sans-serif;
+  background-color: #000000;
+}
+a {
+  text-decoration: none;
+  color: #FFFFFF;
+}
+dl, ol, ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+  
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+  }
+  
+  .logo img {
+    object-fit: cover;
+  }
