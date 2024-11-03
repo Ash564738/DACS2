@@ -45,6 +45,7 @@ body:hover::-webkit-scrollbar-thumb{
     width: 100%;
 }
 .header__logo-wrap {
+    gap: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,16 +68,16 @@ body:hover::-webkit-scrollbar-thumb{
     cursor: pointer;
     color: white;
     text-decoration: none;
-    position: relative; /* Add this */
+    position: relative;
 }
 .logoyoutube span {
     font-size: 10px;
     font-weight: 500;
     color: #909090;
     align-items: baseline;
-    position: absolute; /* Add this */
-    top: 0; /* Align to the top */
-    right: -15px; /* Align to the right */
+    position: absolute;
+    top: 0;
+    right: -15px;
 }
 .youtubetitle {
     font-size: 20px;
@@ -85,7 +86,7 @@ body:hover::-webkit-scrollbar-thumb{
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
-    position: relative; /* Ensure this is relative for absolute positioning of span */
+    position: relative;
 }
 .logoyoutubeimg {
     color: red;
@@ -147,10 +148,60 @@ body:hover::-webkit-scrollbar-thumb{
 }
 .header__userava {
     width: 30px;
+    object-fit: cover;
     border-radius: 50%;
     cursor: pointer;
     margin: 0 10px 0 0;
 }
+.header-modal{
+    position: absolute;
+    top: 10;
+    right: 70px;
+    z-index: 20;
+    background: rgb(65, 65, 65);
+    border-radius: 10px;
+    overflow: hidden;
+    color: white;
+    width: 250px;
+}
+.header-modal-option{
+    display: flex;
+    background: rgb(65, 65, 65);
+    padding: 10px 15px;
+    cursor: pointer;
+    gap: 20px;
+    align-items: center;
+    &:hover{
+        background-color: rgb(34,33,33);
+    }
+}
+.header-modal-channel{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px;
+    align-items: center;
+}
+.header-modal-channel img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.header-modal-channel-name{
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+.header-modal-channel-email{
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+.header-modal-separator {
+    border: none;
+    border-top: 1px solid gray;
+    width: 100%;
+}
+
 /*sidebar start here*/
 .nav-left{
     gap: 10px;
