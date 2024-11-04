@@ -14,7 +14,6 @@ const VideoUpload = () => {
             ...inputField, [name]: event.target.value
         })
     }
-
     const uploadImage = async (e, type) => {
         setLoader(true)
         console.log("Uploading")
@@ -25,20 +24,12 @@ const VideoUpload = () => {
         data.append('upload_preset', 'youtube-clone');
         try {
             // cloudName="dhlklhfgj"
-            
             {/* Please watch the video for the code} */}
-
-
-
-
         } catch (err) {
             setLoader(false)
             console.log(err)
         }
-
-
     }
-    
     useEffect(()=>{
         let isLogin = localStorage.getItem("userId");
         if(isLogin===null){
@@ -48,11 +39,7 @@ const VideoUpload = () => {
     console.log(inputField)
     const handleSubmitFunc = async()=>{
         {/* Please watch the video for the code} */}
-
     }
-
-    
-
     return (
         <div className='videoUpload'>
             <div className="uploadBox">
@@ -60,20 +47,14 @@ const VideoUpload = () => {
                     <YouTubeIcon sx={{ fontSize: "54px", color: "red" }} />
                     Upload Video
                 </div>
-
                 <div className="uploadForm">
                     {/* Please watch the video for the code} */}
-
                     {
                     loader && <Box sx={{ display: 'flex' }}>
                                     <CircularProgress />
                                 </Box>
                     }
-                </div>
-
-                
-                
-
+                </div>                
                 <div className="uploadBtns">
                     <div className="uploadBtn-form" onClick={handleSubmitFunc}>Upload</div>
                     <Link to={'/'} className="uploadBtn-form">Home</Link>
@@ -83,5 +64,4 @@ const VideoUpload = () => {
         </div>
     )
 }
-
 export default VideoUpload
