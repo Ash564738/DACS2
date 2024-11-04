@@ -6,12 +6,10 @@
     flex-direction: column;
     flex: 0.16 1;
     box-sizing: border-box;
-    height: 92vh;
     overflow-y: auto;
     position: fixed;
     top: 55px;
     left: 0px;
-    width: 275px;
     padding: 14px;
     background-color: black;
     color: white;

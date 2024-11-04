@@ -51,11 +51,17 @@ const Video = () => {
     return (
         <div className='video'>
             <div className="videoPostSection">
-                <div className="video_youtube">
+            <div className="video_youtube">
                     {data && <video width="400" controls autoPlay className='video_youtube_video'>
-
-                        {/* Please watch the video for the code} */}
+                        {}
                     </video>}
+                </div>
+                <div className="video_youtube">
+                    <video width="400" controls autoPlay className='video_youtube_video'>
+                        <source src={videoUrl} type="video/mp4" />
+                        <source src={videoUrl} type="video/webm" />
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
                 <div className="video_youtubeAbout">
                     <div className="video_uTubeTitle">{data?.title}</div>
@@ -142,7 +148,6 @@ const Video = () => {
                 </div>
             </div>
             <ToastContainer/>
-
         </div>
     )
 }

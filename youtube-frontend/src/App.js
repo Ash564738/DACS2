@@ -1,9 +1,9 @@
 import './App.css';
 import Navbar from './Component/Navbar/navbar';
 import Home from './Pages/Home/home';
+import Video from './Pages/Video/video';
 import { useState } from 'react';
 import {Route, Routes} from 'react-router-dom';
-import Video from './Pages/Video/video';
 import axios from 'axios';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
