@@ -10,12 +10,13 @@
     position: fixed;
     top: 55px;
     left: 0px;
-    padding: 14px;
+    padding: 14px 0 14px 14px;
+    height: 92vh;
     background-color: black;
     color: white;
 }
 .home-sideNavbar::-webkit-scrollbar {
-    width: 12px;
+    width: 10px;
 }
 .home_sideNavbarTop{
     display: flex;
@@ -33,7 +34,6 @@
     &:hover{
         background-color: rgb(35, 35, 35);
     }
-
 }
 .home_sideNavbarTopOptionTitle{
     font-size: 14px;
@@ -46,7 +46,6 @@
     border-bottom: 1px solid rgb(86, 85, 85);
     padding: 10px 0;
 }
-
 .home_sideNavbarTopOptionTitleHeader{
     font-weight: 600;
 }
