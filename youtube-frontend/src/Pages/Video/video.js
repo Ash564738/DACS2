@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import ReactPlayer from 'react-player';
 import './video.css';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
