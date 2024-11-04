@@ -6,17 +6,17 @@
     flex-direction: column;
     flex: 0.16 1;
     box-sizing: border-box;
+    height: 92vh;
     overflow-y: auto;
     position: fixed;
     top: 55px;
     left: 0px;
-    padding: 14px 0 14px 14px;
-    height: 92vh;
+    padding: 14px;
     background-color: black;
     color: white;
 }
 .home-sideNavbar::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
 }
 .home_sideNavbarTop{
     display: flex;
