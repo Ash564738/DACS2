@@ -4,6 +4,9 @@ import Home from './Pages/Home/home';
 import Video from './Pages/Video/video';
 import { useState } from 'react';
 import {Route, Routes} from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
