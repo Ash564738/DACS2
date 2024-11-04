@@ -1,10 +1,3 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './login.css';
-import flatpickr from 'flatpickr'; // Import flatpickr
-import 'flatpickr/dist/flatpickr.min.css'; // Import flatpickr styles
-import './LoginForm.js'; // Ensure this is relevant to your use case
 document.addEventListener('DOMContentLoaded', () => {
     const signUpButton = document.getElementById('signUp');
     const signInButton = document.getElementById('signIn');
