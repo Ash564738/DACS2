@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React, { useState,useEffect } from 'react'
 import './navbar.css';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -14,14 +14,22 @@ import TranslateIcon from '@mui/icons-material/Translate';
 import LanguageIcon from '@mui/icons-material/Language';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import { Link , useNavigate} from 'react-router-dom';
+import axios from 'axios';
 const Navbar = ({setSideNavbarFunc,sideNavbar}) => {
-    const [userPic, setUserPic] = useState("https://i.kym-cdn.com/entries/icons/original/000/043/403/cover3.jpg");
-    const [navbarModal, setNavbarModal] = useState(false);
+    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.Wy2uo_y-ttULYs4chLmqSAAAAA?rs=1&pid=ImgDetMain")
+    const [navbarModal,setNavbarModal] = useState(false);
+    const navigate = useNavigate();
     const handleClickModal =()=>{
         setNavbarModal(prev=>!prev);
-      }
+    }
     const sideNavbarFunc=()=>{
         setSideNavbarFunc(!sideNavbar)
+    }
+    const handleprofile =()=>{
+        let userId = localStorage.getItem("userId")
+        navigate(`/user/${userId}`);
+        setNavbarModal(false);
     }
     return (
         <div className="navbar">
@@ -30,11 +38,11 @@ const Navbar = ({setSideNavbarFunc,sideNavbar}) => {
                     <div className="barbutton" title="Menu" onClick={sideNavbarFunc}>
                         <MenuIcon sx={{ color: "white" }} />
                     </div>
-                    <div className="logoyoutube">
+                    <Link to ={'/'} className="logoyoutube">
                         <YoutubeIcon sx={{ fontSize: "34px", color: "red" }} className="logoyoutubeimg" />
                         <div className="youtubetitle">MeTube</div>
                         <span>VN</span>
-                    </div>
+                    </Link>
                 </div>
                 <div className="header__center">
                     <div className="header__search">
@@ -58,7 +66,7 @@ const Navbar = ({setSideNavbarFunc,sideNavbar}) => {
                                 <div className="header-modal-channel-inf">
                                     <div className="header-modal-channel-name">Catto</div>
                                     <div className="header-modal-channel-email">@Catto.gmail.com</div>
-                                    <div className="header-modal-channel-profile">View your channel</div>
+                                    <div className="header-modal-channel-profile" onClick={handleprofile}>View your channel</div>
                                 </div>
                             </div>
                             <hr className="header-modal-separator" />
