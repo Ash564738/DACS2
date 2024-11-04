@@ -88,7 +88,6 @@
     cursor: pointer;
 }
 .youtube_video_likeBlock_Like{
-
     display: flex;
     gap: 10px;
     
@@ -216,6 +215,7 @@
 }
 .video_suggetion_thumbnail_img{
     width: inherit;
+    border-radius: 15px;
 }
 .video_suggetions_About{
     display: flex;
