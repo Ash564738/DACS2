@@ -16,12 +16,6 @@ dl, ol, ul {
 .clickable-text {
     cursor: pointer;
 }
-.white-circle{
-    background: white;
-    width: 10px;
-    height: 10px;
-    border: none;
-}
 .custom-rounded-pill {
     width: 110px;
     height: 30px;
@@ -29,7 +23,7 @@ dl, ol, ul {
     bottom: 20px;
 }  
 main {
-    background-color: rgb(54, 54, 54);
+    background-color: rgb(0, 0, 0);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,7 +36,7 @@ main {
     overflow: hidden;
     background-color: rgb(26, 26, 26);
     border-radius: 15px;
-    height: 90vh;
+    height: 85vh;
     width: 75vw;
     transition: transform 0.6s ease-in-out;
 }
@@ -313,11 +307,33 @@ input[type="date"]::placeholder {
 #dob-label{
     padding-left: 40px;
 }
-.flatpickr-calendar, .flatpickr-day, .flatpickr-weekday, .flatpickr-month {
+.flatpickr-calendar {
+    height: 250px;
+    background-color: rgb(26, 26, 26);
     color: white;
+    z-index: 1000;
+}
+.flatpickr-days {
+    height: 200px;
+}
+.flatpickr-months {
+    height: 30px;
+}
+.flatpickr-weekdays{
+    height: 20px;
+    padding: 5px 0;
+}
+.flatpickr-calendar, .flatpickr-day, .flatpickr-weekday, .flatpickr-months,.flatpickr-months .flatpickr-prev-month svg, .flatpickr-months .flatpickr-next-month svg {
+    font-size: 0.9em;
+    color: white;
+    fill: white;
+}
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month,.flatpickr-current-month {
+    padding: 5px;
 }
 .flatpickr-months .flatpickr-prev-month svg, .flatpickr-months .flatpickr-next-month svg {
-    fill: white;
+    width: 10px;
+    height: 10px;
 }
 .flatpickr-current-month .numInputWrapper span.arrowUp:after, .flatpickr-current-month .numInputWrapper span.arrowDown:after {
     border-bottom-color: white;
