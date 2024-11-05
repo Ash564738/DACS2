@@ -12,6 +12,7 @@ const SignUp = () => {
     const [signinField, setSigninField] = useState({"userName":"","password":""});
     const [signupField, setSignupField] = useState({"userName":"","name":"","password":"","gender":"","dob":"","profilePic":""});
     const [fileName, setFileName] = useState('');
+    const [uploadedImageUrl, setUploadedImageUrl] = useState('https://i.pinimg.com/564x/06/bb/d0/06bbd01930f59ec4bcb7dbbf386a8c85.jpg');
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
             <svg className={`position-absolute gradient-border-svg top-0 w-100 h-100 pointer-events-none ${className}`}>
@@ -168,17 +169,25 @@ const SignUp = () => {
         });
     });
     console.log(signinField);
-
-    const handleOnChangeInput = (e,name) => {
-        setSigninField({
-            ...signinField,[name]:e.target.value
-        })
-        setSignupField({
-            ...signupField,[name]:e.target.value
-        })
-        const file = e.target.files[0];
-        setFileName(file ? file.name : '');
-    }
+    console.log(signupField);
+    const handleOnChangeInput = (e, name, form) => {
+        const { value, files } = e.target;
+        if (files && files.length > 0) { 
+            setFileName(files[0].name);
+        } else {
+            if (form === "signin") {
+                setSigninField({
+                    ...signinField,
+                    [name]: value
+                });
+            } else if (form === "signup") {
+                setSignupField({
+                    ...signupField,
+                    [name]: value
+                });
+            }
+        }
+    };    
     return (
     <main>
         <div className="container text-white align-items-center justify-content-center flex-row overflow-hidden p-0 m-0" id="container">
@@ -195,12 +204,12 @@ const SignUp = () => {
                     </div>
                     <form action="login" method="post" className="signin-form align-items-center justify-content-center flex-column w-100">
                         <div className="mb-3 form-floating w-100 position-relative">
-                            <input type="email" value ={signinField.userName} onChange={(e)=> handleOnChangeInput(e,"userName")} className="form-control gradient-input" id="signinEmail" placeholder="Email" autoComplete="on" required/>
+                            <input type="email" value ={signinField.userName} onChange={(e) => handleOnChangeInput(e, "userName", "signin")} className="form-control gradient-input" id="signinEmail" placeholder="Email" autoComplete="on" required/>
                             <label className="form-label" htmlFor="signinEmail">Email</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
                         </div>
                         <div className="mb-3 form-floating w-100 position-relative">
-                            <input type="password" value ={signinField.password} onChange={(e)=> handleOnChangeInput(e,"password")} className="form-control gradient-input" placeholder="Password" id="signinPassword" name="password" autoComplete="on" required/>
+                            <input type="password" value ={signinField.password} onChange={(e)=> handleOnChangeInput(e,"password", "signin")} className="form-control gradient-input" placeholder="Password" id="signinPassword" name="password" autoComplete="on" required/>
                             <label className="form-label" htmlFor="signinPassword">Password</label>
                             <GradientBorderSVG gradientId="signinPassGradient" maskId="signinPassBorderMask" />
                         </div>
@@ -243,12 +252,12 @@ const SignUp = () => {
                     </div>
                     <form action="signup" method="post" className="signup-form align-items-center justify-content-center flex-column w-100">
                         <div className="mb-3 form-floating w-100 position-relative">
-                            <input type="email" className="form-control gradient-input" id="signupEmail" placeholder="Email" autoComplete="on" required/>
+                            <input type="email" className="form-control gradient-input" value={signupField.userName} onChange={(e)=> handleOnChangeInput(e,"userName", "signup")} id="signupEmail" placeholder="Email" autoComplete="on" required/>
                             <label className="form-label" htmlFor="signupEmail">Email</label>
                             <GradientBorderSVG gradientId="signupEmailGradient" maskId="signupEmailBorderMask" />
                         </div>
                         <div className="mb-3 form-floating w-100 position-relative">
-                            <input type="text" className="form-control gradient-input" id="signupName" placeholder="Full Name" autoComplete="on" required/>
+                            <input type="text" className="form-control gradient-input" value ={signupField.name} onChange={(e)=> handleOnChangeInput(e,"name", "signup")} id="signupName" placeholder="Full Name" autoComplete="on" required/>
                             <label className="form-label" htmlFor="signupName">Full Name</label>
                             <GradientBorderSVG gradientId="signupNameGradient" maskId="signupNameBorderMask" />
                         </div>
@@ -294,16 +303,17 @@ const SignUp = () => {
                             </div>
                         </div>
                         <div className="mb-3 form-floating w-100 position-relative">
-                            <input type="password" className="form-control gradient-input" id="signupPassword" autoComplete="on" placeholder="Password" required/>
+                            <input type="password" className="form-control gradient-input" value ={signupField.password} onChange={(e)=> handleOnChangeInput(e,"password", "signup")} id="signupPassword" autoComplete="on" placeholder="Password" required/>
                             <label className="form-label" htmlFor="signupPassword">Password</label>
                             <GradientBorderSVG gradientId="signupPassGradient" maskId="signupPassBorderMask" />
                         </div>
                         <div className="mb-3 form-floating w-100 position-relative">
-                                <input type="file"onChange={(e) => handleOnChangeInput(e, "profilePic")}accept="image/*"style={{position: "absolute",left: 0,top: 0,opacity: 0,width:"100%",height: "100%",cursor: "pointer",zIndex: 1,}}/>
-                                <button type="button"style={{padding: "5px",backgroundColor: 'white',color: "black",border: "none",borderRadius: "15px",cursor: "pointer",fontSize: "0.9em", textTransform: "none",}}>
-                                    Choose File
-                                </button>
-                                {fileName || " No Profile Pic Choosen"}
+                            <input type="file"onChange={(e) => handleOnChangeInput(e, "profilePic")} accept="image/*"style={{position: "absolute",left: 0,top: 0,opacity: 0,width:"100%",height: "100%",cursor: "pointer",zIndex: 1,}}/>
+                            <button type="button"style={{padding: "5px",backgroundColor: 'white',color: "black",border: "none",borderRadius: "15px",cursor: "pointer",fontSize: "0.9em", textTransform: "none",}}>
+                                Choose File
+                            </button>
+                            {fileName || " No Profile Pic Choosen"}
+                            <img src={uploadedImageUrl} alt="" className='image_default_signUp'/>
                         </div>
                         <button type="submit" className="animate-button fw-bold fs-6 form-floating w-100 position-relative">Submit</button>
                     </form>
