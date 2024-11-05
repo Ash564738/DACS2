@@ -1,56 +1,59 @@
-import React, { useState, useEffect } from 'react'
-import ReactPlayer from 'react-player';
+import React, { useState, useEffect } from 'react';
 import './video.css';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import {toast,ToastContainer} from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify';
 const Video = () => {
     const [message, setMessage] = useState("");
     const [data, setData] = useState(null);
     const [videoUrl, setVideoURL] = useState("");
     const { id } = useParams();
     const [comments, setComments] = useState([]);
-    const fetchVedioById = async () => {
-        await axios.get(`http://localhost:4000/api/getVideoById/${id}`).then((response) => {
-            console.log(response.data.video);
-            setData(response.data.video)
-            setVideoURL(response.data.video.videoLink)
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-    const getCommentByVideoId = async () => {
-        await axios.get(`http://localhost:4000/commentApi/comment/${id}`).then((response) => {
-            console.log(response);
-            setComments(response.data.comments)
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-    useEffect(() => {
-        fetchVedioById();
-        getCommentByVideoId();
-    }, [])
-    const handleComment = async()=>{
-        const body = {
-            "message":message,
-            "video":id
+    const fetchVideoById = async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
+            setData(response.data.video);
+            setVideoURL(response.data.video.videoLink);
+        } catch (err) {
+            console.error(err);
         }
-        await axios.post('http://localhost:4000/commentApi/comment',body, { withCredentials: true }).then((resp)=>{
-            console.log(resp)
+    };
+    const getCommentByVideoId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/commentApi/comment/${id}`);
+            setComments(response.data.comments);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    useEffect(() => {
+        fetchVideoById();
+        getCommentByVideoId();
+    }, [id]);
+    const handleComment = async () => {
+        const body = { message, video: id };
+        try {
+            const resp = await axios.post('http://localhost:4000/commentApi/comment', body, { withCredentials: true });
             const newComment = resp.data.comment;
-            setComments([newComment,...comments]);
-            setMessage("")
-        }).catch(err=>{
-            toast.error("Please Login First to comment")
-        })
-    }
+            setComments([newComment, ...comments]);
+            setMessage("");
+        } catch (err) {
+            toast.error("Please login first to comment");
+        }
+    };
     return (
         <div className='video'>
             <div className="videoPostSection">
+                {/* <div className="video_youtube">
+                    {data && (
+                        <video width="400" controls autoPlay className='video_youtube_video'>
+                            <source src={videoUrl} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    )}
+                </div> */}
                 <div className="video_youtube">
                     <video width="400" controls autoPlay className='video_youtube_video'>
                         <source src="https://videos.pexels.com/video-files/1481903/1481903-hd_1920_1080_25fps.mp4" type="video/mp4" />
@@ -62,7 +65,7 @@ const Video = () => {
                     <div className="youtube_video_ProfileBlock">
                         <div className="youtube_video_ProfileBlock_left">
                             <Link to={`/user/${data?.user?._id}`} className="youtube_video_ProfileBlock_left_img">
-                                <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} />
+                                <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} alt="User Profile" />
                             </Link>
                             <div className="youtubeVideo_subsView">
                                 <div className="youtubePostProfileName"> {data?.user?.channelName} </div>
@@ -89,32 +92,34 @@ const Video = () => {
                 <div className="youtubeCommentSection">
                     <div className="youtubeCommentSectionTitle">{comments.length} Comments</div>
                     <div className="youtubeSelfComment">
-                        <img className='video_youtubeSelfCommentProfile' src="https://i.kym-cdn.com/entries/icons/original/000/043/403/cover3.jpg" />
+                        <img className='video_youtubeSelfCommentProfile' src="https://i.kym-cdn.com/entries/icons/original/000/043/403/cover3.jpg" alt="User Profile" />
                         <div className="addAComment">
-                            <input type="text" className="addAcommentInput" placeholder="Add a comment..." />
+                            <input 
+                                type="text" 
+                                className="addAcommentInput" 
+                                placeholder="Add a comment..." 
+                                value={message} 
+                                onChange={(e) => setMessage(e.target.value)} 
+                            />
                             <div className="cancelSubmitComment">
-                                <div className="cancelComment">Cancel</div>
-                                <div className="cancelComment">Comment</div>
+                                <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
+                                <div className="cancelComment" onClick={handleComment}>Comment</div>
                             </div>
                         </div>
                     </div>
                     <div className="youtubeOthersComments">
-                        {
-                            comments.map((item, index) => {
-                                return (
-                                    <div className="youtubeSelfComment">
-                                        <img className='video_youtubeSelfCommentProfile' src={item?.user?.profilePic} />
-                                        <div className="others_commentSection">
-                                            <div className="others_commentSectionHeader">
-                                                <div className="channelName_comment">Username</div>
-                                                <div className="commentTimingOthers">2024-09-30</div>
-                                            </div>
-                                            <div className="otherCommentSectionComment">{item.message}</div>
-                                        </div>
+                        {comments.map((item, index) => (
+                            <div className="youtubeSelfComment" key={item._id || index}>
+                                <img className='video_youtubeSelfCommentProfile' src={item?.user?.profilePic} alt="User Profile" />
+                                <div className="others_commentSection">
+                                    <div className="others_commentSectionHeader">
+                                        <div className="channelName_comment">{item?.user?.username}</div>
+                                        <div className="commentTimingOthers">{new Date(item.createdAt).toLocaleDateString()}</div>
                                     </div>
-                                );
-                            })
-                        }
+                                    <div className="otherCommentSectionComment">{item.message}</div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -218,6 +223,6 @@ const Video = () => {
             </div>
             <ToastContainer/>
         </div>
-    )
-}
-export default Video
+    );
+};
+export default Video;

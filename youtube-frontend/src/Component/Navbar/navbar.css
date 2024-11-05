@@ -7,7 +7,7 @@
     width: 100%;
     justify-content: space-between;
     top: 0;
-    position: fixed;
+    position: fixed !important;
     background-color: black;
     z-index: 10;
 }
@@ -18,6 +18,8 @@
     width: 100%;
 }
 .header__logo-wrap {
+    position: relative;
+    left: 15px;
     gap: 20px;
     display: flex;
     justify-content: center;
@@ -118,6 +120,8 @@
     justify-content: center;
     gap: 20px;
     margin-left: auto;
+    position: relative;
+    right: 15px;
 }
 .header__userava {
     width: 30px;
