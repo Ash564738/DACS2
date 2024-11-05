@@ -38,7 +38,7 @@ const Video = () => {
             const resp = await axios.post('http://localhost:4000/commentApi/comment', body, { withCredentials: true });
             const newComment = resp.data.comment;
             setComments([newComment, ...comments]);
-            setMessage(""); // Clear the comment input
+            setMessage("");
         } catch (err) {
             toast.error("Please login first to comment");
         }
