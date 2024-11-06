@@ -22,7 +22,7 @@
     flex-shrink: 0;
     height: auto;
     overflow-x: scroll;
-    background-color: black;
+    background-color: #0F0F0F;
     padding: 10px 10px;
 }
 .homePage_options::-webkit-scrollbar {
@@ -43,7 +43,7 @@
 }
 .home_mainPage {
     display: grid;
-    background-color: black;
+    background-color: #0F0F0F;
     box-sizing: border-box;
     gap: 20px;
     grid-template-columns: 384px 384px 384px;
@@ -55,7 +55,7 @@
     gap: 20px;
     grid-template-columns: 326px 326px 326px 326px;
     padding: 120px 0 20px 10px;
-    background-color: black;
+    background-color: #0F0F0F;
 }
 .youtube_Video{
     color: white;

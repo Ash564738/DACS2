@@ -23,7 +23,8 @@ dl, ol, ul {
     bottom: 20px;
 }
 .image_default_signUp{
-    margin-left: 100px;
+    position: absolute;
+    right: 0;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -33,7 +34,7 @@ dl, ol, ul {
     height: 100px;
 }
 main {
-    background-color: rgb(0, 0, 0);
+    background-color: #0F0F0F;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -290,9 +291,9 @@ main {
     border-radius: 15px;
 }
 .transition-stroke-dashoffset {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    transition: stroke-dashoffset 0.7s ease-in-out;
+    transition:
+        stroke-dashoffset 0.7s ease-in-out,
+        stroke 0.7s ease;
 }
 .gradient-input:focus ~ .gradient-border-svg {
     opacity: 1;

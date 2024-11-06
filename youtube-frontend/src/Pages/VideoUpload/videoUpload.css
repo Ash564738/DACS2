@@ -9,10 +9,10 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-    background-color: black;
+    background-color: #0F0F0F;
     color: white;
 }
-.uploadBox{
+.uploadBoxWrapper{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,6 +21,15 @@
     height: 85vh;
     width: 55vw;
     border-radius: 15px;
+}
+.uploadBox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+    height: 100%;
 }
 .uploadVideoTitle{
     display: flex;

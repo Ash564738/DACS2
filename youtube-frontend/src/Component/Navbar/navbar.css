@@ -8,7 +8,7 @@
     justify-content: space-between;
     top: 0;
     position: fixed !important;
-    background-color: black;
+    background-color: #0F0F0F;
     z-index: 10;
 }
 /* header starts here */
