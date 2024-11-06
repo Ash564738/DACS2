@@ -1,5 +1,5 @@
 .video{
-    background-color: black;
+    background-color: #0F0F0F;
     margin-top: 56px;
     display: flex;
     color: white;
@@ -134,7 +134,7 @@
 }
 .addAcommentInput{
     width: 100%;
-    background-color: black;
+    background-color: transparent;
     color: white;
     height: 35px;
     border: none;
@@ -155,7 +155,7 @@
 }
 .cancelComment{
     padding: 8px 16px;
-    border-radius: 18px;
+    border-radius: 20px;
     border: 1px solid;
     cursor: pointer;
     &:hover{

@@ -3,11 +3,9 @@
     width: 100%;
     padding: 10px 13px 0 13px;
     box-sizing: border-box;
-    background-color: black;
+    background-color: #0F0F0F;
     color: white;
 }
-
-
 .profile_page{
     display: flex;
     flex-direction: column;
@@ -19,7 +17,6 @@
     justify-content: center;
     align-items: center;
 }
-
 .profile_page_inactive{
     display: flex;
     flex-direction: column;
@@ -30,24 +27,20 @@
     justify-content: center;
     align-items: center;
 }
-
 .profile_top_section{
     width: 100%;
     display: flex;
     padding: 0 0 20px 0;
-    
 }
 .profile_top_section_profile{
     width: 150px;
     height: 150px;
-
 }
 .profile_top_section_img{
     width: 100%;
     border-radius: 50%;
     height: 100%;
 }
-
 .profile_top_section_About{
     display: flex;
     flex-direction: column;
@@ -63,7 +56,6 @@
     font-size: 16px;
     color: rgb(153, 153, 153);
 }
-
 .profile_videos{
     width: 100%;
 }
@@ -77,9 +69,6 @@
     border-bottom: 1px solid rgb(153, 153, 153);
 
 }
-
-
-
 .profileVideos{
     display: flex;
     gap: 10px;
@@ -92,7 +81,6 @@
     color: white;
     cursor: pointer;
     text-decoration: none;
-
 }
 .profileVideo_block_thumbnail{
     width: 100%;

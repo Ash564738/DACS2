@@ -19,7 +19,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
-    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.Wy2uo_y-ttULYs4chLmqSAAAAA?rs=1&pid=ImgDetMain")
+    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain")
     const [navbarModal,setNavbarModal] = useState(false);
     const [login,setLogin] = useState(false);
     const [isLogedIn,setIsLogedIn] = useState(false)

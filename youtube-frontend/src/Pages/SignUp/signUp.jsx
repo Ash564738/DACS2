@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Link,useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify'
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,12 +9,58 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import TripOriginOutlinedIcon from '@mui/icons-material/TripOriginOutlined';
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
 import './signUp.css';
+import axios from 'axios';
 const SignUp = () => {
+    const [uploadedImageUrl, setUploadedImageUrl] = useState('https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain');
     const [signinField, setSigninField] = useState({"userName":"","password":""});
-    const [signupField, setSignupField] = useState({"userName":"","name":"","password":"","gender":"","dob":"","profilePic":""});
+    const [signupField, setSignupField] = useState({"userName":"","name":"","password":"","gender":"","dob":"","profilePic":uploadedImageUrl});
+    const [progressBar,setProgressBar] = useState(false);
+    const navigate = useNavigate();
     const [fileName, setFileName] = useState('');
-    const [uploadedImageUrl, setUploadedImageUrl] = useState('https://i.pinimg.com/564x/06/bb/d0/06bbd01930f59ec4bcb7dbbf386a8c85.jpg');
+    const uploadImage = async (e) => {
+        console.log("Uploading Image");
+        const files = e.target.files;
+        console.log(files);
+        const data = new FormData();
+        data.append('file', files[0]);
+        data.append('upload_preset', 'Metube');
+        setProgressBar(true);
+        try {
+            // cloudName = 'dicsxejp4';
+            const response = await axios.post(`https://api.cloudinary.com/v1_1/dicsxejp4/image/upload`,data);
+            const imageUrl = response.data.secure_url;
+            setUploadedImageUrl(imageUrl);
+            setSigninField({...signupField,"profilePic": imageUrl});
+            console.log(imageUrl);
+            console.log(response);
+        } catch (err) {
+            console.error("Error uploading file:", err);
+        } finally {
+            setProgressBar(false);
+        }
+    };
+    const handleOnChangeInput = (e, name, form) => {
+        const { value, files } = e.target;
+        if (files && files.length > 0) {
+            uploadImage(e);
+            setFileName(files[0].name);
+        } else {
+            if (form === "signin") {
+                setSigninField({
+                    ...signinField,[name]: value
+                });
+            } else if (form === "signup") {
+                setSignupField({
+                    ...signupField,[name]: value
+                });
+            }
+        }
+    };
+    console.log(signinField);
+    console.log(signupField);
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
             <svg className={`position-absolute gradient-border-svg top-0 w-100 h-100 pointer-events-none ${className}`}>
@@ -168,26 +216,6 @@ const SignUp = () => {
             });
         });
     });
-    console.log(signinField);
-    console.log(signupField);
-    const handleOnChangeInput = (e, name, form) => {
-        const { value, files } = e.target;
-        if (files && files.length > 0) { 
-            setFileName(files[0].name);
-        } else {
-            if (form === "signin") {
-                setSigninField({
-                    ...signinField,
-                    [name]: value
-                });
-            } else if (form === "signup") {
-                setSignupField({
-                    ...signupField,
-                    [name]: value
-                });
-            }
-        }
-    };    
     return (
     <main>
         <div className="container text-white align-items-center justify-content-center flex-row overflow-hidden p-0 m-0" id="container">
@@ -239,7 +267,7 @@ const SignUp = () => {
                         </button>
                     </div>
                     <div className="text-center w-100">
-                        <p className="fs-6 d-inline">Don’t have an account?</p>
+                        <p className="fs-6 d-inline">Don’t have an account? </p>
                         <p className="fw-bold fs-6 d-inline clickable-text" id="signUp" >Sign Up</p>
                     </div>
                 </div>
@@ -308,17 +336,17 @@ const SignUp = () => {
                             <GradientBorderSVG gradientId="signupPassGradient" maskId="signupPassBorderMask" />
                         </div>
                         <div className="mb-3 form-floating w-100 position-relative">
-                            <input type="file"onChange={(e) => handleOnChangeInput(e, "profilePic")} accept="image/*"style={{position: "absolute",left: 0,top: 0,opacity: 0,width:"100%",height: "100%",cursor: "pointer",zIndex: 1,}}/>
+                            <input type="file" onChange={(e) => handleOnChangeInput(e, "profilePic")} accept="image/*"style={{position: "absolute",left: 0,top: 0,opacity: 0,width:"100%",height: "100%",cursor: "pointer",zIndex: 1,}}/>
                             <button type="button"style={{padding: "5px",backgroundColor: 'white',color: "black",border: "none",borderRadius: "15px",cursor: "pointer",fontSize: "0.9em", textTransform: "none",}}>
                                 Choose File
                             </button>
-                            {fileName || " No Profile Pic Choosen"}
+                            {fileName || " No ProfilePic Choosen"}
                             <img src={uploadedImageUrl} alt="" className='image_default_signUp'/>
                         </div>
                         <button type="submit" className="animate-button fw-bold fs-6 form-floating w-100 position-relative">Submit</button>
                     </form>
                     <div className="text-center w-100">
-                        <p className="fs-6 d-inline">Already have an account?</p>
+                        <p className="fs-6 d-inline">Already have an account? </p>
                         <p className ="fw-bold fs-6 d-inline clickable-text" id="signIn">Sign In</p>
                     </div>
                 </div>
@@ -348,7 +376,7 @@ const SignUp = () => {
                         <button type="submit" className="animate-button fw-bold fs-6 form-floating w-100 position-relative">Change Password</button>
                     </form>
                     <div className="text-center w-100">
-                        <p className="fs-6 d-inline">Remember your password?</p>
+                        <p className="fs-6 d-inline">Remember your password? </p>
                         <p className ="fw-bold fs-6 d-inline clickable-text" id="signIn1">Sign In</p>
                     </div>
                 </div>
@@ -438,6 +466,10 @@ const SignUp = () => {
                 </div>
             </div>
         </div>
+        {progressBar && <Box sx={{ width: '100%' }}>
+                        <LinearProgress />
+                    </Box>}
+        <ToastContainer />
     </main>
     )
 }
