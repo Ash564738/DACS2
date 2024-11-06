@@ -6,6 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import Loader from '../../Component/Loader/loader';
 const VideoUpload = () => {
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
@@ -46,7 +47,6 @@ const VideoUpload = () => {
             setInputField({
                 ...inputField,[val]: url
             });
-            console.log(url);
         } catch (err) {
             console.error("Error uploading file:", err);
         } finally {
@@ -98,9 +98,9 @@ const VideoUpload = () => {
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
                         </div>
                         {loader && (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                                <CircularProgress />
-                            </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '40px', height: '40px'}}>
+                            <Loader />
+                        </Box>
                         )}
                         <div>Thumbnail <input type="file" onChange={(e) => uploadImage(e, "image")} accept='image/*'/></div>
                         <div>Video <input type="file" onChange={(e) => uploadImage(e, "video")} accept='video/mp4, video/webm, video/*'/></div>
