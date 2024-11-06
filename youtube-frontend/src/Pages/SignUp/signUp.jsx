@@ -23,7 +23,6 @@ const SignUp = () => {
     const uploadImage = async (e) => {
         console.log("Uploading Image");
         const files = e.target.files;
-        console.log(files);
         const data = new FormData();
         data.append('file', files[0]);
         data.append('upload_preset', 'Metube');
@@ -34,8 +33,6 @@ const SignUp = () => {
             const imageUrl = response.data.secure_url;
             setUploadedImageUrl(imageUrl);
             setSigninField({...signupField,"profilePic": imageUrl});
-            console.log(imageUrl);
-            console.log(response);
         } catch (err) {
             console.error("Error uploading file:", err);
         } finally {
