@@ -41,30 +41,8 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: white;
     text-decoration: none;
     position: relative;
-}
-.logoyoutube span {
-    font-size: 10px;
-    font-weight: 500;
-    color: #909090;
-    align-items: baseline;
-    position: absolute;
-    top: 0;
-    right: -15px;
-}
-.youtubetitle {
-    font-size: 20px;
-    word-spacing: 0px;
-    letter-spacing: 0px;
-    font-optical-sizing: auto;
-    font-weight: 500;
-    font-style: normal;
-    position: relative;
-}
-.logoyoutubeimg {
-    color: red;
 }
 .header__center {
     display: flex;

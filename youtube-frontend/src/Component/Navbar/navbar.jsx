@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './navbar.css';
+import Logo from '../../Component/Logo/logo';
 import {
     Menu as MenuIcon,
     YouTube as YoutubeIcon,
@@ -68,9 +69,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                         <MenuIcon sx={{ color: "white" }} />
                     </div>
                     <Link to={'/'} className="logoyoutube">
-                        <YoutubeIcon sx={{ fontSize: "34px", color: "red" }} className="logoyoutubeimg" />
-                        <div className="youtubetitle">MeTube</div>
-                        <span>VN</span>
+                        <Logo className="logoyoutubeimg" />
                     </Link>
                 </div>
                 <div className="header__center">
