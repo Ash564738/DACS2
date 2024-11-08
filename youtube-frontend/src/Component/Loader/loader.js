@@ -98,18 +98,18 @@ const StyledWrapper = styled.div`
     flex-direction: column;
     width: 10px;
     position: absolute;
-    margin: 0px 0px 60px 30px;
+    margin: 0px 0px 55px 28px;
   }
   .zzz {
     color: white;
     font-weight: 500;
-    font-size: 0.6em;
+    font-size: 0.5em;
     animation: zzz 2s linear infinite;
   }
   .bigzzz {
     color: white;
     font-weight: 500;
-    font-size: 0.7em;
+    font-size: 0.6em;
     margin-left: 10px;
     animation: zzz 2.3s linear infinite;
   }

@@ -332,7 +332,7 @@ const SignUp = () => {
                             <label className="form-label" htmlFor="signupPassword">Password</label>
                             <GradientBorderSVG gradientId="signupPassGradient" maskId="signupPassBorderMask" />
                         </div>
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-3 form-floating w-100 position-relative align-items-center d-flex">
                             <input type="file" onChange={(e) => handleOnChangeInput(e, "profilePic")} accept="image/*"style={{position: "absolute",left: 0,top: 0,opacity: 0,width:"100%",height: "100%",cursor: "pointer",zIndex: 1,}}/>
                             <button type="button"style={{padding: "5px",backgroundColor: 'white',color: "black",border: "none",borderRadius: "15px",cursor: "pointer",fontSize: "0.9em", textTransform: "none",}}>
                                 Choose File

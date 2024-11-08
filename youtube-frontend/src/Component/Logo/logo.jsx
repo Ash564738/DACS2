@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import gsap from 'gsap';
 import { TweenMax, TimelineMax } from 'gsap';
 import styled from 'styled-components';
 const Logo = () => {
@@ -133,7 +132,6 @@ const Logo = () => {
 			  TweenMax.set(earsl, {x:0, y:0, rotation: 0});
 			  TweenMax.set(earsr, {x:0, y:0, rotation: 0});
 			}
-		
 			initAni();
 	});
 	return (
@@ -194,13 +192,13 @@ const StyledWrapper = styled.div`
 .cat-wrapper {
     display: flex;
 	position: relative;
-	top: -10px;
+	top: -12px;
     width: 50px;
 }
 .logoani {
     display: flex;
 	position: relative;
-	top: 6px;
+	top: 5px;
 	right: -5px;
 }
 .logo{
@@ -209,7 +207,7 @@ const StyledWrapper = styled.div`
     opacity: 0;
 	align-items: center;
 	justify-content: center;
-	top: 6px;
+	top: 5px;
     &.visible{
         opacity: 1;
         transition: all 1s;

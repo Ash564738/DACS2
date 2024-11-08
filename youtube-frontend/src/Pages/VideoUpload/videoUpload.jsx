@@ -99,7 +99,7 @@ const VideoUpload = () => {
                         </div>
                         {loader && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '40px', height: '40px'}}>
-                            <Loader />
+                            <Loader/>
                         </Box>
                         )}
                         <div>Thumbnail <input type="file" onChange={(e) => uploadImage(e, "image")} accept='image/*'/></div>
