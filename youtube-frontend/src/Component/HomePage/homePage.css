@@ -6,8 +6,6 @@
 }
 .homePage {
     display: flex;
-    flex-direction: column;
-    flex: 1;
     margin-left: 260px;
     min-height: 100vh;
 }

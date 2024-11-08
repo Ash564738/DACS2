@@ -42,8 +42,8 @@
     cursor: pointer;
 }
 .youtube_video_ProfileBlock_left_image{
-    max-width: 100%;
-    max-height: 100%;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
 }
 .youtubeVideo_subsView{
@@ -174,7 +174,6 @@
 }
 .others_commentSectionHeader{
     display: flex;
-    gap: 10px;
 }
 .channelName_comment{
     font-size: 14px;
