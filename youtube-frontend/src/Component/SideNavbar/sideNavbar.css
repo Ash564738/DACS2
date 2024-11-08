@@ -9,6 +9,7 @@
     height: 92vh;
     overflow-y: auto;
     position: fixed;
+    width: 260px;
     top: 55px;
     left: 0px;
     padding: 14px;
@@ -16,7 +17,18 @@
     color: white;
 }
 .home-sideNavbar::-webkit-scrollbar {
-    width: 12px;
+    width: 8px;
+}
+.home-sideNavbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+.home-sideNavbar::-webkit-scrollbar-thumb {
+    background: #535353;
+    border-radius: 10px;
+}
+.home-sideNavbar::-webkit-scrollbar-thumb:hover {
+    background: #323232;
 }
 .home_sideNavbarTop{
     display: flex;

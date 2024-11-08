@@ -6,6 +6,8 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 const Video = () => {
+    const [like, setLike] = useState(0);
+    const [dislike, setDislike] = useState(0);
     const [message, setMessage] = useState("");
     console.log(message);
     const [data, setData] = useState(null);
@@ -17,6 +19,8 @@ const Video = () => {
             const response = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
             setData(response.data.video);
             setVideoURL(response.data.video.videoLink);
+            setLike(response.data.video.like.length);
+            setDislike(response.data.video.dislike.length);
         } catch (err) {
             console.error(err);
         }
@@ -44,22 +48,34 @@ const Video = () => {
             toast.error("Please login first to comment");
         }
     };
+    const handleLike = async () => {
+        try {
+            const response = await axios.put(`http://localhost:4000/api/video/like/${id}`, {}, { withCredentials: true });
+            setLike(response.data.like);
+            setDislike(response.data.dislike);
+        } catch (error) {
+            console.error("Error liking video:", error);
+        }
+    };
+    const handleDislike = async () => {
+        try {
+            const response = await axios.put(`http://localhost:4000/api/video/dislike/${id}`, {}, { withCredentials: true });
+            setLike(response.data.like);
+            setDislike(response.data.dislike);
+        } catch (error) {
+            console.error("Error disliking video:", error);
+        }
+    };
     return (
         <div className='video'>
             <div className="videoPostSection">
-                {/* <div className="video_youtube">
+                <div className="video_youtube">
                     {data && (
                         <video width="400" controls autoPlay className='video_youtube_video'>
                             <source src={videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
                     )}
-                </div> */}
-                <div className="video_youtube">
-                    <video width="400" controls autoPlay className='video_youtube_video'>
-                        <source src="https://videos.pexels.com/video-files/1481903/1481903-hd_1920_1080_25fps.mp4" type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
                 </div>
                 <div className="video_youtubeAbout">
                     <div className="video_uTubeTitle">{data?.title}</div>
@@ -75,13 +91,14 @@ const Video = () => {
                             <div className="subscribeBtnYoutube">Subscribe</div>
                         </div>
                         <div className="youtube_video_likeBlock">
-                            <div className="youtube_video_likeBlock_Like">
+                            <div className="youtube_video_likeBlock_Like" onClick={handleLike}>
                                 <ThumbUpOutlinedIcon />
-                                <div className="youtube_video_likeBlock_NoOfLikes">{32}</div>
+                                <div className="youtube_video_likeBlock_NoOfLikes">{like}</div>
                             </div>
                             <div className="youtubeVideoDivider"></div>
-                            <div className="youtube_video_likeBlock_Like">
+                            <div className="youtube_video_likeBlock_Like" onClick={handleDislike}>
                                 <ThumbDownAltOutlinedIcon />
+                                <div className="youtube_video_likeBlock_NoOfDislikes">{dislike}</div>
                             </div>
                         </div>
                     </div>
