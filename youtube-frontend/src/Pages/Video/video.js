@@ -16,29 +16,22 @@ const Video = () => {
     const [comments, setComments] = useState([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [hasIncremented, setHasIncremented] = useState(false);
-    const fetchVideoById = useCallback(async () => {
+    const fetchVideoData = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
-            setData(response.data.video);
-            setVideoURL(response.data.video.videoLink);
-            setLike(response.data.video.like.length);
-            setDislike(response.data.video.dislike.length);
+            const videoResponse = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
+            const commentResponse = await axios.get(`http://localhost:4000/commentApi/comment/${id}`);
+            setData(videoResponse.data.video);
+            setComments(commentResponse.data.comments);
+            setVideoURL(videoResponse.data.video.videoLink);
+            setLike(videoResponse.data.video.like.length);
+            setDislike(videoResponse.data.video.dislike.length);
         } catch (err) {
-            console.error(err);
-        }
-    }, [id]);
-    const getCommentByVideoId = useCallback(async () => {
-        try {
-            const response = await axios.get(`http://localhost:4000/commentApi/comment/${id}`);
-            setComments(response.data.comments);
-        } catch (err) {
-            console.error(err);
+            console.error("Error fetching video and comments:", err);
         }
     }, [id]);
     useEffect(() => {
-        fetchVideoById();
-        getCommentByVideoId();
-    }, [fetchVideoById, getCommentByVideoId]);
+        fetchVideoData();
+    }, [fetchVideoData]);    
     const handleViewIncrement = async () => {
         if (!hasIncremented) {
             try {

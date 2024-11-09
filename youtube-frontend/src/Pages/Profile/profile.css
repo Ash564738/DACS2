@@ -40,6 +40,7 @@
     width: 100%;
     border-radius: 50%;
     height: 100%;
+    object-fit: cover;
 }
 .profile_top_section_About{
     display: flex;
@@ -85,12 +86,14 @@
 .profileVideo_block_thumbnail{
     width: 100%;
     height: 140px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
 }
 .profileVideo_block_thumbnail_img{
     width: 100%;
     height: 100%;
 }
-
 .profileVideo_block_detail{
     display: flex;
     flex-direction: column;
