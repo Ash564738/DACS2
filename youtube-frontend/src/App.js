@@ -8,6 +8,8 @@ import Profile from './Pages/Profile/profile';
 import VideoUpload from './Pages/VideoUpload/videoUpload';
 import SignUp from './Pages/SignUp/signUp';
 import axios from 'axios';
+import { RocketLaunch } from '@mui/icons-material';
+import SocialMedia from './Component/SocialMedia/socialMedia';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
   const setSideNavbarFunc=(value)=>{
@@ -22,6 +24,7 @@ function App() {
         <Route path='/user/:id' element={<Profile sideNavbar={sideNavbar} />} />
         <Route path='/:id/upload' element={<VideoUpload/>} />
         <Route path='/signup' element={<SignUp/>} />
+        <Route path='/socialMedia' element={<SocialMedia/>} />
       </Routes>
     </div>
   );
