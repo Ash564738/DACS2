@@ -168,6 +168,9 @@
     flex-direction: column;
     gap: 10px;
 }
+.youtubeOthersComments .youtubeSelfComment {
+    align-items: center;
+}
 .others_commentSection{
     display: flex;
     flex-direction: column;
@@ -184,7 +187,6 @@
     color: #AAAAAA;
 }
 .otherCommentSectionComment{
-    margin-top: 10px;
 }
 /* ------------------------------------ */
 .videoSuggestions{

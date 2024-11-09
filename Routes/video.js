@@ -8,4 +8,5 @@ router.get('/getVideoById/:id', videoController.getVideoById);
 router.get('/:userId/channel', videoController.getAllVideoByUserID);
 router.put('/video/like/:id', auth, videoController.likeVideo);
 router.put('/video/dislike/:id', auth, videoController.dislikeVideo);
+router.put('/incrementViews/:id', videoController.incrementViews);
 module.exports = router;

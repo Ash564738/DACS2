@@ -53,3 +53,33 @@ exports.logOut = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+exports.toggleSubscription = async (req, res) => {
+  console.log("In toggleSubscription Function");
+  try {
+      const { userId } = req.user;
+      const { subscribeToId } = req.params;
+      const user = await User.findById(userId);
+      const isSubscribed = user.subscriptions.includes(subscribeToId);
+      if (isSubscribed) {
+          user.subscriptions.pull(subscribeToId);
+          await User.findByIdAndUpdate(subscribeToId, { $inc: { subscribers: -1 } });
+      } else {
+          user.subscriptions.push(subscribeToId);
+          await User.findByIdAndUpdate(subscribeToId, { $inc: { subscribers: 1 } });
+      }
+      await user.save();
+      res.json({ isSubscribed: !isSubscribed });
+  } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+  }
+};
+exports.getSubscriptions = async (req, res) => {
+  console.log("In getSubscriptions Function");
+  try {
+      const { userId } = req.user;
+      const user = await User.findById(userId).populate('subscriptions');
+      res.json(user.subscriptions);
+  } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+  }
+};
