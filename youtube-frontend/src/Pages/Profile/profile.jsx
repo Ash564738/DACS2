@@ -3,6 +3,7 @@ import './profile.css';
 import SideNavbar from '../../Component/SideNavbar/sideNavbar';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { Link, useParams } from 'react-router-dom';
+
 import axios from 'axios';
 const Profile = ({ sideNavbar }) => {
     const { id } = useParams();
@@ -10,9 +11,11 @@ const Profile = ({ sideNavbar }) => {
     const [user, setUser] = useState(null);
     const fetchProfileData = async () => {
         try {
-            const userResponse = await axios.get(`http://localhost:4000/api/getUserById/${id}`);
+            const userResponse = await axios.get(`http://localhost:4000/auth/getUserById/${id}`);
+            const videosResponse = await axios.get(`http://localhost:4000/auth/getVideosByUserId/${id}`);
+            console.log("User data:", userResponse.data);
+            console.log("Videos data:", videosResponse.data);
             setUser(userResponse.data.user);
-            const videosResponse = await axios.get(`http://localhost:4000/api/getVideosByUserId/${id}`);
             setData(videosResponse.data.videos);
         } catch (error) {
             console.error("Error fetching profile data:", error);
@@ -30,12 +33,12 @@ const Profile = ({ sideNavbar }) => {
                         <img className='profile_top_section_img' src={user?.profilePic} alt="Profile" />
                     </div>
                     <div className="profile_top_section_About">
-                        <div className="profile_top_section_About_Name">{user?.channelName}</div>
+                        <div className="profile_top_section_About_Name">{user?.name}</div>
                         <div className="profile_top_section_info">
-                            @{user?.username} . {data.length} videos . {user?.subscribersCount || 0} subscribers
+                            @{user?.userName} . {data.length} videos . {user?.subscribers || 0} subscribers
                         </div>
                         <div className="profile_top_section_info">
-                            About {user?.bio || user?.channelName}
+                            {user?.about || user?.name}
                         </div>
                     </div>
                 </div>
