@@ -201,28 +201,35 @@ const SignUp = () => {
         };
     });
     const handleSignup = async () => {
-        try {
-            const response = await axios.post('http://localhost:4000/auth/signUp', signupField).then(res => {
-                console.log(res);
-            }).catch(err => {
-                console.log(err);
-            });
-        } catch (error) {
-            console.error("Error in SignUp:", error);
-            toast.error("Error in SignUp", { position: "top-center", autoClose: 2000 });
-        }
+        setProgressBar(true);
+        axios.post('http://localhost:4000/auth/signUp', signupField).then(res => {
+            console.log(res);
+            toast.success("User registered successfully", { position: "top-center", autoClose: 2000 });
+            setProgressBar(false);
+            navigate('/');
+        }).catch(err => {
+            console.log(err);
+            setProgressBar(false);
+            toast.error("Error registering user", { position: "top-center", autoClose: 2000 });
+        });
     };
     const handleSignin = async() => {
-        try {
-            const response = await axios.post('http://localhost:4000/auth/signIn', signinField).then((res) => {
-                console.log(res);
-            }).catch((err) => {
-                console.log(err);
-            });
-        } catch (error) {
-            console.error("Error in SignIn:", error);
-            toast.error("Error in SignIn", { position: "top-center", autoClose: 2000 });
-        }
+        setProgressBar(true);
+        axios.post('http://localhost:4000/auth/signIn', signinField).then((res) => {
+            console.log(res);
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("userId", res.data.user._id);
+            localStorage.setItem("userName", res.data.user.userName);
+            localStorage.setItem("name", res.data.user.name);
+            localStorage.setItem("profilePic", res.data.user.profilePic);
+            window.location.reload();
+            setProgressBar(false);
+            toast.success("User signed in successfully", { position: "top-center", autoClose: 2000 });
+        }).catch((err) => {
+            console.log(err);
+            setProgressBar(false);
+            toast.error("Error signing in user", { position: "top-center", autoClose: 2000 });
+        });
     }
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
@@ -250,6 +257,7 @@ const SignUp = () => {
         setProgressBar(true);
         try {
             const response = await axios.post(`https://api.cloudinary.com/v1_1/dicsxejp4/image/upload`, data);
+            setProgressBar(false);
             const imageUrl = response.data.secure_url;
             setUploadedImageUrl(imageUrl);
             setSignupField({ ...signupField, "profilePic": imageUrl });
@@ -285,7 +293,7 @@ const SignUp = () => {
                             <GradientBorderSVG gradientId="signinPassGradient" maskId="signinPassBorderMask" />
                         </div>
                         <p className="text-end fs-6 mb-3 w-100 clickable-text" id="forgetPass" >Forgot password?</p>
-                        <button type="submit" className="animate-button fw-bold fs-6 py-2 w-100"  onClick={handleSignin}>Sign In</button>
+                        <button type="button" className="animate-button fw-bold fs-6 py-2 w-100"  onClick={handleSignin}>Sign In</button>
                     </form>
                     <div className="d-flex align-items-center justify-content-center py-2 w-100">
                         <hr className="flex-fill" style={{ background: '#C5BCBC' }} />
@@ -313,8 +321,10 @@ const SignUp = () => {
                         <p className="fs-6 d-inline">Don’t have an account? </p>
                         <p className="fw-bold fs-6 d-inline clickable-text" id="signUp">Sign Up</p>
                     </div>
+                    {progressBar && <Box sx={{ width: '100%' }}>
+                        <Loader />
+                    </Box>}
                 </div>
-                <ToastContainer />
             </div>
             <div className="form-container w-50 h-100 justify-content-center align-items-center p-0 m-0">
                 <div className="sign-up-container align-items-center justify-content-center flex-column">
@@ -382,15 +392,20 @@ const SignUp = () => {
                             </button>
                             {fileName || " No ProfilePic Choosen"}
                             <img src={uploadedImageUrl} alt="" className='image_default_signUp'/>
+                            {progressBar && <Box sx={{ width: '100%' }}>
+                                <Loader />
+                            </Box>}
                         </div>
-                        <button type="submit" className="animate-button fw-bold fs-6 form-floating w-100 position-relative"  onClick={handleSignup}>Submit</button>
+                        <button type="button" className="animate-button fw-bold fs-6 form-floating w-100 position-relative"  onClick={handleSignup}>Submit</button>
                     </form>
                     <div className="text-center w-100">
                         <p className="fs-6 d-inline">Already have an account? </p>
                         <p className ="fw-bold fs-6 d-inline clickable-text" id="signIn">Sign In</p>
                     </div>
+                    {progressBar && <Box sx={{ width: '100%' }}>
+                        <Loader />
+                    </Box>}
                 </div>
-                <ToastContainer />
             </div>
             <div className="form-container w-50 h-100 justify-content-center align-items-center p-0 m-0">
                 <div className="forget-pass-container align-items-center justify-content-center flex-column">
@@ -414,14 +429,13 @@ const SignUp = () => {
                             <label className="form-label" htmlFor="forgetpassConfirmPassword">Confirm New Password</label>
                             <GradientBorderSVG gradientId="forgetpassConPassGradient" maskId="forgetpassConPassBorderMask" />
                         </div>
-                        <button type="submit" className="animate-button fw-bold fs-6 form-floating w-100 position-relative">Change Password</button>
+                        <button type="button" className="animate-button fw-bold fs-6 form-floating w-100 position-relative">Change Password</button>
                     </form>
                     <div className="text-center w-100">
                         <p className="fs-6 d-inline">Remember your password? </p>
                         <p className ="fw-bold fs-6 d-inline clickable-text" id="signIn1">Sign In</p>
                     </div>
                 </div>
-                <ToastContainer />
             </div>
             <div className="overlay-container w-50 h-100 justify-content-center align-items-center p-0 m-0">
                 <div className="overlay">
@@ -508,9 +522,7 @@ const SignUp = () => {
                 </div>
             </div>
         </div>
-        {progressBar && <Box sx={{ width: '100%' }}>
-            <Loader />
-        </Box>}
+        <ToastContainer />
     </main>
     )
 }

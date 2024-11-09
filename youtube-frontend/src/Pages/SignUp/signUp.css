@@ -319,16 +319,17 @@ input[type="date"]::placeholder {
     padding-left: 40px;
 }
 .flatpickr-calendar {
-    height: 250px;
+    height: 243px;
     background-color: rgb(26, 26, 26);
     color: white;
     z-index: 1000;
+    overflow: hidden;
 }
 .flatpickr-days {
     height: 200px;
 }
 .flatpickr-months {
-    height: 30px;
+    height: 28px;
 }
 .flatpickr-weekdays{
     height: 20px;

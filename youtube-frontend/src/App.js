@@ -7,6 +7,7 @@ import {Route,Routes} from 'react-router-dom';
 import Profile from './Pages/Profile/profile';
 import VideoUpload from './Pages/VideoUpload/videoUpload';
 import SignUp from './Pages/SignUp/signUp';
+import SocialMedia from './Pages/SocialMedia/socialMedia';
 import axios from 'axios';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
@@ -29,6 +30,7 @@ function App() {
         <Route path='/user/:id' element={<Profile sideNavbar={sideNavbar} />} />
         <Route path='/:id/upload' element={<VideoUpload/>} />
         <Route path='/signup' element={<SignUp/>} />
+        <Route path='/socialMedia' element={<SocialMedia/>} />
       </Routes>
     </div>
   );
