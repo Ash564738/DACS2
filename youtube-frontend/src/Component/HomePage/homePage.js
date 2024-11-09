@@ -5,15 +5,13 @@ import axios from 'axios';
 const HomePage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   useEffect(() => {
-    axios.get('http://localhost:4000/api/allVideo')
-      .then(res => {
+    axios.get('http://localhost:4000/api/allVideo').then(res => {
         if (res.data && res.data.videos) {
           setData(res.data.videos);
         } else {
           console.warn("No videos found in response.");
         }
-      })
-      .catch(err => {
+      }).catch(err => {
         console.error("Error fetching videos:", err);
       });
   }, []);
@@ -28,38 +26,38 @@ const HomePage = ({ sideNavbar }) => {
         ))}
       </div>
       <div className={sideNavbar ? "home_mainPage" : "home_mainPageWithoutLink"}>
-        {data && data.length > 0 ? (
-          data.map((item) => (
-            <Link key={item._id} to={`/watch/${item._id}`} className="youtube_Video">
-              <div className="youtube_thumbnailBox">
+      {data && data.length > 0 ? (
+        data.map((item) => (
+          <Link key={item._id} to={`/watch/${item._id}`} className="youtube_Video">
+            <div className="youtube_thumbnailBox">
+              <img 
+                src={item.thumbnail || "default_thumbnail.jpg"} 
+                alt={`${item.title} thumbnail`} 
+                className="youtube_thumbnailPic" 
+              />
+              <div className="youtube_timingThumbnail">
+                {item.duration || "00:00"}
+              </div>
+            </div>
+            <div className="youtubeTitleBox">
+              <div className="youtubeTitleBoxProfile">
                 <img 
-                  src={item.thumbnail || "default_thumbnail.jpg"} 
-                  alt={`${item.title} thumbnail`} 
-                  className="youtube_thumbnailPic" 
+                  src={item.user?.profilePic || "default_profile.jpg"} 
+                  alt={`${item.user?.name || "Unknown"} profile`} 
+                  className="youtube_thumbnail_Profile" 
                 />
-                <div className="youtube_timingThumbnail">
-                  {item.duration || "00:00"}
-                </div>
               </div>
-              <div className="youtubeTitleBox">
-                <div className="youtubeTitleBoxProfile">
-                  <img 
-                    src={item.user?.profilePic || "default_profile.jpg"} 
-                    alt={`${item.user?.name || "Unknown"} profile`} 
-                    className="youtube_thumbnail_Profile" 
-                  />
-                </div>
-                <div className="youtubeTitleBox_Title">
-                  <div className="youtube_videoTitle">{item.title || "Untitled Video"}</div>
-                  <div className="youtube_channelName">{item.user?.name || "Unknown Channel"}</div>
-                  <div className="youtubeVideo_views">{item.views ? `${item.views} Likes` : "0 Likes"}</div>
-                </div>
+              <div className="youtubeTitleBox_Title">
+                <div className="youtube_videoTitle">{item.title || "Untitled Video"}</div>
+                <div className="youtube_channelName">{item.user?.name || "Unknown Channel"}</div>
+                <div className="youtubeVideo_views">{item.views ? `${item.views} views` : "0 views"}</div>
               </div>
-            </Link>
-          ))
-        ) : (
-          <p>No videos available.</p>
-        )}
+            </div>
+          </Link>
+        ))
+      ) : (
+        <p>No videos available.</p>
+      )}
       </div>
     </div>
   );

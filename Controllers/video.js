@@ -13,8 +13,8 @@ exports.uploadVideo = async (req, res) => {
 exports.getAllVideo = async (req, res) => {
     console.log("getAllVideo");
     try {
-        const videos = await Video.find().populate('user', 'name profilePic userName createdAt');
-        res.status(200).json({ success: true, videos });
+        const videos = await Video.find().populate('user', 'name profilePic').select('title thumbnail duration views');
+        res.status(201).json({ success: true, videos });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
@@ -23,8 +23,8 @@ exports.getVideoById = async (req, res) => {
     console.log("getVideoById");
     try {
         const { id } = req.params;
-        const video = await Video.findById(id).populate('user', 'name profilePic userName createdAt about');
-        res.status(200).json({ success: true, video });
+        const video = await Video.findById(id).populate('user', 'name profilePic');
+        res.status(201).json({ success: true, video });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
@@ -34,7 +34,7 @@ exports.getAllVideoByUserID = async (req, res) => {
     try {
         const { userId } = req.params;
         const videos = await Video.find({ user: userId }).populate('user', 'name profilePic userName createdAt about');
-        res.status(200).json({ success: true, videos });
+        res.status(201).json({ success: true, videos });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
@@ -52,7 +52,7 @@ exports.likeVideo = async (req, res) => {
             video.dislike.pull(userId);
         }
         await video.save();
-        res.status(200).json({ like: video.like.length, dislike: video.dislike.length });
+        res.status(201).json({ like: video.like.length, dislike: video.dislike.length });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
@@ -70,7 +70,17 @@ exports.dislikeVideo = async (req, res) => {
             video.like.pull(userId);
         }
         await video.save();
-        res.status(200).json({ like: video.like.length, dislike: video.dislike.length });
+        res.status(201).json({ like: video.like.length, dislike: video.dislike.length });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+exports.incrementViews = async (req, res) => {
+    console.log("incrementViews");
+    try {
+        const { id } = req.params;
+        const video = await Video.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+        res.status(200).json({ success: true, views: video.views });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }

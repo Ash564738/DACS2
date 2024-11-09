@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema({
   profilePic: {
     type: String,
     required: true,
-  }
+  },
+  subscribers: {
+    type: Number,
+    default: 0,
+  },
+  subscriptions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  }]
 }, { timestamps: true });
 module.exports = mongoose.model('user', userSchema);
