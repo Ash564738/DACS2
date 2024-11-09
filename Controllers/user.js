@@ -36,7 +36,7 @@ exports.signIn = async (req, res) => {
     if (user && await bcrypt.compare(password, user.password)) {
       const token = jwt.sign({ userId: user._id }, "Its_My_Secret_Key");
       res.cookie('token', token, cookieOptions);
-      res.json({ message: 'User signed in successfully', success: "true", token });
+      res.json({ message: 'User signed in successfully', success: "true", token, user });
       console.log("User signed in successfully");
     } else {
       res.status(400).json({ error: 'Invalid credentials' });
