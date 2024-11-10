@@ -8,7 +8,8 @@ const auth = async (req, res, next) =>{
     }else{
         try{
             const decode = jwt.verify(token, "Its_My_Secret_Key");
-            req.user = await User.findById(decode.userId).select('-password');
+            req.user = { userId: decode.userId };
+            console.log("Authenticated user ID:", req.user.userId);
             next();
         }catch(err){
             res.status(401).json({ error: 'Token is not valid' });

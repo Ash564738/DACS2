@@ -224,6 +224,7 @@ const SignUp = () => {
             localStorage.setItem("userName", res.data.user.userName);
             localStorage.setItem("name", res.data.user.name);
             localStorage.setItem("profilePic", res.data.user.profilePic);
+            navigate('/');
             window.location.reload();
         }).catch((err) => {
             toast.error("Error signing in user", { position: "top-center", autoClose: 2000 });

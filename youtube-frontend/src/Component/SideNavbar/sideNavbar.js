@@ -11,12 +11,16 @@ const SideNavbar = ({ sideNavbar }) => {
     }, []);
     const fetchUserSubscriptions = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/auth/getSubscriptions`);
+            const response = await axios.get(`http://localhost:4000/auth/getSubscriptions`, { withCredentials: true });
+            console.log("Subscriptions Response:", response.data);
             setSubscriptions(response.data.subscriptions);
         } catch (error) {
-            console.error("Error fetching subscriptions:", error);
+            console.error("Error fetching subscriptions:", error.response?.data || error.message);
         }
     };
+    useEffect(() => {
+        console.log("Updated subscriptions:", subscriptions);
+    }, [subscriptions]);    
     const sidebarOptions = [
         { icon: <Home />, label: "Home" },
         { icon: <Videocam />, label: "Shorts" },
@@ -70,13 +74,18 @@ const SideNavbar = ({ sideNavbar }) => {
                 <div className="home_sideNavbarTopOption">
                     <div className="home_sideNavbarTopOptionTitleHeader">Subscription</div>
                 </div>
-                {subscriptions.map((channel) => (
-                    <div key={channel._id} className="home_sideNavbarTopOption">
-                        <img className='home_sideNavbar_ImgLogo' src={channel.profilePic} alt={`${channel.name} logo`} />
-                        <div className="home_sideNavbarTopOptionTitle">{channel.name}</div>
-                    </div>
-                ))}
-                <div className="home_sideNavbarTopOption"><List />
+                {subscriptions && subscriptions.length > 0 ? (
+                    subscriptions.map((channel) => (
+                        <div key={channel._id} className="home_sideNavbarTopOption">
+                            <img className='home_sideNavbar_ImgLogo' src={channel.profilePic} alt={`${channel.name} logo`} />
+                            <div className="home_sideNavbarTopOptionTitle">{channel.name}</div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="home_sideNavbarTopOptionTitle">No subscriptions available</div>
+                )}
+                <div className="home_sideNavbarTopOption">
+                    <List />
                     <div className="home_sideNavbarTopOptionTitle">All Subscriptions</div>
                 </div>
             </div>

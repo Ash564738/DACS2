@@ -19,6 +19,8 @@ const Video = () => {
     const [suggestedVideos, setSuggestedVideos] = useState([]);
     const [user, setUser] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
@@ -28,7 +30,7 @@ const Video = () => {
     const fetchUserProfile = async (userId) => {
         try {
             const response = await axios.get(`http://localhost:4000/auth/getUserById/${userId}`);
-            const { profilePic,name, userName, about } = response.data.user;
+            const { profilePic, name, userName, about } = response.data.user;
             setUser({ name, userName, about });
             setUserPic(profilePic);
         } catch (error) {
@@ -45,19 +47,27 @@ const Video = () => {
                 setDislike(videoResponse.data.video.dislike ? videoResponse.data.video.dislike.length : 0);
             } else {
                 console.error("Video not found.");
-            }            
+            }
             const commentResponse = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${id}`);
             setComments(commentResponse.data.comments);
             const suggestedResponse = await axios.get(`http://localhost:4000/api/allVideo`);
             setSuggestedVideos(suggestedResponse.data.videos || []);
+            const userId = localStorage.getItem("userId");
+            if (userId) {
+                const subscriptionResponse = await axios.get(`http://localhost:4000/auth/getSubscriptions`, { withCredentials: true });
+                const subscribedIds = subscriptionResponse.data.subscriptions.map(sub => sub._id);
+                setIsSubscribed(subscribedIds.includes(videoResponse.data.video.user._id));
+            }
         } catch (err) {
             console.error("Error fetching video and comments:", err);
-            setSuggestedVideos([]);
+            setError("Failed to load video data.");
+        } finally {
+            setLoading(false);
         }
     }, [id]);
     useEffect(() => {
         fetchVideoData();
-    }, [fetchVideoData]);
+    }, [id, fetchVideoData]);    
     const handleViewIncrement = async () => {
         if (!hasIncremented) {
             try {
@@ -74,22 +84,24 @@ const Video = () => {
             handleViewIncrement();
             setHasIncremented(true);
         }
-    }, [data, hasIncremented]);
+    }, [data, hasIncremented, handleViewIncrement]);
     const handleComment = async () => {
         const body = { message, video: id, user: data.user._id };
         try {
-            await axios.post('http://localhost:4000/commentApi/comment', body, { withCredentials: true }).then((resp) => {
-                const newComment = resp.data.comment;
-                setComments([newComment, ...comments]);
-                setMessage("");
-            });
+            const resp = await axios.post('http://localhost:4000/commentApi/comment', body, { withCredentials: true });
+            const newComment = resp.data.comment;
+            setComments([newComment, ...comments]);
+            setMessage("");
         } catch (err) {
             toast.error("Please login first to comment");
         }
     };
     const handleSubscribe = async () => {
         try {
-            const response = await axios.put(`http://localhost:4000/api/toggleSubscription/${data.user._id}`,{ withCredentials: true });
+            const token = localStorage.getItem("token");
+            const response = await axios.post(
+                `http://localhost:4000/auth/toggleSubscription/${data.user._id}`,{},{ withCredentials: true }
+            );
             setIsSubscribed(response.data.isSubscribed);
         } catch (error) {
             console.error("Error subscribing:", error);
@@ -105,6 +117,12 @@ const Video = () => {
             console.error(`Error ${action} video:`, error);
         }
     };
+    if (loading) {
+        return <p>Loading video...</p>;
+    }
+    if (error) {
+        return <p>{error}</p>;
+    }
     return (
         <div className='video'>
             <div className="videoPostSection">
@@ -121,7 +139,7 @@ const Video = () => {
                     <div className="youtube_video_ProfileBlock">
                         <div className="youtube_video_ProfileBlock_left">
                             <Link to={`/user/${data?.user?._id}`} className="youtube_video_ProfileBlock_left_img">
-                                <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} alt="User Profile" />
+                                <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} alt={`User Profile of ${data?.user?.name}`} />
                             </Link>
                             <Link to={`/user/${data?.user?._id}`} className="youtubeVideo_subsView">
                                 <div className="youtubePostProfileName">{data?.user?.name}</div>
@@ -150,59 +168,66 @@ const Video = () => {
                         <div>{data?.description}</div>
                     </div>
                 </div>
-                <div className="youtubeCommentSection">
-                    <div className="youtubeCommentSectionTitle">{comments.length} Comments</div>
-                    <div className="youtubeSelfComment">
-                        <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />
-                        <div className="addAComment">
-                            <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} />
-                            <div className="cancelSubmitComment">
-                                <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
-                                <div className="cancelComment" onClick={handleComment}>Comment</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="youtubeOthersComments">
-                        {(comments || []).map((item, index) => (
-                            <div className="youtubeSelfComment" key={item._id || index}>
-                                <img className='video_youtubeSelfCommentProfile' src={item?.user?.profilePic} alt="User Profile" />
-                                <div className="others_commentSection">
-                                    <div className="others_commentSectionHeader">
-                                        <div className="channelName_comment">{item?.user?.userName}</div>
-                                        <div className="commentTimingOthers">
-                                            {item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Date not available"}
-                                        </div>
-                                    </div>
-                                    <div className="otherCommentSectionComment">{item.message}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <CommentSection comments={comments} userPic={userPic} message={message} setMessage={setMessage} handleComment={handleComment} />
             </div>
-            <div className="videoSuggestions">
-                {suggestedVideos && suggestedVideos.length > 0 ? (suggestedVideos.map((item) => (
-                        <div className="videoSuggestionsBlock" key={item._id}>
-                            <Link to={`/watch/${item._id}`} className="video_suggestion_link">
-                                <div className="video_suggetion_thumbnail">
-                                    <img className='video_suggetion_thumbnail_img' src={item.thumbnail} type="image/*"/>
-                                </div>
-                                <div className="video_suggetions_About">
-                                    <div className="video_suggetions_About_title">{item.title}</div>
-                                    <div className="video_suggetions_About_Profile">{item.user?.name}</div>
-                                    <div className="video_suggetions_About_Profile">
-                                        {item.views ? `${item.views} views` : "0 views"} . {item.createdAt ? item.createdAt.slice(0, 10) : "Date not available"}
-                                    </div>
-                                </div>
-                            </Link>
-                        </div>
-                    ))
-                ) : (
-                    <p>No suggestions available.</p>
-                )}
-            </div>
+            <SuggestedVideos suggestedVideos={suggestedVideos} />
             <ToastContainer />
         </div>
     );
 };
+const CommentSection = ({ comments, userPic, message, setMessage, handleComment }) => (
+    <div className="youtubeCommentSection">
+        <div className="youtubeCommentSectionTitle">{comments.length} Comments</div>
+        <div className="youtubeSelfComment">
+            <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />
+            <div className="addAComment">
+                <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} />
+                <div className="cancelSubmitComment">
+                    <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
+                    <div className="cancelComment" onClick={handleComment}>Comment</div>
+                </div>
+            </div>
+        </div>
+        <div className="youtubeOthersComments">
+            {(comments || []).map((item, index) => (
+                <div className="youtubeSelfComment" key={item._id || index}>
+                    <img className='video_youtubeSelfCommentProfile' src={item?.user?.profilePic} alt="User Profile" />
+                    <div className="others_commentSection">
+                        <div className="others_commentSectionHeader">
+                            <div className="channelName_comment">{item?.user?.userName}</div>
+                            <div className="commentTimingOthers">
+                                {item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Date not available"}
+                            </div>
+                        </div>
+                        <div className="otherCommentSectionComment">{item.message}</div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+const SuggestedVideos = ({ suggestedVideos }) => (
+    <div className="videoSuggestions">
+        {suggestedVideos && suggestedVideos.length > 0 ? (
+            suggestedVideos.map((item) => (
+                <div className="videoSuggestionsBlock" key={item._id}>
+                    <Link to={`/watch/${item._id}`} className="video_suggestion_link">
+                        <div className="video_suggetion_thumbnail">
+                            <img className='video_suggetion_thumbnail_img' src={item.thumbnail} alt={`Thumbnail of ${item.title}`} />
+                        </div>
+                        <div className="video_suggetions_About">
+                            <div className="video_suggetions_About_title">{item.title}</div>
+                            <div className="video_suggetions_About_Profile">{item.user?.name}</div>
+                            <div className="video_suggetions_About_Profile">
+                                {item.views ? `${item.views} views` : "0 views"} . {item.createdAt ? item.createdAt.slice(0, 10) : "Date not available"}
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+            ))
+        ) : (
+            <p>No suggestions available.</p>
+        )}
+    </div>
+);
 export default Video;
