@@ -39,39 +39,40 @@ exports.getAllVideoByUserID = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-exports.likeVideo = async (req, res) => {
-    console.log("likeVideo");
+exports.toggleLikeDislike = async (req, res) => {
+    const { id: videoId } = req.params;
+    const userId = req.user._id;
+    const { action } = req.query; 
+    console.log(`toggleLikeDislike on video controller - Video ID: ${videoId}, User ID: ${userId}, Action: ${action}`);
     try {
-        const { id: videoId } = req.params;
-        const userId = req.user._id;
         const video = await Video.findById(videoId);
-        if (video.like.includes(userId)) {
-            video.like.pull(userId);
+        if (!video) {
+            console.log("Video not found for ID:", videoId);
+            return res.status(404).json({ error: 'Video not found' });
+        }
+        if (!Array.isArray(video.like)) video.like = [];
+        if (!Array.isArray(video.dislike)) video.dislike = [];
+        if (action === "like") {
+            if (video.like.includes(userId)) {
+                video.like.pull(userId);
+            } else {
+                video.like.push(userId);
+                video.dislike.pull(userId);
+            }
+        } else if (action === "dislike") {
+            if (video.dislike.includes(userId)) {
+                video.dislike.pull(userId);
+            } else {
+                video.dislike.push(userId);
+                video.like.pull(userId);
+            }
         } else {
-            video.like.push(userId);
-            video.dislike.pull(userId);
+            return res.status(400).json({ error: "Invalid action" });
         }
         await video.save();
         res.status(201).json({ like: video.like.length, dislike: video.dislike.length });
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
-    }
-};
-exports.dislikeVideo = async (req, res) => {
-    console.log("dislikeVideo");
-    try {
-        const { id: videoId } = req.params;
-        const userId = req.user._id;
-        const video = await Video.findById(videoId);
-        if (video.dislike.includes(userId)) {
-            video.dislike.pull(userId);
-        } else {
-            video.dislike.push(userId);
-            video.like.pull(userId);
-        }
-        await video.save();
-        res.status(201).json({ like: video.like.length, dislike: video.dislike.length });
-    } catch (error) {
+        console.error("Error in toggleLikeDislike:", error);
         res.status(500).json({ error: 'Server error' });
     }
 };
