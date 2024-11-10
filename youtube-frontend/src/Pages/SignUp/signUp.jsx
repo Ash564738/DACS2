@@ -215,7 +215,9 @@ const SignUp = () => {
     };
     const handleSignin = async() => {
         setProgressBar(true);
-        axios.post('http://localhost:4000/auth/signIn', signinField).then((res) => {
+        axios.post('http://localhost:4000/auth/signIn', signinField, {withCredentials: true}).then((res) => {
+            toast.success("User signed in successfully", { position: "top-center", autoClose: 2000 });
+            setProgressBar(false);
             console.log(res);
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("userId", res.data.user._id);
@@ -223,12 +225,10 @@ const SignUp = () => {
             localStorage.setItem("name", res.data.user.name);
             localStorage.setItem("profilePic", res.data.user.profilePic);
             window.location.reload();
-            setProgressBar(false);
-            toast.success("User signed in successfully", { position: "top-center", autoClose: 2000 });
         }).catch((err) => {
-            console.log(err);
-            setProgressBar(false);
             toast.error("Error signing in user", { position: "top-center", autoClose: 2000 });
+            setProgressBar(false);
+            console.log(err);
         });
     }
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {

@@ -1,7 +1,22 @@
 import React from 'react';
 import './sideNavbar.css';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Home, Videocam, Subscriptions, ChevronRight, History, PlaylistAdd, SmartDisplayOutlined, WatchLaterOutlined, ThumbUpAltOutlined, List, TrendingUp, MusicNoteRounded, VideogameAssetRounded, EmojiEventsRounded, NewspaperRounded, Settings, FeedbackOutlined, HelpOutlineOutlined, FlagRounded } from '@mui/icons-material';
 const SideNavbar = ({ sideNavbar }) => {
+    const [subscriptions, setSubscriptions] = useState([]);
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) fetchUserSubscriptions(userId);
+    }, []);
+    const fetchUserSubscriptions = async (userId) => {
+        try {
+            const response = await axios.get(`http://localhost:4000/auth/getSubscriptions`);
+            setSubscriptions(response.data.subscriptions);
+        } catch (error) {
+            console.error("Error fetching subscriptions:", error);
+        }
+    };
     const sidebarOptions = [
         { icon: <Home />, label: "Home" },
         { icon: <Videocam />, label: "Shorts" },
@@ -20,12 +35,6 @@ const SideNavbar = ({ sideNavbar }) => {
         { icon: <VideogameAssetRounded />, label: "Gaming" },
         { icon: <NewspaperRounded />, label: "News" },
         { icon: <EmojiEventsRounded />, label: "Sports" }
-    ];
-    const subscriptions = [
-        { label: "Dog", imgSrc: 'https://i.pinimg.com/564x/32/2a/27/322a27a8027a524af908b7246a801809.jpg' },
-        { label: "Rabbit", imgSrc: 'https://i.pinimg.com/736x/c7/60/ab/c760abe4d6e1abf565e71baec5778247.jpg' },
-        { label: "Fox", imgSrc: 'https://i.pinimg.com/564x/85/f6/b3/85f6b3fd42dd521ead51548be0123bb8.jpg' },
-        { label: "Raccoon", imgSrc: 'https://i.pinimg.com/736x/0a/56/d9/0a56d92be017160bce393c78a400d37d.jpg' }
     ];
     const footerLinks = [
         ["About", "Press", "Copyright"],
@@ -61,14 +70,13 @@ const SideNavbar = ({ sideNavbar }) => {
                 <div className="home_sideNavbarTopOption">
                     <div className="home_sideNavbarTopOptionTitleHeader">Subscription</div>
                 </div>
-                {subscriptions.map((channel, index) => (
-                    <div key={index} className="home_sideNavbarTopOption">
-                        <img className='home_sideNavbar_ImgLogo' src={channel.imgSrc} alt={`${channel.label} logo`} />
-                        <div className="home_sideNavbarTopOptionTitle">{channel.label}</div>
+                {subscriptions.map((channel) => (
+                    <div key={channel._id} className="home_sideNavbarTopOption">
+                        <img className='home_sideNavbar_ImgLogo' src={channel.profilePic} alt={`${channel.name} logo`} />
+                        <div className="home_sideNavbarTopOptionTitle">{channel.name}</div>
                     </div>
                 ))}
-                <div className="home_sideNavbarTopOption">
-                    <List />
+                <div className="home_sideNavbarTopOption"><List />
                     <div className="home_sideNavbarTopOptionTitle">All Subscriptions</div>
                 </div>
             </div>
