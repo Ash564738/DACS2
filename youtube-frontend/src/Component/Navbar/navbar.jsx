@@ -124,10 +124,12 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                             {!isLogedIn && <Link to={"/signup"} className="header-modal-option">
                                 <LoginIcon /> Sign In
                             </Link>}
+                            {isLogedIn && <Link to={"/signup"} className="header-modal-option">
+                                <LoginIcon /> Change Your Account
+                            </Link>}
                             {isLogedIn && <div className="header-modal-option" onClick={handleLogout}>
                                 <LogoutIcon /> Sign Out
                             </div>}
-                            
                             <hr className="header-modal-separator" />
                             <div className="header-modal-option">
                                 <Brightness3Icon /> Appearance: Dark
