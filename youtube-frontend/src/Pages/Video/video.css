@@ -311,40 +311,4 @@
     .video_youtube_video {
         width: 100%;
     }
-    .video_youtubeAbout {
-        padding: 0 10px;
-    }
-    .youtube_video_ProfileBlock {
-        gap: 10px;
-    }
-    .youtube_video_ProfileBlock_left {
-        gap: 10px;
-    }
-    .youtube_video_likeBlock {
-        gap: 5px;
-    }
-    .youtube_video_About {
-        padding: 10px;
-    }
-    .youtubeCommentSection {
-        padding: 10px;
-    }
-    .youtubeSelfComment {
-        gap: 5px;
-    }
-    .addAComment {
-        gap: 5px;
-    }
-    .cancelSubmitComment {
-        gap: 5px;
-    }
-    .youtubeOthersComments {
-        gap: 5px;
-    }
-    .video_suggestion_link {
-        gap: 5px;
-    }
-    .video_suggetions_About {
-        gap: 2px;
-    }
 }
