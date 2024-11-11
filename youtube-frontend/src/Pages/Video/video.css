@@ -9,7 +9,8 @@
 
 .videoPostSection {
     width: 100%;
-    max-width: 875px;
+    padding: 0 20px;
+    min-width: 1000px;
     display: flex;
     flex-direction: column;
 }
@@ -234,8 +235,6 @@
 /* ------------------------------------ */
 .videoSuggestions {
     width: 100%;
-    max-width: 406px;
-    padding: 0 15px 0 15px;
     gap: 15px;
     color: white;
     display: flex;
@@ -283,19 +282,69 @@
     color: #ffffff9c;
     font-size: 1em;
 }
-
+@media (max-width: 1250px) {
+    .videoPostSection {
+        min-width: 850px;
+    }
+}
 /* Responsive Styles */
-@media (max-width: 1200px) {
+@media (max-width: 1150px) {
     .video{
         display:flex;
         flex-direction: column;
-        padding: 0 20px;
+        justify-content: center;
+        align-items: center;
     }
     .videoPostSection {
         width: 100%;
+        min-width: 900px;
     }
     .videoSuggestions{
         width: 100%;
-        padding: 20px 0px;
+        padding: 20px;
+    }
+}
+@media screen and (max-width: 900px) {
+    .videoPostSection {
+        min-width: 100%;
+    }
+    .video_youtube_video {
+        width: 100%;
+    }
+    .video_youtubeAbout {
+        padding: 0 10px;
+    }
+    .youtube_video_ProfileBlock {
+        gap: 10px;
+    }
+    .youtube_video_ProfileBlock_left {
+        gap: 10px;
+    }
+    .youtube_video_likeBlock {
+        gap: 5px;
+    }
+    .youtube_video_About {
+        padding: 10px;
+    }
+    .youtubeCommentSection {
+        padding: 10px;
+    }
+    .youtubeSelfComment {
+        gap: 5px;
+    }
+    .addAComment {
+        gap: 5px;
+    }
+    .cancelSubmitComment {
+        gap: 5px;
+    }
+    .youtubeOthersComments {
+        gap: 5px;
+    }
+    .video_suggestion_link {
+        gap: 5px;
+    }
+    .video_suggetions_About {
+        gap: 2px;
     }
 }

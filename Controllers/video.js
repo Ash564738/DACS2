@@ -6,7 +6,7 @@ exports.uploadVideo = async (req, res) => {
         const { title, description, videoLink, videoType, thumbnail } = req.body;
         console.log("Received data:", { title, description, videoLink, videoType, thumbnail });
 
-        const videoUpload = new Video({ user: req.user._id, title, description, videoLink, videoType, thumbnail });
+        const videoUpload = new Video({ user: req.user.userId, title, description, videoLink, videoType, thumbnail });
         await videoUpload.save();
         console.log("Video uploaded successfully:", videoUpload);
 
