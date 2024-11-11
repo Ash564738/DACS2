@@ -31,7 +31,7 @@ const Video = () => {
     }, []);
     const fetchUserProfile = async (userId) => {
         try {
-            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {},{
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
