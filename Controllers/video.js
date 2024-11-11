@@ -1,22 +1,36 @@
 const Video = require('../Modals/video');
-
+const ffmpeg = require('fluent-ffmpeg');
 exports.uploadVideo = async (req, res) => {
     console.log("In uploadVideo Function");
     try {
         const { title, description, videoLink, videoType, thumbnail } = req.body;
         console.log("Received data:", { title, description, videoLink, videoType, thumbnail });
-
-        const videoUpload = new Video({ user: req.user.userId, title, description, videoLink, videoType, thumbnail });
+        let duration;
+        await new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(videoLink, (err, metadata) => {
+                if (err) return reject(err);
+                duration = metadata.format.duration;
+                resolve();
+            });
+        });
+        const formattedDuration = new Date(duration * 1000).toISOString().substr(11, 8);
+        const videoUpload = new Video({ 
+            user: req.user.userId, 
+            title, 
+            description, 
+            videoLink, 
+            videoType, 
+            thumbnail,
+            duration: formattedDuration
+        });
         await videoUpload.save();
         console.log("Video uploaded successfully:", videoUpload);
-
         res.status(201).json({ success: true, videoUpload });
     } catch (error) {
         console.error("Error in uploadVideo:", error);
         res.status(500).json({ error: 'Server error' });
     }
 };
-
 exports.getAllVideo = async (req, res) => {
     console.log("In getAllVideo Function");
     try {

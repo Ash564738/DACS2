@@ -8,9 +8,8 @@
 }
 
 .videoPostSection {
-    width: 100%;
+    width: 65%;
     padding: 0 20px;
-    min-width: 1000px;
     display: flex;
     flex-direction: column;
 }
@@ -234,7 +233,7 @@
 
 /* ------------------------------------ */
 .videoSuggestions {
-    width: 100%;
+    width: 35%;
     gap: 15px;
     color: white;
     display: flex;
@@ -282,33 +281,34 @@
     color: #ffffff9c;
     font-size: 1em;
 }
-@media (max-width: 1250px) {
+/* Responsive Styles */
+@media (max-width: 1500) and (min-width: 1151px) {
     .videoPostSection {
-        min-width: 850px;
+        min-width: 900px;
     }
 }
-/* Responsive Styles */
-@media (max-width: 1150px) {
-    .video{
-        display:flex;
+@media (max-width: 1150px) and (min-width: 951px) {
+    .videoPostSection {
+        min-width: 700px;
+    }
+    .videoSuggestions {
+        padding: 0 15px 0 0;
+    }
+}
+@media (max-width: 950px) {
+    .video {
+        display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-    }
-    .videoPostSection {
-        width: 100%;
-        min-width: 900px;
-    }
-    .videoSuggestions{
-        width: 100%;
         padding: 20px;
     }
-}
-@media screen and (max-width: 900px) {
     .videoPostSection {
-        min-width: 100%;
+        padding: 0;
+        width: 100%;
     }
-    .video_youtube_video {
+    .videoSuggestions {
+        padding: 20px 0 0 0;
         width: 100%;
     }
 }
