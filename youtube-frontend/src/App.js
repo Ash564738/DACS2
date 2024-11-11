@@ -10,6 +10,8 @@ import SignUp from './Pages/SignUp/signUp';
 import SocialMedia from './Pages/SocialMedia/socialMedia';
 import Short from './Pages/Short/short';
 import axios from 'axios';
+import { RocketLaunch } from '@mui/icons-material';
+import SocialMedia from './Component/SocialMedia/socialMedia';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
   const setSideNavbarFunc=(value)=>{
