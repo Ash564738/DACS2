@@ -57,7 +57,7 @@ const Profile = ({ sideNavbar }) => {
                                     </div>
                                     <div className="profileVideo_block_detail">
                                         <div className="profileVideo_block_detail_name">{item.title}</div>
-                                        <div className="profileVideo_block_detail_about">Created at {new Date(item.createdAt).toLocaleDateString()}</div>
+                                        <div className="profileVideo_block_detail_about">Created at {item.createdAt.slice(0, 10)}</div>
                                     </div>
                                 </Link>
                             ))

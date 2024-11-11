@@ -8,6 +8,7 @@ import Profile from './Pages/Profile/profile';
 import VideoUpload from './Pages/VideoUpload/videoUpload';
 import SignUp from './Pages/SignUp/signUp';
 import SocialMedia from './Pages/SocialMedia/socialMedia';
+import Short from './Pages/Short/short';
 import axios from 'axios';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
@@ -26,6 +27,8 @@ function App() {
       <Navbar setSideNavbarFunc={setSideNavbarFunc} sideNavbar={sideNavbar} />
       <Routes>
         <Route path='/' element={<Home sideNavbar={sideNavbar} />} />
+        <Route path='/socialMedia' element={<SocialMedia sideNavbar={sideNavbar} />} />
+        <Route path='/short' element={<Short sideNavbar={sideNavbar}/>} />
         <Route path='/watch/:id' element={<Video />} />
         <Route path='/user/:id' element={<Profile sideNavbar={sideNavbar} />} />
         <Route path='/:id/upload' element={<VideoUpload/>} />
