@@ -2,6 +2,7 @@ import React from 'react';
 import './sideNavbar.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link} from 'react-router-dom';
 import apiClient from '../../Utils/apiClient.js';
 import { Home, Videocam, Subscriptions, ChevronRight, History, PlaylistAdd, SmartDisplayOutlined, WatchLaterOutlined, ThumbUpAltOutlined, List, TrendingUp, MusicNoteRounded, VideogameAssetRounded, EmojiEventsRounded, NewspaperRounded, Settings, FeedbackOutlined, HelpOutlineOutlined, FlagRounded } from '@mui/icons-material';
 const SideNavbar = ({ sideNavbar }) => {
@@ -27,10 +28,10 @@ const SideNavbar = ({ sideNavbar }) => {
         console.log("Updated subscriptions:", subscriptions);
     }, [subscriptions]);    
     const sidebarOptions = [
-        { icon: <Home />, label: "Home" },
+        { icon: <Link to="/"><Home /></Link>, label: <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</Link> },
         { icon: <Videocam />, label: "Shorts" },
         { icon: <Subscriptions />, label: "Subscriptions" }
-    ];
+    ];    
     const middleOptions = [
         { icon: <History />, label: "History" },
         { icon: <PlaylistAdd />, label: "Playlist" },
@@ -81,10 +82,10 @@ const SideNavbar = ({ sideNavbar }) => {
                 </div>
                 {subscriptions && subscriptions.length > 0 ? (
                     subscriptions.map((channel) => (
-                        <div key={channel._id} className="home_sideNavbarTopOption">
+                        <Link to={`/user/${channel._id}`} key={channel._id} className="home_sideNavbarTopOption">
                             <img className='home_sideNavbar_ImgLogo' src={channel.profilePic} alt={`${channel.name} logo`} />
                             <div className="home_sideNavbarTopOptionTitle">{channel.name}</div>
-                        </div>
+                        </Link>
                     ))
                 ) : (
                     <div className="home_sideNavbarTopOptionTitle">No subscriptions available</div>
