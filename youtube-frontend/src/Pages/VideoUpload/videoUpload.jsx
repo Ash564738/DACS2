@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './videoUpload.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';

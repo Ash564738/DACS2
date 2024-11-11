@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../Controllers/user');
 router.post("/signUp",UserController.signUp)
-router.post('/login',UserController.signIn);
-router.post('/logout',UserController.logout);
+router.post('/signIn',UserController.signIn);
+router.post('/logOut',UserController.logOut);
+router.post('/toggleSubscription/:subscribeToId',UserController.toggleSubscription);
+router.get('/getSubscriptions',UserController.getSubscriptions);
 module.exports = router;

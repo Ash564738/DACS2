@@ -5,32 +5,32 @@ const videoSchema = new mongoose.Schema({
         ref: 'user',
         required: true
     },
-    title:{
-        type:String,
-        required:true,
+    title: { 
+        type: String, required: true 
     },
-    description:{
-        type:String,
+    description: {
+        type: String 
     },
-    videoLink:{
-        type:String,
-        required:true,
+    videoLink: { 
+        type: String, required: true 
     },
-    thumbnail:{
-        type:String,
-        required:true,
+    thumbnail: { 
+        type: String, required: true 
     },
-    videoType:{
-        type:String,
-        default:"All"
+    videoType: { 
+        type: String, default: "All" 
     },
-    like:{
-        type:Number,
-        default:0
+    like: [{ 
+        type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
+    }],
+    dislike: [{ 
+        type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
+    }],
+    duration: { 
+        type: String 
     },
-    dislike:{
-        type:Number,
-        default:0
+    views: { 
+        type: Number, default: 0 
     }
-},{timestamps:true})
-module.exports = mongoose.model('video',videoSchema);
+}, { timestamps: true });
+module.exports = mongoose.model('video', videoSchema);
