@@ -7,6 +7,7 @@ import {Route,Routes} from 'react-router-dom';
 import Profile from './Pages/Profile/profile';
 import VideoUpload from './Pages/VideoUpload/videoUpload';
 import SignUp from './Pages/SignUp/signUp';
+import SocialMedia from './Pages/SocialMedia/socialMedia';
 import axios from 'axios';
 import { RocketLaunch } from '@mui/icons-material';
 import SocialMedia from './Component/SocialMedia/socialMedia';
