@@ -10,5 +10,4 @@ const Home = ({sideNavbar}) => {
     </div>
   )
 }
-
 export default Home

@@ -2,19 +2,22 @@ import React from 'react';
 import './sideNavbar.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import apiClient from '../../Utils/apiClient.js';
 import { Home, Videocam, Subscriptions, ChevronRight, History, PlaylistAdd, SmartDisplayOutlined, WatchLaterOutlined, ThumbUpAltOutlined, List, TrendingUp, MusicNoteRounded, VideogameAssetRounded, EmojiEventsRounded, NewspaperRounded, Settings, FeedbackOutlined, HelpOutlineOutlined, FlagRounded } from '@mui/icons-material';
+
 const SideNavbar = ({ sideNavbar }) => {
     const [subscriptions, setSubscriptions] = useState([]);
+
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) fetchUserSubscriptions(userId);
     }, []);
+
     const fetchUserSubscriptions = async (userId) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, { 
+            const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
@@ -24,14 +27,17 @@ const SideNavbar = ({ sideNavbar }) => {
             console.error("Error fetching subscriptions:", error.response?.data || error.message);
         }
     };
+
     useEffect(() => {
         console.log("Updated subscriptions:", subscriptions);
-    }, [subscriptions]);    
+    }, [subscriptions]);
+
     const sidebarOptions = [
-        { icon: <Link to="/"><Home /></Link>, label: <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</Link> },
+        { icon: <Home />, label: "Home", link: "/" },
         { icon: <Videocam />, label: "Shorts" },
         { icon: <Subscriptions />, label: "Subscriptions" }
-    ];    
+    ];
+
     const middleOptions = [
         { icon: <History />, label: "History" },
         { icon: <PlaylistAdd />, label: "Playlist" },
@@ -39,6 +45,7 @@ const SideNavbar = ({ sideNavbar }) => {
         { icon: <WatchLaterOutlined />, label: "Watch Later" },
         { icon: <ThumbUpAltOutlined />, label: "Liked Videos" }
     ];
+
     const exploreOptions = [
         { icon: <TrendingUp />, label: "Trending" },
         { icon: <MusicNoteRounded />, label: "Music" },
@@ -46,6 +53,7 @@ const SideNavbar = ({ sideNavbar }) => {
         { icon: <NewspaperRounded />, label: "News" },
         { icon: <EmojiEventsRounded />, label: "Sports" }
     ];
+
     const footerLinks = [
         ["About", "Press", "Copyright"],
         ["Contact us", "Creators"],
@@ -54,14 +62,15 @@ const SideNavbar = ({ sideNavbar }) => {
         ["How Metube works"],
         ["Test new features"]
     ];
+
     return (
         <div className={sideNavbar ? "home-sideNavbar" : "homeSideNavbarHide"}>
             <div className="home_sideNavbarTop">
                 {sidebarOptions.map((option, index) => (
-                    <div key={index} className="home_sideNavbarTopOption">
+                    <Link to={option.link || "#"} key={index} className="home_sideNavbarTopOption">
                         {option.icon}
                         <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
-                    </div>
+                    </Link>
                 ))}
             </div>
             <div className="home_sideNavbarMiddle">
@@ -109,11 +118,11 @@ const SideNavbar = ({ sideNavbar }) => {
             <div className="home_sideNavbarMiddle">
                 {[{ icon: <Settings />, label: "Settings" }, { icon: <FlagRounded />, label: "Report History" }, { icon: <HelpOutlineOutlined />, label: "Help" }, { icon: <FeedbackOutlined />, label: "Send Feedback" }]
                     .map((option, index) => (
-                    <div key={index} className="home_sideNavbarTopOption">
-                        {option.icon}
-                        <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
-                    </div>
-                ))}
+                        <div key={index} className="home_sideNavbarTopOption">
+                            {option.icon}
+                            <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
+                        </div>
+                    ))}
             </div>
             <div className="copyright">
                 {footerLinks.map((links, index) => (
@@ -130,4 +139,5 @@ const SideNavbar = ({ sideNavbar }) => {
         </div>
     );
 };
+
 export default SideNavbar;
