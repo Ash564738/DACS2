@@ -8,6 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Loader from '../../Component/Loader/loader';
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import apiClient from '../../Utils/apiClient.js';
 const VideoUpload = () => {
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
@@ -29,6 +30,7 @@ const VideoUpload = () => {
     const [inputField, setInputField] = useState({"title": "","description": "","videoLink": "","thumbnail": "","videoType": ""});
     const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
     const handleOnChangeInput = (event, name) => {
         setInputField({
             ...inputField,[name]: event.target.value
@@ -69,7 +71,10 @@ const VideoUpload = () => {
     const handleUploadVideo = async () => {
         setLoader(true);
         try {
-            await axios.post('http://localhost:4000/api/video', inputField, { withCredentials: true }).then((response) => {
+            await apiClient.post('http://localhost:4000/api/video', inputField, { 
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            }).then((response) => {
                 if (response.data.success) {
                     setLoader(false);
                     toast.success("Video Uploaded Successfully");

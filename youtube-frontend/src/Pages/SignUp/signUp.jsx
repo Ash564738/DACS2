@@ -14,6 +14,7 @@ import Box from '@mui/material/Box';
 import './signUp.css';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import apiClient from '../../Utils/apiClient.js';
 const SignUp = () => {
     const [uploadedImageUrl, setUploadedImageUrl] = useState('https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain');
     const [signinField, setSigninField] = useState({"userName": "", "password": ""});
@@ -21,6 +22,7 @@ const SignUp = () => {
     const [progressBar, setProgressBar] = useState(false);
     const [fileName, setFileName] = useState('');
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
     const handleGenderClick = (gender) => {
         setSignupField((prevSignupField) => ({
             ...prevSignupField,
@@ -43,8 +45,6 @@ const SignUp = () => {
                 });
             }
         }
-        console.log("Signup Field:", signupField);
-        console.log("Signin Field:", signinField);
     };
     useEffect(() => {
         const signUpButton = document.getElementById('signUp');
@@ -202,7 +202,7 @@ const SignUp = () => {
     });
     const handleSignup = async () => {
         setProgressBar(true);
-        axios.post('http://localhost:4000/auth/signUp', signupField).then(res => {
+        await axios.post('http://localhost:4000/auth/signUp', signupField).then(res => {
             console.log(res);
             toast.success("User registered successfully", { position: "top-center", autoClose: 2000 });
             setProgressBar(false);
@@ -215,7 +215,10 @@ const SignUp = () => {
     };
     const handleSignin = async() => {
         setProgressBar(true);
-        axios.post('http://localhost:4000/auth/signIn', signinField, {withCredentials: true}).then((res) => {
+        await apiClient.post('http://localhost:4000/auth/signIn', signinField, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true
+        }).then((res) => {
             toast.success("User signed in successfully", { position: "top-center", autoClose: 2000 });
             setProgressBar(false);
             console.log(res);
