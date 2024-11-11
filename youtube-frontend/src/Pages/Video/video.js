@@ -234,7 +234,7 @@ const SuggestedVideos = ({ suggestedVideos }) => (
                             <div className="video_suggetions_About_title">{item.title}</div>
                             <div className="video_suggetions_About_Profile">{item.user?.name}</div>
                             <div className="video_suggetions_About_Profile">
-                                {item.views ? `${item.views} views` : "0 views"} . {item.createdAt ? item.createdAt.slice(0, 10) : "Date not available"}
+                                {item.views ? `${item.views} views` : "0 views"} . {item.createdAt ? Date(item.createdAt).toLocaleDateString() : "Date not available"}
                             </div>
                         </div>
                     </Link>
