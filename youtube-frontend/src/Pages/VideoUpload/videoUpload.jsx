@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Loader from '../../Component/Loader/loader';
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+import apiClient from '../../Utils/apiClient.js';
 const VideoUpload = () => {
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
@@ -27,6 +30,7 @@ const VideoUpload = () => {
     const [inputField, setInputField] = useState({"title": "","description": "","videoLink": "","thumbnail": "","videoType": ""});
     const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
     const handleOnChangeInput = (event, name) => {
         setInputField({
             ...inputField,[name]: event.target.value
@@ -40,11 +44,15 @@ const VideoUpload = () => {
         data.append('file', files[0]);
         data.append('upload_preset', 'Metube');
         try {
-            const response = await axios.post(`https://api.cloudinary.com/v1_1/dicsxejp4/${type}/upload`,data);
-            const url = response.data.secure_url;
-            let val = type === "image" ? "thumbnail" : "videoLink";
-            setInputField({
-                ...inputField,[val]: url
+            await axios.post(`https://api.cloudinary.com/v1_1/dicsxejp4/${type}/upload`,data).then((response) => {
+                if (response.data.secure_url) {
+                    setLoader(false);
+                    const url = response.data.secure_url;
+                    let val = type === "image" ? "thumbnail" : "videoLink";
+                    setInputField({
+                        ...inputField,[val]: url
+                    });
+                }
             });
         } catch (err) {
             console.error("Error uploading file:", err);
@@ -53,20 +61,29 @@ const VideoUpload = () => {
         }
     };
     console.log(inputField);
-    // useEffect(()=>{
-    //     let isLogin = localStorage.getItem("userId");
-    //     if(isLogin===null){
-    //         navigate('/')
-    //     }
-    // },[])
-    const handleSubmitFunc = async () => {
+    useEffect(()=>{
+        let isLogin = localStorage.getItem("userId");
+        if(isLogin===null){
+            toast.error("Please Login First")
+            navigate('/')
+        }
+    },[])
+    const handleUploadVideo = async () => {
         setLoader(true);
         try {
-            const response = await axios.post('http://localhost:4000/api/uploadVideo', inputField);
-            if (response.status === 200) {
-                navigate('/');
+            await apiClient.post('http://localhost:4000/api/video', inputField, { 
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            }).then((response) => {
+                if (response.data.success) {
+                    setLoader(false);
+                    toast.success("Video Uploaded Successfully");
+                    navigate('/');
+                }
             }
+            );
         } catch (error) {
+            toast.error("Error while uploading video");
             console.error("Error uploading video:", error);
         } finally {
             setLoader(false);
@@ -105,11 +122,12 @@ const VideoUpload = () => {
                         <div>Video <input type="file" onChange={(e) => uploadImage(e, "video")} accept='video/mp4, video/webm, video/*'/></div>
                     </div>
                     <div className="uploadBtns">
-                        <div className="uploadBtn-form animate-button fw-bold fs-6 form-floating w-100 position-relative" onClick={handleSubmitFunc}>Upload</div>
+                        <div className="uploadBtn-form animate-button fw-bold fs-6 form-floating w-100 position-relative" onClick={handleUploadVideo}>Upload</div>
                         <Link to="/" className="uploadBtn-form animate-button fw-bold fs-6 form-floating w-100 position-relative">Home</Link>
                     </div>
                 </div>
             </div>
+            <ToastContainer/>
         </div>
     );
 };

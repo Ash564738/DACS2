@@ -3,15 +3,19 @@ import './profile.css';
 import SideNavbar from '../../Component/SideNavbar/sideNavbar';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { Link, useParams } from 'react-router-dom';
-
+import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 const Profile = ({ sideNavbar }) => {
     const { id } = useParams();
     const [data, setData] = useState([]);
     const [user, setUser] = useState(null);
+    const token = localStorage.getItem("token");
     const fetchProfileData = async () => {
         try {
-            const userResponse = await axios.get(`http://localhost:4000/auth/getUserById/${id}`);
+            const userResponse = await apiClient.get(`http://localhost:4000/auth/getUserById/${id}`, {},{
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
             const videosResponse = await axios.get(`http://localhost:4000/auth/getVideosByUserId/${id}`);
             console.log("User data:", userResponse.data);
             console.log("Videos data:", videosResponse.data);
