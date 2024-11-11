@@ -6,6 +6,7 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiClient from '../../Utils/apiClient.js';
 const Video = () => {
     const [like, setLike] = useState(0);
     const [dislike, setDislike] = useState(0);
@@ -21,6 +22,7 @@ const Video = () => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const token = localStorage.getItem("token");
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
@@ -29,7 +31,10 @@ const Video = () => {
     }, []);
     const fetchUserProfile = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/auth/getUserById/${userId}`);
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
             const { profilePic, name, userName, about } = response.data.user;
             setUser({ name, userName, about });
             setUserPic(profilePic);
@@ -54,7 +59,10 @@ const Video = () => {
             setSuggestedVideos(suggestedResponse.data.videos || []);
             const userId = localStorage.getItem("userId");
             if (userId) {
-                const subscriptionResponse = await axios.get(`http://localhost:4000/auth/getSubscriptions`, { withCredentials: true });
+                const subscriptionResponse = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`,{}, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true
+                });
                 const subscribedIds = subscriptionResponse.data.subscriptions.map(sub => sub._id);
                 setIsSubscribed(subscribedIds.includes(videoResponse.data.video.user._id));
             }
@@ -86,9 +94,12 @@ const Video = () => {
         }
     }, [data, hasIncremented, handleViewIncrement]);
     const handleComment = async () => {
-        const body = { message, video: id, user: data.user._id };
+        const body = { message, video: id, user: data.userId };
         try {
-            const resp = await axios.post('http://localhost:4000/commentApi/comment', body, { withCredentials: true });
+            const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, { 
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
             const newComment = resp.data.comment;
             setComments([newComment, ...comments]);
             setMessage("");
@@ -98,9 +109,10 @@ const Video = () => {
     };
     const handleSubscribe = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await axios.post(
-                `http://localhost:4000/auth/toggleSubscription/${data.user._id}`,{},{ withCredentials: true }
+            const response = await apiClient.post(`http://localhost:4000/auth/toggleSubscription/${data.user._id}`,{},{ 
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true
+                }
             );
             setIsSubscribed(response.data.isSubscribed);
         } catch (error) {
@@ -110,7 +122,10 @@ const Video = () => {
     const handleLikeDislike = async (action) => {
         console.log(`${action} video handleLikeDislike on Video/video.js`);
         try {
-            const response = await axios.put(`http://localhost:4000/api/video/toggleLikeDislike/${id}?action=${action}`, {}, { withCredentials: true });
+            const response = await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${id}?action=${action}`, {}, { 
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
             setLike(response.data.like);
             setDislike(response.data.dislike);
         } catch (error) {

@@ -6,7 +6,7 @@ exports.addComment = async (req, res) => {
         let { video, message } = req.body;
         console.log("Received data:", { video, message });
 
-        const comment = new Comment({ user: req.user._id, video, message });
+        const comment = new Comment({ user: req.user.userId, video, message }); 
         await comment.save();
         console.log("Comment saved:", comment);
 

@@ -102,19 +102,17 @@ exports.toggleSubscription = async (req, res) => {
 
 exports.getSubscriptions = async (req, res) => {
   console.log("In getSubscriptions Function");
-
     try {
         const { userId } = req.user;
         console.log("User ID:", userId);
-        const user = await User.findById(userId).populate('subscriptions', '_id profilePic name'); // Ensure correct fields are populated
+        const user = await User.findById(userId).populate('subscriptions', '_id profilePic name');
         console.log("User found:", user);
         if (!user) {
           return res.status(404).json({ error: 'User not found' });}
           else{
             console.log("Subscriptions:", user.subscriptions);
           }
-
-        res.json({ subscriptions: user.subscriptions }); // Wrap in an object for consistency with front-end expectations
+        res.json({ subscriptions: user.subscriptions });
     } catch (error) {
       console.error("Error in getSubscriptions:", error);
       res.status(500).json({ error: 'Server error' });
@@ -140,14 +138,19 @@ exports.getUserById = async (req, res) => {
   console.log("In getUserById Function");
   try {
     const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
     console.log("User ID:", userId);
-
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     console.log("User found:", user);
-
     res.json({ user });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ error: 'Server error' });
   }
 };
+

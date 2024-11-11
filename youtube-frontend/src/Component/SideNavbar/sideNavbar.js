@@ -2,6 +2,7 @@ import React from 'react';
 import './sideNavbar.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import apiClient from '../../Utils/apiClient.js';
 import { Home, Videocam, Subscriptions, ChevronRight, History, PlaylistAdd, SmartDisplayOutlined, WatchLaterOutlined, ThumbUpAltOutlined, List, TrendingUp, MusicNoteRounded, VideogameAssetRounded, EmojiEventsRounded, NewspaperRounded, Settings, FeedbackOutlined, HelpOutlineOutlined, FlagRounded } from '@mui/icons-material';
 const SideNavbar = ({ sideNavbar }) => {
     const [subscriptions, setSubscriptions] = useState([]);
@@ -11,7 +12,11 @@ const SideNavbar = ({ sideNavbar }) => {
     }, []);
     const fetchUserSubscriptions = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/auth/getSubscriptions`, { withCredentials: true });
+            const token = localStorage.getItem("token");
+            const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, { 
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
             console.log("Subscriptions Response:", response.data);
             setSubscriptions(response.data.subscriptions);
         } catch (error) {

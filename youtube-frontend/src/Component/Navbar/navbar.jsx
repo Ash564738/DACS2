@@ -20,6 +20,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import apiClient from '../../Utils/apiClient.js';
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain")
     const [user, setUser] = useState({});
@@ -28,12 +29,15 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     const [isLogedIn,setIsLogedIn] = useState(false)
     const navigate = useNavigate();
     const modalRef = useRef();
+    const token = localStorage.getItem('token');
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
             fetchUserProfile(userId);
             setIsLogedIn(true);
-        }
+        } else {
+            console.error("No user ID found in local storage");
+        }        
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
                 setNavbarModal(false);
@@ -45,15 +49,22 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
         };
     }, []);
     const fetchUserProfile = async (userId) => {
-        try {
-            const response = await axios.get(`http://localhost:4000/auth/getUserById/${userId}`);
-            const { profilePic,name, userName, about } = response.data.user;
-            setUser({ name, userName, about });
-            setUserPic(profilePic);        
-        } catch (error) {
-            console.error("Error fetching user data:", error);
+        if (!userId) {
+            console.error("User ID is undefined");
+            return;
         }
-    };
+        try {
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const { profilePic, name, userName, about } = response.data.user;
+            setUser({ name, userName, about });
+            setUserPic(profilePic);
+        } catch (error) {
+            console.error("Error fetching user data:", error.response ? error.response.data : error.message);
+        }
+    };    
     const handleModalToggle = () => {
         setNavbarModal((prev) => !prev);
     };
@@ -67,7 +78,10 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     };
     const handleLogout = async() => {
         try {
-            axios.post(`http://localhost:4000/auth/logOut`,{},{withCredentials:true}).then((response) => {
+            await apiClient.post(`http://localhost:4000/auth/logOut`,{},{
+                headers: {Authorization: `Bearer ${token}`},
+                withCredentials: true
+            }).then((response) => {
                 if (response.data.success) {
                     toast.success("Logged out successfully");
                     localStorage.removeItem("userId");
