@@ -1,4 +1,5 @@
 const User = require('../Modals/user');
+const Video = require('../Modals/video');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieOptions = {
@@ -20,6 +21,7 @@ exports.signUp = async (req, res) => {
       const user = new User({ name, userName, about, profilePic, gender, dob, password: updatedPass });
       await user.save();
       res.status(201).json({ message: 'User registered successfully', success: "yes", data: user });
+      console.log("User registered successfully");
     }
   } catch (error) {
     console.error("Error in signUp:", error);
@@ -34,7 +36,8 @@ exports.signIn = async (req, res) => {
     if (user && await bcrypt.compare(password, user.password)) {
       const token = jwt.sign({ userId: user._id }, "Its_My_Secret_Key");
       res.cookie('token', token, cookieOptions);
-      res.json({ message: 'User signed in successfully', success: "true", token });
+      res.json({ message: 'User signed in successfully', success: "true", token, user });
+      console.log("User signed in successfully");
     } else {
       res.status(400).json({ error: 'Invalid credentials' });
     }
@@ -83,3 +86,24 @@ exports.getSubscriptions = async (req, res) => {
       res.status(500).json({ error: 'Server error' });
   }
 };
+exports.getVideosByUserId = async (req, res) => {
+  try {
+      const userId = req.params.id;
+      const videos = await Video.find({ user: userId });
+      res.json({ videos });
+  } catch (error) {
+      console.error("Error fetching videos:", error);
+      res.status(500).json({ error: 'Server error' });
+  }
+};
+exports.getUserById = async (req, res) => {
+  try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+      res.json({ user });
+  }
+  catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: 'Server error' });
+  }
+}
