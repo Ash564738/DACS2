@@ -15,6 +15,13 @@ function App() {
   const setSideNavbarFunc=(value)=>{
     setSideNavbar(value)
   }
+  useEffect(()=>{
+    axios.get('http://localhost:4000/api/allVideo').then((res)=>{
+      console.log(res)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  },[])
   return (
     <div className="App">
       <Navbar setSideNavbarFunc={setSideNavbarFunc} sideNavbar={sideNavbar} />
