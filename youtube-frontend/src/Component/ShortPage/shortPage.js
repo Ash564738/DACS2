@@ -1,7 +1,6 @@
 import React from 'react'
 import './shortPage.css'
-import SideNavbar from '../../Component/SideNavbar/sideNavbar'
-const ShortPage = ({sideNavbar}) => {
+const ShortPage = () => {
   return (
     <div className='short'>
     </div>
