@@ -3,7 +3,6 @@ import './navbar.css';
 import Logo from '../../Component/Logo/logo';
 import {
     Menu as MenuIcon,
-    YouTube as YoutubeIcon,
     Search as SearchIcon,
     KeyboardVoice as KeyBoardVoiceIcon,
     VideoCall as VideoCallIcon,
@@ -18,19 +17,27 @@ import {
     HelpOutlineOutlined as HelpOutlineOutlinedIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast,ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import apiClient from '../../Utils/apiClient.js';
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain")
+    const [user, setUser] = useState({});
     const [navbarModal,setNavbarModal] = useState(false);
     const [login,setLogin] = useState(false);
     const [isLogedIn,setIsLogedIn] = useState(false)
     const navigate = useNavigate();
     const modalRef = useRef();
+    const token = localStorage.getItem('token');
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
             fetchUserProfile(userId);
-        }
+            setIsLogedIn(true);
+        } else {
+            console.error("No user ID found in local storage");
+        }        
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
                 setNavbarModal(false);
@@ -42,14 +49,22 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
         };
     }, []);
     const fetchUserProfile = async (userId) => {
+        if (!userId) {
+            console.error("User ID is undefined");
+            return;
+        }
         try {
-            const response = await axios.get(`http://localhost:4000/api/getUserById/${userId}`);
-            const { profilePic, username, email } = response.data.user;
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const { profilePic, name, userName, about } = response.data.user;
+            setUser({ name, userName, about });
             setUserPic(profilePic);
         } catch (error) {
-            console.error("Error fetching user data:", error);
+            console.error("Error fetching user data:", error.response ? error.response.data : error.message);
         }
-    };
+    };    
     const handleModalToggle = () => {
         setNavbarModal((prev) => !prev);
     };
@@ -60,6 +75,26 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     };
     const sideNavbarFunc = () => {
         setSideNavbarFunc(!sideNavbar);
+    };
+    const handleLogout = async() => {
+        try {
+            await apiClient.post(`http://localhost:4000/auth/logOut`,{},{
+                headers: {Authorization: `Bearer ${token}`},
+                withCredentials: true
+            }).then((response) => {
+                if (response.data.success) {
+                    toast.success("Logged out successfully");
+                    localStorage.removeItem("userId");
+                    window.localStorage.clear();
+                    window.location.reload();
+                    setIsLogedIn(false);
+                    navigate("/");
+                }
+            });
+        } catch (error) {
+            toast.error("Error logging out");
+            console.error("Error fetching user data:", error);
+        }
     };
     return (
         <div className="navbar">
@@ -84,7 +119,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                     </div>
                 </div>
                 <div className="header__infor">
-                    <Link to = {'/763/upload'}>
+                    <Link to = {'/${userId}/upload'}>
                         <VideoCallIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
                     </Link>
                     <NotificationsIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
@@ -94,18 +129,21 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                             <div className="header-modal-channel">
                                 <img src={userPic} className="header__userava" alt="Ava" />
                                 <div className="header-modal-channel-inf">
-                                    <div className="header-modal-channel-name">Catto</div>
-                                    <div className="header-modal-channel-email">@Catto.gmail.com</div>
+                                    <div className="header-modal-channel-name">{user.name}</div>
+                                    <div className="header-modal-channel-email">{user.userName}</div>
                                     <div className="header-modal-channel-profile" onClick={handleProfile}>View your channel</div>
                                 </div>
                             </div>
                             <hr className="header-modal-separator" />
-                            <Link to={"/signup"} className="header-modal-option">
+                            {!isLogedIn && <Link to={"/signup"} className="header-modal-option">
                                 <LoginIcon /> Sign In
-                            </Link>
-                            <div className="header-modal-option" >
+                            </Link>}
+                            {isLogedIn && <Link to={"/signup"} className="header-modal-option">
+                                <LoginIcon /> Change Your Account
+                            </Link>}
+                            {isLogedIn && <div className="header-modal-option" onClick={handleLogout}>
                                 <LogoutIcon /> Sign Out
-                            </div>
+                            </div>}
                             <hr className="header-modal-separator" />
                             <div className="header-modal-option">
                                 <Brightness3Icon /> Appearance: Dark
@@ -130,6 +168,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                     )}
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

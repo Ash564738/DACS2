@@ -1,4 +1,4 @@
-.profile{
+.profile {
     display: flex;
     width: 100%;
     padding: 10px 13px 0 13px;
@@ -6,7 +6,8 @@
     background-color: #0F0F0F;
     color: white;
 }
-.profile_page{
+
+.profile_page {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -17,7 +18,8 @@
     justify-content: center;
     align-items: center;
 }
-.profile_page_inactive{
+
+.profile_page_inactive {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -27,40 +29,48 @@
     justify-content: center;
     align-items: center;
 }
-.profile_top_section{
+
+.profile_top_section {
     width: 100%;
     display: flex;
     padding: 0 0 20px 0;
 }
-.profile_top_section_profile{
+
+.profile_top_section_profile {
     width: 150px;
     height: 150px;
 }
-.profile_top_section_img{
+
+.profile_top_section_img {
     width: 100%;
     border-radius: 50%;
     height: 100%;
     object-fit: cover;
 }
-.profile_top_section_About{
+
+.profile_top_section_About {
     display: flex;
     flex-direction: column;
     gap: 7px;
     padding: 0 10px;
     width: 85%;
 }
-.profile_top_section_About_Name{
+
+.profile_top_section_About_Name {
     font-size: 36px;
     font-weight: 600;
 }
-.profile_top_section_info{
+
+.profile_top_section_info {
     font-size: 16px;
     color: rgb(153, 153, 153);
 }
-.profile_videos{
+
+.profile_videos {
     width: 100%;
 }
-.profile_videos_title{
+
+.profile_videos_title {
     font-size: 22px;
     padding-bottom: 10px;
     color: rgb(207, 206, 206);
@@ -68,43 +78,137 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgb(153, 153, 153);
-
 }
-.profileVideos{
+
+.profileVideos {
     display: flex;
     gap: 10px;
     height: 100vh;
     flex-wrap: wrap;
     margin-top: 20px;
 }
-.profileVideo_block{
+
+.profileVideo_block {
     width: 210px;
     color: white;
     cursor: pointer;
     text-decoration: none;
 }
-.profileVideo_block_thumbnail{
+
+.profileVideo_block_thumbnail {
     width: 100%;
     height: 140px;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 5px;
 }
-.profileVideo_block_thumbnail_img{
+
+.profileVideo_block_thumbnail_img {
     width: 100%;
     height: 100%;
 }
-.profileVideo_block_detail{
+
+.profileVideo_block_detail {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
-.profileVideo_block_detail_name{
+
+.profileVideo_block_detail_name {
     width: 100%;
     font-size: 16px;
     font-weight: 600;
 }
-.profileVideo_block_detail_about{
+
+.profileVideo_block_detail_about {
     color: #ababab;
     font-size: 13px;
+}
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .profile_top_section_About_Name {
+        font-size: 30px;
+    }
+    .profileVideo_block {
+        width: 180px;
+    }
+    .profileVideo_block_thumbnail {
+        height: 120px;
+    }
+}
+
+@media (max-width: 992px) {
+    .profile_top_section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile_top_section_profile {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile_top_section_About {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile_top_section_About_Name {
+        font-size: 24px;
+    }
+
+    .profileVideo_block {
+        width: 160px;
+    }
+
+    .profileVideo_block_thumbnail {
+        height: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile_page {
+        margin-top: 20px;
+    }
+
+    .profile_top_section_profile {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile_top_section_About_Name {
+        font-size: 20px;
+    }
+
+    .profileVideo_block {
+        width: 140px;
+    }
+
+    .profileVideo_block_thumbnail {
+        height: 90px;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile_top_section_profile {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile_top_section_About_Name {
+        font-size: 18px;
+    }
+
+    .profileVideo_block {
+        width: 120px;
+    }
+
+    .profileVideo_block_thumbnail {
+        height: 80px;
+    }
+
+    .profileVideos {
+        gap: 5px;
+    }
 }
