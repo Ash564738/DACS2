@@ -7,10 +7,18 @@ import {Route,Routes} from 'react-router-dom';
 import Profile from './Pages/Profile/profile';
 import VideoUpload from './Pages/VideoUpload/videoUpload';
 import SignUp from './Pages/SignUp/signUp';
+<<<<<<< HEAD
 import Short from './Pages/Short/short';
 import axios from 'axios';
 import { RocketLaunch } from '@mui/icons-material';
 import SocialMedia from './Pages/SocialMedia/socialMedia';
+=======
+import SocialMedia from './Pages/SocialMedia/socialMedia';
+import Short from './Pages/Short/short';
+import axios from 'axios';
+import { RocketLaunch } from '@mui/icons-material';
+import SocialMedia from './Component/SocialMedia/socialMedia';
+>>>>>>> 3b3d29c933a62aac23f56b4a4ea73ebfcbdb8051
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
   const setSideNavbarFunc=(value)=>{

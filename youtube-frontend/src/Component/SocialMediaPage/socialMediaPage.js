@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import './socialMediaPage.css'
 import React, { useEffect, useState } from 'react';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -209,6 +210,15 @@ const SocialMediaPage = () => {
             </div>
         </div>
         </div>
+=======
+import React from 'react'
+import './socialMediaPage.css'
+const SocialMediaPage = () => {
+  return (
+    <div className='socialmedia'>
+
+    </div>
+>>>>>>> 3b3d29c933a62aac23f56b4a4ea73ebfcbdb8051
   )
 }
 export default SocialMediaPage
