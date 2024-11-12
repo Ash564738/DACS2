@@ -1,8 +1,7 @@
 .home{
     display: flex;
     width: 100%;
-    padding: 10px 0 0 0;
     box-sizing: border-box;
     background-color: #0F0F0F;
-    /* overflow-x:hidden; */
+    margin-top: 56px;
 }

@@ -4,14 +4,14 @@
 }
 .socialMediaPage{
     display: flex;
-    flex-direction: column;
     flex: 1;
     min-height: 100vh;
     margin-left: 260px;
-    margin-top: 56px;
+    width: 100%;
+    padding: 20px;
 }
 .main-content{
-    flex-basis: 25%;
+    padding: 0 20px 0 0;
 }
 .left-sidebar{
     flex-basis: 25%;
@@ -19,18 +19,16 @@
     top: 70px;
     align-self: flex-start;
 }
-
 .right-sidebar{
     flex-basis: 25%;
     position: sticky;
     top: 15px;
     align-self: flex-start;
-    background: #fff;
+    background: rgb(26, 26, 26);
     padding: 20px;
     border-radius: 4px;
-    color: #626262;
+    color: #ffff;
 }
-
 .sidebar-title{
     display: flex;
     align-items: center;

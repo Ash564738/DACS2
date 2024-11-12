@@ -34,7 +34,7 @@ exports.uploadVideo = async (req, res) => {
 exports.getAllVideo = async (req, res) => {
     console.log("In getAllVideo Function");
     try {
-        const videos = await Video.find().populate('user', 'name profilePic').select('title thumbnail duration views createdAt ');
+        const videos = await Video.find().populate('user', 'name profilePic userName createdAt about').select('title description videoLink thumbnail duration views createdAt like dislike');
         console.log("Videos found:", videos);
 
         res.status(200).json({ success: true, videos });

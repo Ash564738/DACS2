@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import apiClient from '../../Utils/apiClient.js';
 import { Home, Videocam, Subscriptions, ChevronRight, History, PlaylistAdd, SmartDisplayOutlined, WatchLaterOutlined, ThumbUpAltOutlined, List, TrendingUp, MusicNoteRounded, VideogameAssetRounded, EmojiEventsRounded, NewspaperRounded, Settings, FeedbackOutlined, HelpOutlineOutlined, FlagRounded } from '@mui/icons-material';
-
 const SideNavbar = ({ sideNavbar }) => {
     const [subscriptions, setSubscriptions] = useState([]);
 
@@ -34,7 +33,7 @@ const SideNavbar = ({ sideNavbar }) => {
 
     const sidebarOptions = [
         { icon: <Home />, label: "Home", link: "/" },
-        { icon: <Videocam />, label: "Shorts" },
+        { icon: <Videocam />, label: "Shorts",link: "/short"},
         { icon: <Subscriptions />, label: "Subscriptions" }
     ];
 

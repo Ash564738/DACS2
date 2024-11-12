@@ -1,7 +1,7 @@
 .socialmedia{
     display: flex;
     width: 100%;
-    padding: 10px 0 0 0;
     box-sizing: border-box;
     background-color: #0F0F0F;
+    margin-top: 56px;
 }

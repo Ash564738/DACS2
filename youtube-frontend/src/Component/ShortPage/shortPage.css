@@ -1,0 +1,104 @@
+.fullShortPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+}
+.shortPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 260px;
+    width: 100%;
+    min-height: 100vh;
+}
+.short_mainPage{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background-color: #0F0F0F;
+    gap: 20px;
+}
+.shortVideoBlock{
+    display: flex;
+    flex-direction: row;
+    min-height: 90vh;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+.shortcontentBox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+    max-width: 43%;
+    min-height: 90vh;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+}
+.shortcontentVideo{
+    display: flex;
+    position: relative;
+    cursor: pointer;
+    object-fit: cover;
+    min-height: 90vh;
+    width: 100%;
+    max-width: 800px;
+}
+.shortTitleBox{
+    display: flex;
+    position: absolute; 
+    bottom: 100px;
+    width: 100%;
+    padding: 0 20px;
+}
+.shortTitleBoxProfile{
+    display: flex;
+    position: relative;
+}
+.shortTitleBoxProfilePic{
+    position: relative;
+    display: flex;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+.shortTitleBoxTitle{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.shortsidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+    color: white;
+}
+.shortLikeBox,
+.shortDislikeBox,.shortViewsBox, .shortCommentBox, .shortShareBox {
+    display: flex;
+    align-items: center;
+    background-color: rgba(56, 56, 56, 0.5);
+    padding: 10px;
+    border-radius: 50%;
+    margin: 20px 0 5px 0;
+}
+.shortLikeBox i,
+.shortDislikeBox i,.shortViewsBox i, .shortCommentBox i, .shortShareBox i {
+    font-size: 1.5em;
+    color: #fff;
+}
+.shortBoxProfile{
+    margin: 20px 0 5px 0;
+}
