@@ -118,7 +118,7 @@
     font-size: 14px;
     color: rgb(170,170,170);
 }
-@media screen and (max-width: 1400px) and (min-width: 1200px) {
+@media (min-width: 1200px) {
     .youtube_Video {
         width: calc(33% - 14px);
     }
