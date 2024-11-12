@@ -1,3 +1,5 @@
+export default SocialMedia;
+=======
 import React from 'react'
 import './socialMedia.css'
 import SideNavbar from '../../Component/SideNavbar/sideNavbar'
