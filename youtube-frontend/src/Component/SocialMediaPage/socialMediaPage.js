@@ -6,9 +6,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
-const SocialMediaPage = () => {
+const SocialMediaPage = ({ sideNavbar }) => {
   return (
-    <div>
+    <div className={sideNavbar ? 'socialMediaPage' : 'fullSocialMediaPage'}>
     <div className="main-content">
             <div className="story-gallery">
                 <div className="story story1">
