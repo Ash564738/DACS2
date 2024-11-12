@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import './shortPage.css';
+import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 const ShortPage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
@@ -44,8 +46,24 @@ const ShortPage = ({ sideNavbar }) => {
 const ShortItem = ({ item }) => {
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(true);
-  const [showComments, setShowComments] = useState(false); // State to toggle comment visibility
-
+  const [showComments, setShowComments] = useState(false);
+  const [message, setMessage] = useState("");
+  const token = localStorage.getItem("token");
+  const handleComment = async () => {
+    const body = { message, video: item._id, user: item.user._id };
+    try {
+      const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, { 
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
+      });
+      const newComment = resp.data.comment;
+      setComments([newComment, ...comments]);
+      setMessage("");
+    } catch (err) {
+      console.error("Error adding comment:", err.response?.data || err.message);
+      alert("Failed to add comment.");
+    }
+  };
   const fetchComments = useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
@@ -62,28 +80,24 @@ const ShortItem = ({ item }) => {
   }, [fetchComments]);
 
   const toggleComments = () => {
-    setShowComments(prev => !prev); // Toggle the visibility of the comment box
+    setShowComments(prev => !prev);
   };
   return (
     <div className="shortVideoBlock">
       <div className="shortcontentBox">
         <video src={item.videoLink} controls className="shortcontentVideo" />
         <div className="shortTitleBox">
-          <div className="shortTitleBoxProfile">
-            <img
-              src={item.user?.profilePic || "default_profile.jpg"}
-              alt={`${item.user?.name || "Unknown"} profile`}
-              className="shortTitleBoxProfilePic"
-            />
-          </div>
+          <Link to={`/user/${item?.user?._id}`} className="shortTitleBoxProfile">
+            <img src={item.user?.profilePic || "default_profile.jpg"} alt={`${item.user?.name || "Unknown"} profile`} className="shortTitleBoxProfilePic"/>
+          </Link>
           <div className="shortTitleBoxTitle">
-            <div className="shortUserName">{item.user?.name || "Unknown Channel"}</div>
+            <Link to={`/user/${item?.user?._id}`} className="shortUserName">{item.user?.name || "Unknown Channel"}</Link>
             <div className="shortVideoTitle">{item.title || "Untitled Video"}</div>
-            <div className="shortVideoDescription">{item.description || "Untitled Description"}</div>
+            <p className="shortVideoDescription">{item.description || "Untitled Description"}</p>
           </div>
         </div>
       </div>
-      <div className="shortsidebar">
+      <div className="shortSideBar">
         <div className="shortLikeBox">
           <i className="fas fa-thumbs-up"></i>
         </div>
@@ -92,34 +106,51 @@ const ShortItem = ({ item }) => {
           <i className="fas fa-thumbs-down"></i>
         </div>
         <span>{item.dislike.length}</span>
-        <div className="shortViewsBox">
-          <i className="fas fa-eye"></i>
-        </div>
-        <span>{item.views}</span>
-        <div
-          className="shortCommentBox"
-          onClick={toggleComments}
-        >
+        <div className="shortCommentBox" onClick={toggleComments}>
           <i className="fas fa-comment"></i>
         </div>
         <span>{loadingComments ? 'Loading comments...' : comments.length}</span>
+        <div className="shortShareBox">
+          <i className="fas fa-share"></i>
+        </div>
+        <Link to={`/user/${item?.user?._id}`} className="shortProfileBox">
+          <img src={item.user?.profilePic || "default_profile.jpg"} alt={`${item.user?.name || "Unknown"} profile`} />
+        </Link>
       </div>
       {showComments && (
-          <div className="commentsBox">
-            <h3>Comments</h3>
-            {loadingComments ? (
-              <p>Loading...</p>
-            ) : comments.length > 0 ? (
-              comments.map((comment, index) => (
-                <div key={index} className="comment">
-                  <p><strong>{comment.user.name}:</strong> {comment.message}</p>
+        <div className="commentBox">
+          <h4>Comments ({comments.length})</h4>
+          {loadingComments ? (
+            <p>Loading...</p>
+          ) : comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <div key={index} className="comment">
+                <Link to={`/user/${comment?.user?._id}`}>
+                  <img src={comment.user.profilePic || "default_profile.jpg"} alt={`${comment.user.name} profile`} className="commentProfilePic"/>
+                </Link>
+                <div className="commentMessage">
+                  <span>{comment.user.name}</span>
+                  <p>{comment.message}</p>
                 </div>
-              ))
-            ) : (
-              <p>No comments yet.</p>
-            )}
+              </div>
+            ))
+          ) : (
+            <p>No comments yet.</p>
+          )}
+          <div className="youtubeSelfComment">
+            <Link to={`/user/${item?.user?._id}`}>
+              <img className='video_youtubeSelfCommentProfile' src={item.user?.profilePic || "default_profile.jpg"} alt="User Profile" />
+            </Link>
+            <div className="addAComment">
+              <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} />
+              <div className="cancelSubmitComment">
+                <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
+                <div className="cancelComment" onClick={handleComment}>Comment</div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };

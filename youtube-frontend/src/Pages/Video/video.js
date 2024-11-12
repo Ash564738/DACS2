@@ -74,8 +74,12 @@ const Video = () => {
         }
     }, [id]);
     useEffect(() => {
+        setData(null);
+        setVideoURL("");
+        setHasIncremented(false);
+        setLoading(true);
         fetchVideoData();
-    }, [id, fetchVideoData]);    
+    }, [id, fetchVideoData]);      
     const handleViewIncrement = async () => {
         if (!hasIncremented) {
             try {
@@ -194,7 +198,9 @@ const CommentSection = ({ comments, userPic, message, setMessage, handleComment 
     <div className="youtubeCommentSection">
         <div className="youtubeCommentSectionTitle">{comments.length} Comments</div>
         <div className="youtubeSelfComment">
-            <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />
+            <Link to={`/user/${comments?.user?._id}`}>
+                <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />
+            </Link>
             <div className="addAComment">
                 <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} />
                 <div className="cancelSubmitComment">
@@ -206,7 +212,9 @@ const CommentSection = ({ comments, userPic, message, setMessage, handleComment 
         <div className="youtubeOthersComments">
             {(comments || []).map((item, index) => (
                 <div className="youtubeSelfComment" key={item._id || index}>
-                    <img className='video_youtubeSelfCommentProfile' src={item?.user?.profilePic} alt="User Profile" />
+                    <Link to={`/user/${item?.user?._id}`}>
+                        <img className='video_youtubeSelfCommentProfile' src={item?.user?.profilePic} alt="User Profile" />
+                    </Link>
                     <div className="others_commentSection">
                         <div className="others_commentSectionHeader">
                             <div className="channelName_comment">{item?.user?.userName}</div>
