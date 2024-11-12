@@ -44,6 +44,7 @@ const ShortPage = ({ sideNavbar }) => {
 const ShortItem = ({ item }) => {
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(true);
+  const [showComments, setShowComments] = useState(false); // State to toggle comment visibility
 
   const fetchComments = useCallback(async () => {
     try {
@@ -60,13 +61,20 @@ const ShortItem = ({ item }) => {
     fetchComments();
   }, [fetchComments]);
 
+  const toggleComments = () => {
+    setShowComments(prev => !prev); // Toggle the visibility of the comment box
+  };
   return (
     <div className="shortVideoBlock">
       <div className="shortcontentBox">
         <video src={item.videoLink} controls className="shortcontentVideo" />
         <div className="shortTitleBox">
           <div className="shortTitleBoxProfile">
-            <img src={item.user?.profilePic || "default_profile.jpg"}alt={`${item.user?.name || "Unknown"} profile`}className="shortTitleBoxProfilePic"/>
+            <img
+              src={item.user?.profilePic || "default_profile.jpg"}
+              alt={`${item.user?.name || "Unknown"} profile`}
+              className="shortTitleBoxProfilePic"
+            />
           </div>
           <div className="shortTitleBoxTitle">
             <div className="shortUserName">{item.user?.name || "Unknown Channel"}</div>
@@ -75,7 +83,6 @@ const ShortItem = ({ item }) => {
           </div>
         </div>
       </div>
-
       <div className="shortsidebar">
         <div className="shortLikeBox">
           <i className="fas fa-thumbs-up"></i>
@@ -85,23 +92,34 @@ const ShortItem = ({ item }) => {
           <i className="fas fa-thumbs-down"></i>
         </div>
         <span>{item.dislike.length}</span>
-
         <div className="shortViewsBox">
           <i className="fas fa-eye"></i>
         </div>
         <span>{item.views}</span>
-
-        <div className="shortCommentBox">
+        <div
+          className="shortCommentBox"
+          onClick={toggleComments}
+        >
           <i className="fas fa-comment"></i>
         </div>
         <span>{loadingComments ? 'Loading comments...' : comments.length}</span>
-        <div className="shortShareBox">
-          <i className="fas fa-share"></i>
-        </div>
-        <div className="shortBoxProfile">
-            <img src={item.user?.profilePic || "default_profile.jpg"}alt={`${item.user?.name || "Unknown"} profile`}className="shortTitleBoxProfilePic"/>
-        </div>
       </div>
+      {showComments && (
+          <div className="commentsBox">
+            <h3>Comments</h3>
+            {loadingComments ? (
+              <p>Loading...</p>
+            ) : comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <div key={index} className="comment">
+                  <p><strong>{comment.user.name}:</strong> {comment.message}</p>
+                </div>
+              ))
+            ) : (
+              <p>No comments yet.</p>
+            )}
+          </div>
+        )}
     </div>
   );
 };

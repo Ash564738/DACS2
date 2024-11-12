@@ -93,6 +93,7 @@
     padding: 10px;
     border-radius: 50%;
     margin: 20px 0 5px 0;
+    cursor: pointer;
 }
 .shortLikeBox i,
 .shortDislikeBox i,.shortViewsBox i, .shortCommentBox i, .shortShareBox i {
@@ -101,4 +102,12 @@
 }
 .shortBoxProfile{
     margin: 20px 0 5px 0;
+}
+.commentsBox{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(56, 56, 56, 0.5);
+    color: white;
+    padding: 20px;
+    border-radius: 30px;
 }
