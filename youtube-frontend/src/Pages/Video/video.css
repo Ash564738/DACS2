@@ -94,30 +94,29 @@
     gap: 10px;
     background-color: #a5a5a538;
     justify-content: center;
-    align-items: center;
     padding: 10px 10px;
+    align-items: center;
     box-sizing: border-box;
     border-radius: 18px;
     height: 36px;
     align-self: center;
     cursor: pointer;
 }
-
+.youtube_video_likeBlock i{
+    align-self: center;
+}
 .youtube_video_likeBlock_Like {
     display: flex;
     gap: 10px;
 }
-
 .youtube_video_likeBlock_NoOfLikes {
     font-weight: 500;
 }
-
 .youtubeVideoDivider {
     width: 0px;
     height: 20px;
     border: 1px solid;
 }
-
 .youtube_video_About {
     display: flex;
     flex-direction: column;
@@ -132,36 +131,30 @@
     margin-top: 10px;
     box-sizing: border-box;
 }
-
 .youtubeCommentSection {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
 }
-
 .youtubeCommentSectionTitle {
     font-size: 1em;
     font-weight: 500;
 }
-
 .youtubeSelfComment {
     display: flex;
     margin-top: 10px;
     gap: 10px;
 }
-
 .video_youtubeSelfCommentProfile {
     width: 36px;
     height: 36px;
     border-radius: 50%;
 }
-
 .addAComment {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
-
 .addAcommentInput {
     width: 100%;
     background-color: transparent;
