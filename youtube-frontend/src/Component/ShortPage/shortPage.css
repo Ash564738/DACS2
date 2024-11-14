@@ -1,20 +1,19 @@
-.fullShortPage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    flex: 1;
-    min-height: 100vh;
-}
+.fullShortPage,
 .shortPage {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 260px;
-    width: 100%;
     min-height: 100vh;
 }
-.short_mainPage{
+.fullShortPage {
+    flex-direction: column;
+    flex: 1;
+}
+.shortPage {
+    margin-left: 260px;
+    width: 100%;
+}
+.short_mainPage {
     position: relative;
     display: flex;
     justify-content: center;
@@ -24,7 +23,7 @@
     background-color: #0F0F0F;
     gap: 20px;
 }
-.shortVideoBlock{
+.shortVideoBlock {
     display: flex;
     flex-direction: row;
     min-height: 90vh;
@@ -32,21 +31,21 @@
     justify-content: center;
     align-items: center;
 }
-.shortcontentBox{
+.shortContentBox {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: black;
     color: white;
-    width: 45%;
-    max-width: 450px;
-    min-width: 380px;
+    width: calc(50% - 350px);
+    max-width: 500px;
+    min-width: 350px;
     min-height: 90vh;
     border-radius: 30px;
     overflow: hidden;
     position: relative;
 }
-.shortcontentVideo{
+.shortContentVideo {
     display: flex;
     position: relative;
     cursor: pointer;
@@ -54,33 +53,52 @@
     min-height: 90vh;
     width: 100%;
 }
-.shortTitleBox{
-    display: flex;
-    justify-items: center;
-    position: absolute; 
-    bottom: 100px;
-    width: 100%;
-    padding: 0 20px;
+.shortContentOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    pointer-events: none;
 }
-.shortTitleBoxProfile{
-    display: flex;
-    position: relative;
-}
-.shortTitleBoxProfilePic{
-    position: relative;
-    display: flex;
-    border-radius: 50%;
-    height: 40px;
-    width: 40px;
-    margin-right: 10px;
-}
-.shortTitleBoxTitle{
+.shortTitleBox {
     display: flex;
     flex-direction: column;
-    position: relative;
+    justify-items: center;
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    gap: 3px;
+    padding: 0 20px;
 }
-.shortVideoDescription{
-    padding:0;
+.shortTitleBoxProfilePic img,
+.commentProfilePic {
+    display: flex;
+    border-radius: 50%;
+    height: 36px;
+    width: 36px;
+}
+.shortProfileBox img{
+    display: flex;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+}
+
+.shortUserName {
+    font-weight: bold;
+    font-size: 1em;
+}
+.shortTitleBoxTitle {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    gap: 5px;
+}
+.shortVideoDescription {
+    padding: 0;
     margin: 0;
 }
 .shortSideBar {
@@ -88,60 +106,88 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    bottom : 0px;
+    bottom: 10px;
     box-sizing: border-box;
     padding: 10px;
     color: white;
+    align-self: end;
 }
 .shortLikeBox,
-.shortDislikeBox, .shortCommentBox, .shortShareBox {
+.shortDislikeBox,
+.shortCommentBox,
+.shortShareBox,
+.shortProfileBox {
     display: flex;
-    background-color: rgba(56, 56, 56, 0.5);
+    margin: 20px 0 5px 0;
+    cursor: pointer;
+}
+.shortLikeBox,
+.shortDislikeBox,
+.shortCommentBox,
+.shortShareBox {
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 10px;
     border-radius: 50%;
-    margin: 20px 0 5px 0;
-    cursor: pointer;
-}
-.shortProfileBox{
-    display: flex;
-    margin: 20px 0 5px 0;
-    cursor: pointer;
-}
-.shortProfileBox img{
-    border-radius: 50%;
-    height: 40px;
-    width: 40px;
 }
 .shortLikeBox i,
-.shortDislikeBox i, .shortCommentBox i, .shortShareBox i {
+.shortDislikeBox i,
+.shortCommentBox i,
+.shortShareBox i {
     font-size: 1.5em;
     color: #fff;
 }
-.shortBoxProfile{
+.shortBoxProfile {
     margin: 20px 0 5px 0;
 }
-.commentBox{
+.commentBox {
     display: flex;
     flex-direction: column;
-    background-color: rgba(56, 56, 56, 0.5);
+    justify-content: space-between;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
     padding: 20px;
     border-radius: 30px;
-    width: 35%;
+    width: calc(35% - 300px);
     max-width: 350px;
     min-width: 300px;
     min-height: 90vh;
 }
-.commentProfilePic{
-    display: flex;
-    border-radius: 50%;
-    height: 40px;
-    width: 40px;
+.commentProfilePic {
     margin-right: 15px;
 }
-.comment{
+.comment {
     display: flex;
     flex-direction: row;
     width: 100%;
     margin: 5px 0;
+}
+.shortSelfComment {
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+}
+.customControls {
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    top: 30px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+}
+.customControls div {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    width: 45px;
+    height: 45px;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.customControls div:hover {
+    background-color: rgba(0, 0, 0, 0.5);
 }

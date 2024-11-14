@@ -11,6 +11,8 @@ import './video.css';
 const Video = () => {
     const [like, setLike] = useState(0);
     const [dislike, setDislike] = useState(0);
+    const [userLiked, setUserLiked] = useState(false);
+    const [userDisliked, setUserDisliked] = useState(false);
     const [message, setMessage] = useState("");
     const [data, setData] = useState(null);
     const [videoUrl, setVideoURL] = useState("");
@@ -23,8 +25,6 @@ const Video = () => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [userLiked, setUserLiked] = useState(false);
-    const [userDisliked, setUserDisliked] = useState(false);
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     useEffect(() => {
@@ -71,6 +71,7 @@ const Video = () => {
             }
         } catch (err) {
             toast.error("Failed to fetch video data: " + err.message);
+            setError("Failed to fetch video data. Please try again later.");
         } finally {
             setLoading(false);
         }

@@ -359,13 +359,14 @@ input[type="date"]::placeholder {
     background-color: rgb(26, 26, 26);
     color: white;
 }
-button {
+.animate-button {
     position: relative;
     border-radius: 15px !important;
     border: 1px solid #ffffff;
     background-color: transparent;
     color: #ffffff;
     font-size: 12px;
+    max-height: 50px;
     font-weight: bold;
     padding: 12px 45px;
     letter-spacing: 1px;
@@ -373,10 +374,10 @@ button {
     overflow: hidden;
     transition: background-color 0.3s ease;
 }
-button:hover {
-    background: #444444;
+.animate-button:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
-button:focus {
+.animate-button:focus {
     outline: none;
 }
 .button-effect {

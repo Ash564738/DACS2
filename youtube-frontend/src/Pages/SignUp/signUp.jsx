@@ -297,7 +297,7 @@ const SignUp = () => {
                             <GradientBorderSVG gradientId="signinPassGradient" maskId="signinPassBorderMask" />
                         </div>
                         <p className="text-end fs-6 mb-3 w-100 clickable-text" id="forgetPass" >Forgot password?</p>
-                        <button type="button" className="animate-button fw-bold fs-6 py-2 w-100"  onClick={handleSignin}>Sign In</button>
+                        <button type="button" className="animate-button fw-bold fs-8 py-2 w-100"  onClick={handleSignin}>Sign In</button>
                     </form>
                     <div className="d-flex align-items-center justify-content-center py-2 w-100">
                         <hr className="flex-fill" style={{ background: '#C5BCBC' }} />
@@ -305,17 +305,17 @@ const SignUp = () => {
                         <hr className="flex-fill" style={{ background: '#C5BCBC' }} />
                     </div>
                     <div className="d-flex flex-row align-items-center justify-content-center py-2 w-100">
-                        <button className="py-2 px-4 d-flex align-items-center justify-content-center w-100 mx-1" title="Sign in with Google">
+                        <button className="py-2 px-4 d-flex align-items-center justify-content-center w-100 mx-1 animate-button" title="Sign in with Google">
                             <span className="fw-bold fs-6">
                                 <i className="fab fa-google"></i>
                             </span>
                         </button>
-                        <button className="py-2 px-4 d-flex align-items-center justify-content-center w-100 mx-1" title="Sign in with Facebook">
+                        <button className="py-2 px-4 d-flex align-items-center justify-content-center w-100 mx-1 animate-button" title="Sign in with Facebook">
                             <span className="fw-bold fs-6">
                                 <i className="fab fa-facebook"></i>
                             </span>
                         </button>
-                        <button className="py-2 px-4 d-flex align-items-center justify-content-center w-100 mx-1" title="Sign in with Twitter">
+                        <button className="py-2 px-4 d-flex align-items-center justify-content-center w-100 mx-1 animate-button" title="Sign in with Twitter">
                             <span className="fw-bold fs-6">
                                 <i className="fab fa-twitter"></i>
                             </span>
@@ -400,7 +400,7 @@ const SignUp = () => {
                                 <Loader />
                             </Box>}
                         </div>
-                        <button type="button" className="animate-button fw-bold fs-6 form-floating w-100 position-relative"  onClick={handleSignup}>Submit</button>
+                        <button type="button" className="animate-button fw-bold fs-8 form-floating w-100 position-relative"  onClick={handleSignup}>Sign Up</button>
                     </form>
                     <div className="text-center w-100">
                         <p className="fs-6 d-inline">Already have an account? </p>
@@ -433,7 +433,7 @@ const SignUp = () => {
                             <label className="form-label" htmlFor="forgetpassConfirmPassword">Confirm New Password</label>
                             <GradientBorderSVG gradientId="forgetpassConPassGradient" maskId="forgetpassConPassBorderMask" />
                         </div>
-                        <button type="button" className="animate-button fw-bold fs-6 form-floating w-100 position-relative">Change Password</button>
+                        <button type="button" className="animate-button fw-bold fs-8 form-floating w-100 position-relative">Change Password</button>
                     </form>
                     <div className="text-center w-100">
                         <p className="fs-6 d-inline">Remember your password? </p>
