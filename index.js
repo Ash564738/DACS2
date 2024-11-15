@@ -13,7 +13,9 @@ require('./Connection/conn');
 const AuthRoutes = require('./Routes/user');
 const VideoRoutes = require('./Routes/video');
 const CommentRoutes = require('./Routes/comment');
+const PostRoutes = require('./Routes/post')
 app.use('/auth',AuthRoutes);
 app.use('/api',VideoRoutes);
 app.use('/commentApi',CommentRoutes);
+app.use('/posts', PostRoutes)
 app.listen(port,()=>{console.log("Our backend project is running on Port 4000")});
