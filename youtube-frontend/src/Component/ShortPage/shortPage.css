@@ -58,8 +58,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 30%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    height: 40%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     pointer-events: none;
 }
 .shortTitleBox {
@@ -168,17 +168,25 @@
     margin: 5px 0;
 }
 .customControls {
+    display: flex;
     position: absolute;
     box-sizing: border-box;
+    justify-content: space-between;
     width: 100%;
     top: 30px;
-    left: 20px;
-    display: flex;
+    padding: 0 20px;
     gap: 10px;
 }
-.customControls div {
+.customControls div{
     display: flex;
-    background-color: rgba(0, 0, 0, 0.2);
+    flex-direction: row;
+    gap: 10px;
+}
+.customControls button {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.3);
+    outline: none;
+    border: none;
     color: white;
     width: 45px;
     height: 45px;
@@ -188,6 +196,6 @@
     border-radius: 50%;
     cursor: pointer;
 }
-.customControls div:hover {
+.customControls button:hover {
     background-color: rgba(0, 0, 0, 0.5);
 }

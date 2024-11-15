@@ -171,15 +171,17 @@ const ShortItem = ({ item, userPic }) => {
                     </p>
                 </div>
                 <div className="customControls">
-                    <div onClick={handlePlayPause}>
-                        {videoRef.current?.paused ?<i class="fa-solid fa-play"></i> : <i class="fa-solid fa-pause"></i>}
+                    <div>
+                        <button onClick={handlePlayPause}>
+                            {videoRef.current?.paused ?<i class="fa-solid fa-play"></i> : <i class="fa-solid fa-pause"></i>}
+                        </button>
+                        <button onClick={handleMuteUnmute}>
+                            {videoRef.current?.muted ? <i class="fa-solid fa-volume-xmark"></i> : <i class="fa-solid fa-volume-high"></i>}
+                        </button>
                     </div>
-                    <div onClick={handleMuteUnmute}>
-                        {videoRef.current?.muted ? <i class="fa-solid fa-volume-xmark"></i> : <i class="fa-solid fa-volume-high"></i>}
-                    </div>
-                    <div onClick={handleFullScreen}>
+                    <button onClick={handleFullScreen}>
                         <i class="fa-solid fa-expand"></i>
-                    </div>
+                    </button>
                 </div>
             </div>
             <div className="shortSideBar">
