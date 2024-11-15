@@ -188,7 +188,7 @@
 }
 
 .write-post-container{
-    width: 100%;
+    width: 900px;
     background-color: rgb(26, 26, 26);
     color: white;
     border-radius: 6px;
@@ -217,15 +217,18 @@
     font-size: 12px;
 }
 
-.post-input-container{
+.post-input-container, .comment-section{
+    display: flex;
+    align-items: center;
     padding-left: 55px;
     padding-top: 20px;
 }
 
-.post-input-container textarea{
+.post-input-container textarea, .comment-section input{
     width: 100%;
     border: 0;
     outline: 0;
+    color: #fff;
     border-bottom: 1px solid #ccc;
     background: transparent;
     resize: none;
@@ -269,6 +272,7 @@
     color: #ffffffff;
     margin: 15px 0;
     font-size: 15px;
+    display: flex;
 }
 
 .post-text span{
@@ -293,15 +297,16 @@
     justify-content: space-between;
 }
 
-.activity-icons div img{
+.activity-icons div .fas{
     width: 18px;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .activity-icons div{
     display: inline-flex;
     align-items: center;
     margin-right: 30px;
+    margin-left: 10px;
 }
 
 .post-profile-icon{
@@ -330,57 +335,101 @@
     border-radius: 4px;
 }
 
-
-.chat-widget {
+.chat-container {
+    width: 400px; /* Độ rộng khung chat */
+    border-radius: 10px;
+    background-color: #1c1e21;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Thêm bóng cho khung chat */
+    transition: transform 0.3s ease; /* Hiệu ứng chuyển động khi mở/đóng */
     position: fixed;
-    bottom: 20px;
+    bottom: 90px; /* Cách biểu tượng một khoảng nhỏ */
     right: 20px;
-    width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    background-color: white;
+    display: none; /* Ban đầu ẩn */
 }
 
 .chat-header {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #333;
+    background-color: #2c2f33; /* Màu nền cho header */
+}
+
+.profile-pic {
+    width: 45px; /* Kích thước biểu tượng người dùng */
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-info h3 {
+    margin: 0;
+    font-size: 18px; /* Kích thước chữ lớn hơn */
+}
+
+.user-info span {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.chat-actions button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 10px 4px;
+    font-size: 14px;
+    margin-left: 3px;
+}
+
+.chat-actions button:hover {
+    color: #007bff;
 }
 
 .chat-body {
+    flex-grow: 1;
     padding: 10px;
-}
-
-.messages {
-    max-height: 200px;
     overflow-y: auto;
-    margin-bottom: 10px;
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-textarea {
-    width: 100%;
+.chat-footer {
+    display: flex;
+    align-items: center;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border-top: 1px solid #333;
+    background-color: #2c2f33;
 }
 
-.send-btn {
-    background-color: #007bff;
-    color: white;
+.chat-footer button {
+    background: none;
     border: none;
-    padding: 10px;
-    border-radius: 4px;
+    color: white;
+    margin-right: 5px;
     cursor: pointer;
+    padding: 10px 5px;
+    font-size: 13px;
 }
 
-.send-btn:hover {
-    background-color: #0056b3;
+.chat-footer input {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #555;
+    margin-right: 5px;
+    background-color: #2c2f33;
+    color: white;
+}
+
+.chat-footer input::placeholder {
+    color: #aaa;
 }
 
 .close-chat {
@@ -388,26 +437,74 @@ textarea {
     border: none;
     color: white;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 25px;
+    margin-left: auto;
+    padding: 10px 5px;
 }
 
 .chat-icon {
     position: fixed;
-    bottom: 80px; /* Để biểu tượng không chồng lên khung chat */
+    bottom: 20px;
     right: 20px;
     background-color: #007bff;
     color: white;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    font-size: 24px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    font-size: 28px;
+    transition: background-color 0.3s;
 }
 
 .chat-icon:hover {
     background-color: #0056b3;
 }
+
+.user-message, .system-message {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 70%; 
+    word-wrap: break-word;
+    margin-bottom: 0;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #4caf50;
+    color: white;
+}
+
+.system-message {
+    align-self: flex-start;
+    background-color: #555;
+    color: white;
+}
+
+.post-button{
+    display: block;
+    margin-top: 42px;
+    margin-left: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 1px solid #9a9a9a;
+    color: #ffff;
+    background: transparent;
+    border-radius: 4px;
+}
+
+.comment-button{
+    display: block;
+    margin-left: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 1px solid #9a9a9a;
+    color: #ffff;
+    background: transparent;
+    border-radius: 4px;
+}
+
