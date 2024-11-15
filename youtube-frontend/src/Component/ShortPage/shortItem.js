@@ -49,11 +49,25 @@ const ShortItem = ({ item, userPic }) => {
             console.error("Error fetching like/dislike data:", error);
         }
     }, [item._id, userId, token]);
-
     useEffect(() => {
-        fetchLikeDislikeData();
-    }, [fetchLikeDislikeData]);
-    const handleLikeDislike = async (action) => {
+        if (item && item._id) {
+            fetchLikeDislikeData();
+        }
+    }, [fetchLikeDislikeData, item]);
+    const fetchComments = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
+            setComments(response.data.comments || []);
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        } finally {
+            setLoadingComments(false);
+        }
+    }, [item._id]);
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
+    const handleVideoLikeDislike = async (action) => {
         try {
             const response = await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${item._id}?action=${action}`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -70,22 +84,27 @@ const ShortItem = ({ item, userPic }) => {
             }
         } catch (error) {
             toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike video:", error);
         }
     };
-    const fetchComments = useCallback(async () => {
-        console.log("Fetching comments for video:", item._id);
+    const handleCommentLikeDislike = async (commentId, action) => {
         try {
-            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
-            setComments(response.data.comments || []);
+            const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, 
+            {}, { headers: { Authorization: `Bearer ${token}` }, withCredentials: true });
+            const { like, dislike } = response.data;
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, like: Array(like).fill("dummy"), dislike: Array(dislike).fill("dummy") }
+                        : comment
+                )
+            );
+            await fetchComments();
         } catch (error) {
-            console.error("Error fetching comments:", error);
-        } finally {
-            setLoadingComments(false);
+            toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike comment:", error);
         }
-    }, [item._id]);
-    useEffect(() => {
-        fetchComments();
-    }, [fetchComments]);
+    };
     const handleComment = async () => {
         const body = { message, video: item._id, user: userId };
         try {
@@ -96,6 +115,7 @@ const ShortItem = ({ item, userPic }) => {
             setComments([resp.data.comment, ...comments]);
             setMessage("");
         } catch (err) {
+            console.error("Error adding comment:", err);
             toast.error("Failed to add comment.");
         }
     };
@@ -105,6 +125,7 @@ const ShortItem = ({ item, userPic }) => {
                 await axios.put(`http://localhost:4000/api/incrementViews/${item._id}`);
                 setHasIncremented(true);
             } catch (error) {
+                console.error("Error incrementing views:", error);
                 toast.error("Failed to increment views");
             }
         }
@@ -121,7 +142,9 @@ const ShortItem = ({ item, userPic }) => {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
-            setIsSubscribed(response.data.isSubscribed);
+            setIsSubscribed(prev => !prev);
+            toast.success(response.data.isSubscribed ? "Subscribed successfully!" : "Unsubscribed successfully!");
+            window.location.reload();
         } catch (error) {
             toast.error("Please login first to subscribe");
         }
@@ -173,23 +196,23 @@ const ShortItem = ({ item, userPic }) => {
                 <div className="customControls">
                     <div>
                         <button onClick={handlePlayPause}>
-                            {videoRef.current?.paused ?<i class="fa-solid fa-play"></i> : <i class="fa-solid fa-pause"></i>}
+                            {videoRef.current?.paused ? <i className="fa-solid fa-play"></i> : <i className="fa-solid fa-pause"></i>}
                         </button>
                         <button onClick={handleMuteUnmute}>
-                            {videoRef.current?.muted ? <i class="fa-solid fa-volume-xmark"></i> : <i class="fa-solid fa-volume-high"></i>}
+                            {videoRef.current?.muted ? <i className="fa-solid fa-volume-xmark"></i> : <i className="fa-solid fa-volume-high"></i>}
                         </button>
                     </div>
                     <button onClick={handleFullScreen}>
-                        <i class="fa-solid fa-expand"></i>
+                        <i className="fa-solid fa-expand"></i>
                     </button>
                 </div>
             </div>
             <div className="shortSideBar">
-                <div className="shortLikeBox" onClick={() => handleLikeDislike("like")}>
+                <div className="shortLikeBox" onClick={() => handleVideoLikeDislike("like")}>
                     <i className={userLiked ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up"}></i>
                 </div>
                 <span>{like}</span>
-                <div className="shortDislikeBox" onClick={() => handleLikeDislike("dislike")}>
+                <div className="shortDislikeBox" onClick={() => handleVideoLikeDislike("dislike")}>
                     <i className={userDisliked ? "fa-solid fa-thumbs-down" : "fa-regular fa-thumbs-down"}></i>
                 </div>
                 <span>{dislike}</span>
@@ -219,6 +242,16 @@ const ShortItem = ({ item, userPic }) => {
                                     <div className="commentMessage">
                                         <span>{comment.user.name}</span>
                                         <p>{comment.message}</p>
+                                        <div className="commentActions">
+                                            <div className="shortcommentLikeBox" onClick={() => handleCommentLikeDislike(comment._id, "like")}>
+                                                <i className={comment.like.includes(userId) ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up"}></i>
+                                            </div>
+                                            <span>{comment.like.length}</span>
+                                            <div className="shortcommentDislikeBox" onClick={() => handleCommentLikeDislike(comment._id, "dislike")}>
+                                                <i className={comment.dislike.includes(userId) ? "fa-solid fa-thumbs-down" : "fa-regular fa-thumbs-down"}></i>
+                                            </div>
+                                            <span>{comment.dislike.length}</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))
@@ -243,4 +276,5 @@ const ShortItem = ({ item, userPic }) => {
         </div>
     );
 };
+
 export default ShortItem;

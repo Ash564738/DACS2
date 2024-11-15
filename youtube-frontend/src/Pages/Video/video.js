@@ -57,8 +57,6 @@ const Video = () => {
                 setUserLiked(videoData.like.includes(userId));
                 setUserDisliked(videoData.dislike.includes(userId));
             }
-            const commentResponse = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${id}`);
-            setComments(commentResponse.data.comments);
             const suggestedResponse = await axios.get(`http://localhost:4000/api/allVideo`);
             setSuggestedVideos(suggestedResponse.data.videos || []);
             if (userId) {
@@ -99,6 +97,17 @@ const Video = () => {
             setHasIncremented(true);
         }
     }, [data, hasIncremented, handleViewIncrement]);
+    const fetchComments = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${id}`);
+            setComments(response.data.comments || []);
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    }, [id]);
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
     const handleComment = async () => {
         const body = { message, video: id, user: data.userId };
         try {
@@ -141,6 +150,24 @@ const Video = () => {
             }
         } catch (error) {
             toast.error("Please login first to like/dislike");
+        }
+    };
+    const handleCommentLikeDislike = async (commentId, action) => {
+        try {
+            const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, 
+            {}, { headers: { Authorization: `Bearer ${token}` }, withCredentials: true });
+            const { like, dislike } = response.data;
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, like: Array(like).fill("dummy"), dislike: Array(dislike).fill("dummy") }
+                        : comment
+                )
+            );
+            await fetchComments();
+        } catch (error) {
+            toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike comment:", error);
         }
     };
     if (loading) {
@@ -196,7 +223,7 @@ const Video = () => {
                         <div>{data?.description}</div>
                     </div>
                 </div>
-                <CommentSection comments={comments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} handleComment={handleComment} />
+                <CommentSection comments={comments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} handleComment={handleComment} handleCommentLikeDislike={handleCommentLikeDislike}/>
             </div>
             <VideoSuggestion suggestedVideos={suggestedVideos} />
             <ToastContainer />

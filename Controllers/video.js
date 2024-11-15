@@ -44,7 +44,7 @@ exports.getVideoById = async (req, res) => {
             console.log("Video not found for ID:", id);
             return res.status(404).json({ error: 'Video not found' });
         }
-        console.log("Video found:", video);
+        // console.log("Video found:", video);
         res.status(200).json({ success: true, video });
     } catch (error) {
         console.error("Error in getVideoById:", error);
@@ -69,7 +69,7 @@ exports.toggleLikeDislike = async (req, res) => {
     const { id: videoId } = req.params;
     const userId = req.user.userId;
     const { action } = req.query;
-    console.log(`Video ID: ${videoId}, User ID: ${userId}, Action: ${action}`);
+    // console.log(`Video ID: ${videoId}, User ID: ${userId}, Action: ${action}`);
     try {
         const video = await Video.findById(videoId);
         if (!video) {
