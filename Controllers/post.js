@@ -3,7 +3,10 @@ const Post = require('../Modals/post');
 exports.createPost = async (req, res) => {
     console.log("In Create Post Function");
     try {
-        const newPost = new Post(req.body);
+        const newPost = new Post({
+            user: req.body.user,
+            content: req.body.content
+        });        
         await newPost.save();
         console.log("Post created:", newPost);
         res.status(201).json({ message: 'Post created successfully', post: newPost });
@@ -16,7 +19,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     console.log("In Get All Posts Function");
     try {
-        const posts = await Post.find().sort({ date: -1 });
+        const posts = await Post.find().populate('user', 'name profilePic userName createdAt about').sort({ createdAt: -1 });
         console.log("Posts retrieved:", posts);
         res.status(200).json({ message: 'Success', posts });
     } catch (error) {
@@ -32,7 +35,7 @@ exports.likePost = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-        post.likes += 1;
+        post.like.push(req.user._id);  // Add user ID to likes array
         await post.save();
         console.log("Post liked:", post);
 
@@ -46,7 +49,6 @@ exports.likePost = async (req, res) => {
 exports.addCommentToPost = async (req, res) => {
     console.log("In Add Comment To Post Function");
     const postId = req.params.id;
-    // Validate that postId is not undefined or null
     if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({ message: 'Invalid post ID' });
     }
@@ -55,7 +57,7 @@ exports.addCommentToPost = async (req, res) => {
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-        post.comments.push(req.body);
+        post.comments.push({ user: req.user._id, content: req.body.content });
         await post.save();
         console.log("Comment added:", post);
 
@@ -65,4 +67,3 @@ exports.addCommentToPost = async (req, res) => {
         res.status(500).json({ message: 'Error adding comment' });
     }
 };
-

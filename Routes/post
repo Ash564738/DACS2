@@ -9,5 +9,4 @@ router.get('/getAllPosts', postController.getAllPosts);
 router.put('/:id/like', postController.likePost);
 // Route to add a comment to a post
 router.post('/:id/comments', postController.addCommentToPost);
-
 module.exports = router;

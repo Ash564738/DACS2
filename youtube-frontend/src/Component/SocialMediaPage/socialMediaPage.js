@@ -13,6 +13,7 @@ const SocialMediaPage = ({ sideNavbar }) => {
     const [user, setUser] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
@@ -33,26 +34,32 @@ const SocialMediaPage = ({ sideNavbar }) => {
         }
     };
     useEffect(() => {
-        axios.get('http://localhost:4000/posts/getAllPosts')
-            .then(response => {
-                console.log('API response:', response.data);
-                setPosts(Array.isArray(response.data.posts) ? response.data.posts : [])
-                console.log('getAllPosts API response:', response.data);
-
-            })
-            .catch(error => console.error('Error fetching posts:', error));
-    }, []); // Added dependency array to ensure this runs once
-    // Create new post
-    const handlePostSubmit = () => {
-        if (newPost.trim()) {
-            axios.post('http://localhost:4000/posts/createPost', { user: user.name, content: newPost }).then(response => {
-                console.log('Post creation response:', response.data);
-                const newPostData = response.data;
-                setPosts(prevPosts => [newPostData, ...prevPosts]);
+        const fetchPosts = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/posts/getAllPosts');
+                setPosts(Array.isArray(response.data.posts) ? response.data.posts : []);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
+        fetchPosts();
+    }, []);
+    const handlePostSubmit = async () => {
+        if (newPost.trim() && userId) { // Check if user._id exists
+            try {
+                const response = await axios.post('http://localhost:4000/posts/createPost', {
+                    user: userId,
+                    content: newPost
+                });
+                setPosts(prevPosts => [response.data.post, ...prevPosts]);
                 setNewPost('');
-            }).catch(error => console.error('Error creating post:', error));
+            } catch (error) {
+                console.error('Error creating post:', error);
+            }
+        } else {
+            console.error('User ID not available when creating post.');
         }
-    };
+    };    
     // Like post
     const handleLike = (postId) => {
         axios.put(`http://localhost:4000/posts/${postId}/like`)
@@ -133,7 +140,7 @@ const SocialMediaPage = ({ sideNavbar }) => {
             <div className="user-profile">
                 <img src={userPic} alt="User" />
                 <div>
-                    <p>{post.user}</p> {/* Hiển thị người dùng đăng bài */}
+                    <p>{post.user?.name}</p> {/* Hiển thị người dùng đăng bài */}
                     <span>{new Date(post.createdAt).toLocaleString()}</span> {/* Hiển thị ngày tạo */}
                 </div>
             </div>
