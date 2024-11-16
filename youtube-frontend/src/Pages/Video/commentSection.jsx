@@ -164,8 +164,11 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                                                     </div>
                                                                     <span>{reply.dislike.length}</span>
                                                                 </div>
-                                                                <div className="commentFuntionSection">
-                                                                    <i className="fa-solid fa-ellipsis-vertical" onClick={() => toggleReplyFunction(reply._id)}></i>
+                                                            </div>
+                                                            <div className="commentFuntionSectionBox">
+                                                                    <div className="commentFuntionToggle" onClick={() => toggleReplyFunction(reply._id)}>
+                                                                        <i className="fa-solid fa-ellipsis-vertical" ></i>
+                                                                    </div>
                                                                     {showReplyFunction[reply._id] && (
                                                                         <div className='commentFunction'>
                                                                             {reply.user._id === userId ? (
@@ -187,7 +190,6 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                                                             )}
                                                                         </div>
                                                                     )}
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -197,8 +199,10 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                     </div>
                                 )}
                             </div>
-                            <div className="commentFuntionSection">
-                                <i className="fa-solid fa-ellipsis-vertical" onClick={() => toggleReplyFunction(item._id)}></i>
+                            <div className="commentFuntionSectionBox">
+                                <div className="commentFuntionToggle" onClick={() => toggleReplyFunction(item._id)}>
+                                    <i className="fa-solid fa-ellipsis-vertical" ></i>
+                                </div>
                                 {showReplyFunction[item._id] && (
                                     <div className='commentFunction'>
                                         {item.user._id === userId ? (

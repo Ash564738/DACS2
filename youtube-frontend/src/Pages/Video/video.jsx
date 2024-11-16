@@ -3,8 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import CommentSection from './commentSection';
-import VideoSuggestion from './videoSuggestion';
+import CommentSection from './commentSection.jsx';
+import VideoSuggestion from './videoSuggestion.jsx';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 import './video.css';
@@ -22,12 +22,10 @@ const Video = () => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [hasIncremented, setHasIncremented] = useState(false);
     const [suggestedVideos, setSuggestedVideos] = useState([]);
-    const [user, setUser] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-
     useEffect(() => {
         if (userId) {
             fetchUserProfile(userId);
@@ -41,7 +39,6 @@ const Video = () => {
                 withCredentials: true
             });
             const { profilePic, name, userName, about } = response.data.user;
-            setUser({ name, userName, about });
             setUserPic(profilePic);
         } catch (error) {
             console.error("Error fetching user profile:", error);
@@ -208,7 +205,7 @@ const Video = () => {
             <div className="videoPostSection">
                 <div className="video_youtube">
                     {data && (
-                        <video width="400" controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
+                        <video controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
                             <source src={videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
