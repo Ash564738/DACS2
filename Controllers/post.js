@@ -1,20 +1,23 @@
 const Post = require('../Modals/post');
 // Create a new post
 exports.createPost = async (req, res) => {
-    console.log("In Create Post Function");
     try {
-        const newPost = new Post({
-            user: req.body.user,
-            content: req.body.content
-        });        
+        const { user, content, image, video } = req.body;
+        const newPostData = { user, content };
+
+        if (image) newPostData.image = image;
+        if (video) newPostData.video = video;
+
+        const newPost = new Post(newPostData);
         await newPost.save();
-        console.log("Post created:", newPost);
+
         res.status(201).json({ message: 'Post created successfully', post: newPost });
     } catch (error) {
-        console.error("Error in createPost:", error);
+        console.error('Error creating post:', error);
         res.status(500).json({ message: 'Error creating post' });
     }
 };
+
 // Get all posts
 exports.getAllPosts = async (req, res) => {
     console.log("In Get All Posts Function");
@@ -67,3 +70,5 @@ exports.addCommentToPost = async (req, res) => {
         res.status(500).json({ message: 'Error adding comment' });
     }
 };
+
+

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/fileUpLoad.js');
 const postController = require('../Controllers/post');
 // Route to create a new post
 router.post('/createPost', postController.createPost);
@@ -9,4 +10,5 @@ router.get('/getAllPosts', postController.getAllPosts);
 router.put('/:id/like', postController.likePost);
 // Route to add a comment to a post
 router.post('/:id/comments', postController.addCommentToPost);
+// router.post('/createPost', upload.single('file'), postController.createPost);
 module.exports = router;
