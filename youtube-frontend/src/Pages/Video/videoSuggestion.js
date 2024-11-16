@@ -2,6 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 const VideoSuggestion = ({ suggestedVideos }) => (
     <div className="videoSuggestions">
+        <h4 className="videoSuggestionsTitle">
+            <span>Up next</span>
+            <i className="fas fa-chevron-right"></i>
+        </h4>
         {suggestedVideos && suggestedVideos.length > 0 ? (
             suggestedVideos.map((item) => (
                 <div className="videoSuggestionsBlock" key={item._id}>

@@ -108,7 +108,7 @@ const ShortItem = ({ item, userPic }) => {
     const handleComment = async () => {
         const body = { message, video: item._id, user: userId };
         try {
-            const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, {
+            const resp = await apiClient.post('http://localhost:4000/commentApi/addComment', body, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true,
             });
