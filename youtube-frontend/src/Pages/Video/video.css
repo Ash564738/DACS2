@@ -132,6 +132,7 @@
 .youtubeSelfComment {
     display: flex;
     gap: 10px;
+    max-width: 100%;
 }
 .video_youtubeSelfCommentProfile {
     width: 36px;
@@ -177,8 +178,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-.youtubeOthersComments .youtubeSelfComment {
+    max-width: 100%;
 }
 .others_commentSection {
     display: flex;
@@ -195,10 +195,9 @@
 .commentTimingOthers {
     color: #AAAAAA;
 }
-.otherCommentSectionComment {
-}
 .commentFuntionSectionBox{
     display: flex;
+    align-items: center;
     flex-direction: column;
     position: relative;
     margin-left: auto;

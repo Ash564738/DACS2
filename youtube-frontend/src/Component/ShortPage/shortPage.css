@@ -144,16 +144,30 @@
     position: relative;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 10px;
+    padding: 15px;
     border-radius: 30px;
     width: calc(35% - 300px);
-    max-width: 350px;
+    max-width: 400px;
     max-height: 90vh;
-    min-width: 300px;
+    min-width: 320px;
     min-height: 90vh;
+}
+.commentBox::-webkit-scrollbar {
+    width: 8px;
+}
+.commentBox::-webkit-scrollbar-track {
+    background: transparent;
+}
+.commentBox::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+.commentBox::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 .commentProfilePic {
     margin-right: 15px;

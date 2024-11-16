@@ -9,4 +9,8 @@ router.post('/addReply/:commentId',auth,CommentController.addReply);
 router.get('/getCommentByVideoId/:videoId',CommentController.getCommentByVideoId);
 router.put('/toggleCommentLikeDislike/:id',auth,CommentController.toggleCommentLikeDislike);
 router.put('/toggleReplyLikeDislike/:commentId/:replyId',auth,CommentController.toggleReplyLikeDislike);
+router.delete('/deleteComment/:id', auth, CommentController.deleteComment);
+router.delete('/deleteReply/:commentId/:replyId', auth, CommentController.deleteReply);
+router.put('/editComment/:id', auth, CommentController.editComment);
+router.put('/editReply/:commentId/:replyId', auth, CommentController.editReply);
 module.exports = router;

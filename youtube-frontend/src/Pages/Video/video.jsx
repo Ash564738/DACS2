@@ -26,24 +26,25 @@ const Video = () => {
     const [loading, setLoading] = useState(true);
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    useEffect(() => {
-        if (userId) {
-            fetchUserProfile(userId);
-        }
-    }, [userId]);
 
-    const fetchUserProfile = async (userId) => {
+    const fetchUserProfile = useCallback(async (userId) => {
         try {
             const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
-            const { profilePic, name, userName, about } = response.data.user;
+            const { profilePic } = response.data.user;
             setUserPic(profilePic);
         } catch (error) {
             console.error("Error fetching user profile:", error);
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        if (userId) {
+            fetchUserProfile(userId);
+        }
+    }, [userId, fetchUserProfile]);
 
     const fetchVideoData = useCallback(async () => {
         try {
@@ -82,7 +83,7 @@ const Video = () => {
         fetchVideoData();
     }, [id, fetchVideoData]);
 
-    const handleViewIncrement = async () => {
+    const handleViewIncrement = useCallback(async () => {
         if (!hasIncremented) {
             try {
                 await axios.put(`http://localhost:4000/api/incrementViews/${id}`);
@@ -91,7 +92,7 @@ const Video = () => {
                 console.error("Error incrementing views:", error);
             }
         }
-    };
+    }, [hasIncremented, id]);
 
     useEffect(() => {
         if (data && !hasIncremented) {

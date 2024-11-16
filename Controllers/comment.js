@@ -133,6 +133,7 @@ exports.toggleCommentLikeDislike = async (req, res) => {
         res.status(200).json({ like: comment.like, dislike: comment.dislike });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
+        console.log("Error in toggleCommentLikeDislike:", error);
     }
 };
 
@@ -180,5 +181,88 @@ exports.toggleReplyLikeDislike = async (req, res) => {
         res.status(200).json({ reply });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
+        console.log("Error in toggleReplyLikeDislike:", error);
+    }
+};
+
+exports.deleteComment = async (req, res) => {
+    console.log("In deleteComment Function");
+    const { id: commentId } = req.params;
+    try {
+        const comment = await Comment.findByIdAndDelete(commentId);
+        if (!comment) {
+            console.log("Comment not found for ID:", commentId);
+            return res.status(404).json({ error: "Comment not found" });
+        }
+        res.status(200).json({ message: 'Comment deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+        console.log("Error in deleteComment:", error);
+    }
+};
+
+exports.deleteReply = async (req, res) => {
+    console.log("In deleteReply Function");
+    const { commentId, replyId } = req.params;
+    try {
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            console.log("Comment not found for ID:", commentId);
+            return res.status(404).json({ error: "Comment not found" });
+        }
+        const reply = comment.replies.id(replyId);
+        if (!reply) {
+            console.log("Reply not found for ID:", replyId);
+            return res.status(404).json({ error: "Reply not found" });
+        }
+        comment.replies.pull(replyId);
+        await comment.save();
+        res.status(200).json({ message: 'Reply deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+        console.error("Error in deleteReply:", error);
+    }
+};
+
+exports.editComment = async (req, res) => {
+    console.log("In editComment Function");
+    const { id: commentId } = req.params;
+    const { message } = req.body;
+    try {
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            console.log("Comment not found for ID:", commentId);
+            return res.status(404).json({ error: "Comment not found" });
+        }
+        comment.message = message;
+        await comment.save();
+        res.status(200).json({ message: 'Comment edited successfully', comment });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+        console.log("Error in editComment:", error);
+    }
+};
+
+exports.editReply = async (req, res) => {
+    console.log("In editReply Function");
+    const { commentId, replyId } = req.params;
+    const { message } = req.body;
+    try {
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            console.log("Comment not found for ID:", commentId);
+            return res.status(404).json({ error: "Comment not found" });
+        }
+        const reply = comment.replies.id(replyId);
+        if (!reply) {
+            console.log("Reply not found for ID:", replyId);
+            return res.status(404).json({ error: "Reply not found" });
+        }
+        reply.message = message;
+        await comment.save();
+        res.status(200).json({ message: 'Reply edited successfully', reply });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+        console.log("Error in editReply:", error);
     }
 };
