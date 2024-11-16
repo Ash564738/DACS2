@@ -182,7 +182,7 @@
     flex-direction: column;
     width: 100%;
 }
-.others_commentSectionHeader {
+.otherCommentSectionHeader {
     display: flex;
     gap: 5px;
 }
@@ -194,7 +194,7 @@
 }
 .otherCommentSectionComment {
 }
-.commentReplySection{
+.commentFuntionSection{
     display: flex;
     flex-direction: column;
     position: relative;
@@ -203,14 +203,23 @@
     align-items: center;
     gap: 10px;
 }
-.commentReplyFunction{
-    display: flex;
-    flex-direction: column;
+.commentFunction {
     position: absolute;
-    bottom: -30px;
-    padding: 15px;
+    top: 25px;
+    right: 0;
     background-color: #292828;
     border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1;
+}
+.commentReply{
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
 }
 /* ------------------------------------ */
 .videoSuggestions {

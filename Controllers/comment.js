@@ -7,7 +7,7 @@ exports.getCommentById = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: "Comment ID is required" });
         }
-        const comment = await Comment.findById(id).populate('user', 'name profilePic userName createdAt about').select('video message like dislike createdAt');
+        const comment = await Comment.findById(id).populate('user').populate('replies.user');
         if (!comment) {
             console.log("Comment not found for ID:", id);
             return res.status(404).json({ error: "Comment not found" });
@@ -27,7 +27,7 @@ exports.getRepliesByCommentId = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: "Comment ID is required" });
         }
-        const comment = await Comment.findById(id).populate('replies.user', 'name profilePic userName createdAt about').select('replies');
+        const comment = await Comment.findById(id).populate('replies.user');
         if (!comment) {
             console.log("Comment not found for ID:", id);
             return res.status(404).json({ error: "Comment not found" });
@@ -44,9 +44,9 @@ exports.addComment = async (req, res) => {
     console.log("In Add Comment Function");
     try {
         let { video, message } = req.body;
-        const comment = new Comment({ user: req.user.userId, video, message }); 
+        const comment = new Comment({ user: req.user.userId, video, message, like: [], dislike: [] }); 
         await comment.save();
-        const populatedComment = await Comment.findById(comment._id).populate('user', 'name profilePic userName createdAt about');
+        const populatedComment = await Comment.findById(comment._id).populate('user').populate('replies.user');
         res.status(201).json({ message: 'Success', comment: populatedComment });
     } catch (error) {
         console.error("Error in addComment:", error);
@@ -60,18 +60,15 @@ exports.addReply = async (req, res) => {
         let { commentId } = req.params;
         let { message } = req.body;
         console.log("Comment ID:", commentId);
-        const comment = await Comment.findById(commentId).populate('user', 'name profilePic userName createdAt about');
+        const comment = await Comment.findById(commentId).populate('user').populate('replies.user');
         if (!comment) {
             console.log("Comment not found for ID:", commentId);
             return res.status(404).json({ error: "Comment not found" });
         }
-        const reply = { user: req.user.userId, message };
+        const reply = { user: req.user.userId, message, like: [], dislike: [] };
         comment.replies.push(reply);
         await comment.save();
-        await comment.populate({
-            path: 'replies.user',
-            select: 'name profilePic userName'
-        });
+        await comment.populate('replies.user');
         const newReply = comment.replies[comment.replies.length - 1];
         res.status(201).json({ message: 'Reply added successfully', reply: newReply });
     } catch (error) {
@@ -85,10 +82,10 @@ exports.getCommentByVideoId = async (req, res) => {
     try {
         let { videoId } = req.params;
         const comments = await Comment.find({ video: videoId })
-            .populate('user', 'name profilePic userName createdAt about')
+            .populate('user')
             .populate({
                 path: 'replies',
-                populate: { path: 'user', select: 'name profilePic userName' }
+                populate: { path: 'user' }
             });
         res.status(200).json({ message: 'Success', comments });
     } catch (error) {
@@ -133,7 +130,54 @@ exports.toggleCommentLikeDislike = async (req, res) => {
             return res.status(400).json({ error: "Invalid action" });
         }
         await comment.save();
-        res.status(200).json({ comment });
+        res.status(200).json({ like: comment.like, dislike: comment.dislike });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+exports.toggleReplyLikeDislike = async (req, res) => {
+    console.log("In toggleReplyLikeDislike Function");
+    const { commentId, replyId } = req.params;
+    const userId = req.user.userId;
+    const { action } = req.query;
+    try {
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            console.log("Comment not found for ID:", commentId);
+            return res.status(404).json({ error: "Comment not found" });
+        }
+        const reply = comment.replies.id(replyId);
+        if (!reply) {
+            console.log("Reply not found for ID:", replyId);
+            return res.status(404).json({ error: "Reply not found" });
+        }
+        if (!Array.isArray(reply.like)) reply.like = [];
+        if (!Array.isArray(reply.dislike)) reply.dislike = [];
+        if (action === "like") {
+            if (reply.like.includes(userId)) {
+                reply.like.pull(userId);
+                console.log("User removed from likes:", userId);
+            } else {
+                reply.like.push(userId);
+                reply.dislike.pull(userId);
+                console.log("User removed from dislikes:", userId);
+            }
+        } else if (action === "dislike") {
+            if (reply.dislike.includes(userId)) {
+                reply.dislike.pull(userId);
+                console.log("User removed from dislikes:", userId);
+            } else {
+                reply.dislike.push(userId);
+                reply.like.pull(userId);
+                console.log("User added to dislikes and removed from likes:", userId);
+            }
+        } else {
+            console.log("Invalid action:", action);
+            return res.status(400).json({ error: "Invalid action" });
+        }
+        await comment.save();
+        res.status(200).json({ reply });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }

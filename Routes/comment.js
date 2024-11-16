@@ -8,4 +8,5 @@ router.post('/addComment',auth,CommentController.addComment);
 router.post('/addReply/:commentId',auth,CommentController.addReply);
 router.get('/getCommentByVideoId/:videoId',CommentController.getCommentByVideoId);
 router.put('/toggleCommentLikeDislike/:id',auth,CommentController.toggleCommentLikeDislike);
+router.put('/toggleReplyLikeDislike/:commentId/:replyId',auth,CommentController.toggleReplyLikeDislike);
 module.exports = router;
