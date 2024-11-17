@@ -89,21 +89,22 @@ exports.toggleSubscription = async (req, res) => {
 
 exports.getSubscriptions = async (req, res) => {
   try {
-    const { userId } = req.user;
-    const user = await User.findById(userId).populate('subscriptions');
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const subscribedUserIds = user.subscriptions.map((sub) => sub._id);
-    const videos = await Video.find({ user: { $in: subscribedUserIds } }).populate('user');
-    res.json({
-      success: true,
-      subscribedUsers: user.subscriptions,
-      videos,
-    });
+      const { userId } = req.user;
+      const user = await User.findById(userId).populate('subscriptions');
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+      console.log(user.subscriptions);  // Log the subscriptions field
+      const subscribedUserIds = user.subscriptions.map((sub) => sub._id);
+      const videos = await Video.find({ user: { $in: subscribedUserIds } }).populate('user');
+      res.json({
+          success: true,
+          subscribedUsers: user.subscriptions,
+          videos,
+      });
   } catch (error) {
-    console.error("Error in getSubscriptions:", error);
-    res.status(500).json({ error: 'Server error' });
+      console.error("Error in getSubscriptions:", error);
+      res.status(500).json({ error: 'Server error' });
   }
 };
 
