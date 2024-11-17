@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import './homePage.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+
 const HomePage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -22,14 +25,88 @@ const HomePage = ({ sideNavbar }) => {
         setLoading(false);
       }
     };
+
     fetchVideos();
   }, []);
-  const options = ["All", "Music", "Live", "Mixes", "Gaming", "Debates", "Comedy", "Recently Uploaded", "Watched", "New to you"];
+
+  useEffect(() => {
+    const slider = document.querySelector('.homePage_options');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    const handleMouseDown = (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    };
+
+    const handleMouseLeave = () => {
+      isDown = false;
+      slider.classList.remove('active');
+    };
+
+    const handleMouseUp = () => {
+      isDown = false;
+      slider.classList.remove('active');
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; // Scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+    };
+
+    slider.addEventListener('mousedown', handleMouseDown);
+    slider.addEventListener('mouseleave', handleMouseLeave);
+    slider.addEventListener('mouseup', handleMouseUp);
+    slider.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      slider.removeEventListener('mousedown', handleMouseDown);
+      slider.removeEventListener('mouseleave', handleMouseLeave);
+      slider.removeEventListener('mouseup', handleMouseUp);
+      slider.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  const options = [
+    "All",
+    "Music",
+    "Animation",
+    "Documentary",
+    "Education",
+    "Entertainment",
+    "Playlists",
+    "Mixes",
+    "Gaming",
+    "Food",
+    "Comedy",
+    "Recently Uploaded",
+    "Watched",
+    "New to you",
+  ];
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const filteredVideos = selectedCategory === "All" 
+    ? data 
+    : data.filter((video) => video.videoType === selectedCategory);
+
   return (
     <div className={sideNavbar ? 'homePage' : 'fullHomePage'}>
       <div className="homePage_options">
         {options.map((item, index) => (
-          <div key={index} className="homePage_option">
+          <div 
+            key={index} 
+            className={`homePage_option ${selectedCategory === item ? "active" : ""}`} 
+            onClick={() => handleCategoryClick(item)}
+          >
             {item}
           </div>
         ))}
@@ -39,17 +116,18 @@ const HomePage = ({ sideNavbar }) => {
           <p>Loading videos...</p>
         ) : error ? (
           <p>{error}</p>
-        ) : data.length > 0 ? (
-          data.map((item) => (
+        ) : filteredVideos.length > 0 ? (
+          filteredVideos.map((item) => (
             <VideoItem key={item._id} item={item} />
           ))
         ) : (
-          <p>No videos available.</p>
+          <p>No videos available for this category.</p>
         )}
       </div>
     </div>
   );
 };
+
 const VideoItem = ({ item }) => (
   <Link to={`/watch/${item._id}`} className="youtube_Video">
     <div className="youtube_thumbnailBox">
@@ -78,4 +156,5 @@ const VideoItem = ({ item }) => (
     </div>
   </Link>
 );
+
 export default HomePage;

@@ -12,7 +12,6 @@ exports.getCommentById = async (req, res) => {
             console.log("Comment not found for ID:", id);
             return res.status(404).json({ error: "Comment not found" });
         }
-        console.log("Comment found:", comment);
         res.status(200).json({ message: 'Success', comment });
     } catch (error) {
         console.error("Error in getCommentById:", error);
@@ -32,7 +31,6 @@ exports.getRepliesByCommentId = async (req, res) => {
             console.log("Comment not found for ID:", id);
             return res.status(404).json({ error: "Comment not found" });
         }
-        console.log("Replies found:", comment.replies);
         res.status(200).json({ message: 'Success', replies: comment.replies });
     } catch (error) {
         console.error("Error in getRepliesByCommentId:", error);
@@ -59,7 +57,6 @@ exports.addReply = async (req, res) => {
     try {
         let { commentId } = req.params;
         let { message } = req.body;
-        console.log("Comment ID:", commentId);
         const comment = await Comment.findById(commentId).populate('user').populate('replies.user');
         if (!comment) {
             console.log("Comment not found for ID:", commentId);

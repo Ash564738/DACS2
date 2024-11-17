@@ -1,0 +1,93 @@
+
+.subscription_mainPage,
+.subscription_mainPageWithoutLink{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: #0F0F0F;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    gap: 25px;
+    padding: 140px 20px 20px 20px;
+    width: 100%;
+}
+.subscriptionPage_options {
+    display: flex;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 10px;
+    flex-shrink: 0;
+    height: auto;
+    background-color: #0F0F0F;
+    top: 130px;
+    padding: 5px 20px 10px 20px;
+    cursor: grab;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.subscriptionPage_options.active {
+    cursor: grabbing;
+}
+.subscriptionPage_options::-webkit-scrollbar {
+    height: 5px;
+}
+.subscriptionPage_option {
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0px 10px;
+    background-color: rgb(42, 42, 42);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.subscriptionPage_option.active {
+    font-weight: bold;
+    background-color: white;
+    color: black;
+}
+.subscriptionRow {
+    display: flex;
+    position: fixed;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+    background-color: #0F0F0F;
+    z-index: 10;
+    gap: 10px;
+    padding: 10px 20px;
+}
+.subscriptionRow::-webkit-scrollbar {
+    height: 5px;
+}
+.subscribedUser {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+}
+.subscribedUserPic {
+    display: flex;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+.subscribedUserName {
+    display: flex;
+    text-align: center;
+    color: white;
+}
+
+.subscribedUser.active .subscribedUserPic{
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}
