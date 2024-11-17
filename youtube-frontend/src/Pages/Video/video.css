@@ -239,19 +239,47 @@
 /* ------------------------------------ */
 .videoSuggestions {
     width: 35%;
-    gap: 15px;
     color: white;
     display: flex;
     flex-direction: column;
 }
-.videoSuggestionsTitle{
+.videoSuggestions_options {
     display: flex;
-    font-weight: bold;
-    gap: 5px;
-    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 10px;
+    flex-shrink: 0;
+    height: auto;
+    cursor: grab;
+    overflow-x: auto;
+    white-space: nowrap;
 }
-.videoSuggestionsTitle i{
-    font-size: 0.6em;
+.videoSuggestions_options.active {
+    cursor: grabbing;
+}
+.videoSuggestions_options::-webkit-scrollbar {
+    height: 5px;
+}
+.videoSuggestions_option {
+    flex: 0 0 auto;
+    padding: 5px 10px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+}
+.videoSuggestions_option.active {
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+}
+.videoSuggestions_blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
 }
 .videoSuggestionsBlock {
     display: flex;
@@ -263,31 +291,35 @@
     display: flex;
     gap: 10px;
 }
-.video_suggetion_thumbnail {
+.video_suggestion_thumbnail {
     display: flex;
     width: 160px;
     height: 100px;
     overflow: hidden;
     border-radius: 10px;
 }
-.video_suggetion_thumbnail_img {
+.video_suggestion_thumbnail_img {
     display: flex;
     width: 100%;
     height: 100%;
     min-width: 160px;
     object-fit: cover;
 }
-.video_suggetions_About {
+.video_suggestions_about {
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
-.video_suggetions_About_title {
+.video_suggestions_about_title {
     font-weight: bold;
     margin-bottom: 5px;
 }
-.video_suggetions_About_Profile {
+.video_suggestions_about_profile {
     color: #ffffff9c;
+}
+.video_suggestions_about_profile,
+.video_suggestions_about_views {
+    color: #aaa;
 }
 /* Responsive Styles */
 @media (max-width: 1500) and (min-width: 1151px) {

@@ -11,6 +11,7 @@ import Short from './Pages/Short/short';
 import axios from 'axios';
 import { RocketLaunch } from '@mui/icons-material';
 import SocialMedia from './Pages/SocialMedia/socialMedia';
+import Subscription from './Pages/Subscription/subscription';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
   const setSideNavbarFunc=(value)=>{
@@ -34,7 +35,7 @@ function App() {
         <Route path='/user/:id' element={<Profile sideNavbar={sideNavbar} />} />
         <Route path='/:id/upload' element={<VideoUpload/>} />
         <Route path='/signup' element={<SignUp/>} />
-        <Route path='/socialMedia' element={<SocialMedia/>} />
+        <Route path='/subscription' element={<Subscription sideNavbar={sideNavbar}/>} />
       </Routes>
     </div>
   );

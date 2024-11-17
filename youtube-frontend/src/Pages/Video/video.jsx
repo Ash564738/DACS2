@@ -21,7 +21,6 @@ const Video = () => {
     const { id } = useParams();
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [hasIncremented, setHasIncremented] = useState(false);
-    const [suggestedVideos, setSuggestedVideos] = useState([]);
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
     const userId = localStorage.getItem("userId");
@@ -58,14 +57,12 @@ const Video = () => {
                 setUserLiked(videoData.like.includes(userId));
                 setUserDisliked(videoData.dislike.includes(userId));
             }
-            const suggestedResponse = await axios.get(`http://localhost:4000/api/allVideo`);
-            setSuggestedVideos(suggestedResponse.data.videos || []);
             if (userId) {
                 const subscriptionResponse = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
                     headers: { Authorization: `Bearer ${token}` },
                     withCredentials: true
                 });
-                const subscribedIds = subscriptionResponse.data.subscriptions.map(sub => sub._id);
+                const subscribedIds = subscriptionResponse.data.subscribedUsers?.map(sub => sub._id) || [];
                 setIsSubscribed(subscribedIds.includes(videoData.user._id));
             }
         } catch (err) {
@@ -253,7 +250,7 @@ const Video = () => {
                 </div>
                 <CommentSection id={id} comments={comments} setComments={setComments} fetchComments={fetchComments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} data={data} handleComment={handleComment} handleCommentLikeDislike={handleCommentLikeDislike} token={token} />
             </div>
-            <VideoSuggestion suggestedVideos={suggestedVideos} />
+            <VideoSuggestion id={id} />
             <ToastContainer />
         </div>
     );

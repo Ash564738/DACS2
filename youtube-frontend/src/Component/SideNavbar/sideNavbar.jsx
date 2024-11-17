@@ -32,17 +32,17 @@ const SideNavbar = ({ sideNavbar }) => {
     }, []);
     const fetchUserSubscriptions = async (userId) => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
-                headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true
-            });
-            console.log("Subscriptions Response:", response.data);
-            setSubscriptions(response.data.subscriptions);
+          const token = localStorage.getItem("token");
+          const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          });
+          console.log("Subscriptions Response:", response.data);
+          setSubscriptions(response.data.subscribedUsers || []);
         } catch (error) {
-            console.error("Error fetching subscriptions:", error.response?.data || error.message);
+          console.error("Error fetching subscriptions:", error.response?.data || error.message);
         }
-    };
+      };          
     useEffect(() => {
         console.log("Updated subscriptions:", subscriptions);
     }, [subscriptions]);
@@ -51,7 +51,7 @@ const SideNavbar = ({ sideNavbar }) => {
             "/": "home",
             "/short": "shorts",
             "/socialMedia": "socialMedia",
-            "/subscriptions": "subscriptions"
+            "/subscription": "subscriptions"
         };
         const activeIcon = pathToIcon[location.pathname];
         setActiveIcons({
@@ -91,7 +91,7 @@ const SideNavbar = ({ sideNavbar }) => {
         {
             icon: activeIcons.subscriptions ? <Subscriptions /> : <SubscriptionsOutlinedIcon />,
             label: "Subscriptions",
-            link: "/subscriptions",
+            link: "/subscription",
             name: "subscriptions"
         }
     ];

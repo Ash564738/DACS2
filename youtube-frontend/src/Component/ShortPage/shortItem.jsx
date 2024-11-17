@@ -40,7 +40,7 @@ const ShortItem = ({ item, userId, userPic, token }) => {
                     headers: { Authorization: `Bearer ${token}` },
                     withCredentials: true
                 });
-                const subscribedIds = subscriptionResponse.data.subscriptions.map(sub => sub._id);
+                const subscribedIds = subscriptionResponse.data.subscribedUsers?.map(sub => sub._id) || [];
                 setIsSubscribed(subscribedIds.includes(videoData.user._id));
             }
         } catch (error) {
