@@ -16,10 +16,12 @@ const commentPostSchema = new mongoose.Schema({
 const postSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user', 
+        ref: 'user',
         required: true
     },
     content: String,
+    image: String,
+    video: String,
     like: [{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
     }],
