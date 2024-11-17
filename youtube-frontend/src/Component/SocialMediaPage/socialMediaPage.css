@@ -216,7 +216,7 @@
     font-size: 12px;
 }
 
-.post-input-container, .comment-section{
+.post-input-container, .comment-input{
     display: flex;
     align-items: center;
     padding-left: 55px;
@@ -224,7 +224,7 @@
     width: 100%;
 }
 
-.post-input-container textarea, .comment-section input{
+.post-input-container textarea, .comment-input input{
     width: 100%;
     border: 0;
     outline: 0;
@@ -247,6 +247,7 @@
     margin-right: 30px;
     margin-left: 10px;
     size: 14px;
+    cursor: pointer;
 }
 
 .add-post-links a i{
@@ -330,6 +331,7 @@
     align-items: center;
     margin-right: 30px;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .post-profile-icon{

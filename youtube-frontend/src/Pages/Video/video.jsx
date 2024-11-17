@@ -3,48 +3,49 @@ import { Link, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import CommentSection from './commentSection';
-import VideoSuggestion from './videoSuggestion';
+import CommentSection from './commentSection.jsx';
+import VideoSuggestion from './videoSuggestion.jsx';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 import './video.css';
+
 const Video = () => {
     const [like, setLike] = useState(0);
     const [dislike, setDislike] = useState(0);
     const [userLiked, setUserLiked] = useState(false);
     const [userDisliked, setUserDisliked] = useState(false);
     const [message, setMessage] = useState("");
+    const [comments, setComments] = useState([]);
     const [data, setData] = useState(null);
     const [videoUrl, setVideoURL] = useState("");
     const { id } = useParams();
-    const [comments, setComments] = useState([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [hasIncremented, setHasIncremented] = useState(false);
     const [suggestedVideos, setSuggestedVideos] = useState([]);
-    const [user, setUser] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    useEffect(() => {
-        if (userId) {
-            fetchUserProfile(userId);
-        }
-    }, [userId]);
-    const fetchUserProfile = async (userId) => {
+
+    const fetchUserProfile = useCallback(async (userId) => {
         try {
             const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
-            const { profilePic, name, userName, about } = response.data.user;
-            setUser({ name, userName, about });
+            const { profilePic } = response.data.user;
             setUserPic(profilePic);
         } catch (error) {
-            toast.error("Failed to fetch user profile");
+            console.error("Error fetching user profile:", error);
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        if (userId) {
+            fetchUserProfile(userId);
+        }
+    }, [userId, fetchUserProfile]);
+
     const fetchVideoData = useCallback(async () => {
         try {
             const videoResponse = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
@@ -57,8 +58,6 @@ const Video = () => {
                 setUserLiked(videoData.like.includes(userId));
                 setUserDisliked(videoData.dislike.includes(userId));
             }
-            const commentResponse = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${id}`);
-            setComments(commentResponse.data.comments);
             const suggestedResponse = await axios.get(`http://localhost:4000/api/allVideo`);
             setSuggestedVideos(suggestedResponse.data.videos || []);
             if (userId) {
@@ -70,12 +69,12 @@ const Video = () => {
                 setIsSubscribed(subscribedIds.includes(videoData.user._id));
             }
         } catch (err) {
-            toast.error("Failed to fetch video data: " + err.message);
-            setError("Failed to fetch video data. Please try again later.");
+            console.error("Error fetching video data:", err);
         } finally {
             setLoading(false);
         }
     }, [id, userId, token]);
+
     useEffect(() => {
         setData(null);
         setVideoURL("");
@@ -83,26 +82,55 @@ const Video = () => {
         setLoading(true);
         fetchVideoData();
     }, [id, fetchVideoData]);
-    const handleViewIncrement = async () => {
+
+    const handleViewIncrement = useCallback(async () => {
         if (!hasIncremented) {
             try {
                 await axios.put(`http://localhost:4000/api/incrementViews/${id}`);
                 setHasIncremented(true);
             } catch (error) {
-                toast.error("Failed to increment views");
+                console.error("Error incrementing views:", error);
             }
         }
-    };
+    }, [hasIncremented, id]);
+
     useEffect(() => {
         if (data && !hasIncremented) {
             handleViewIncrement();
             setHasIncremented(true);
         }
     }, [data, hasIncremented, handleViewIncrement]);
+
+    const fetchComments = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${id}`);
+            const commentsData = response.data.comments || [];
+            const commentsWithReplies = await Promise.all(commentsData.map(async (comment) => {
+                try {
+                    const repliesResponse = await axios.get(`http://localhost:4000/commentApi/getRepliesByCommentId/${comment._id}`);
+                    return {
+                        ...comment,
+                        replies: repliesResponse.data.replies || []
+                    };
+                } catch (error) {
+                    console.error(`Error fetching replies for comment ${comment._id}:`, error);
+                    return comment;
+                }
+            }));
+            setComments(commentsWithReplies);
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
+
     const handleComment = async () => {
         const body = { message, video: id, user: data.userId };
         try {
-            const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, {
+            const resp = await apiClient.post('http://localhost:4000/commentApi/addComment', body, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
@@ -110,9 +138,11 @@ const Video = () => {
             setComments([newComment, ...comments]);
             setMessage("");
         } catch (err) {
+            console.error("Error in handleComment:", err);
             toast.error("Please login first to comment");
         }
     };
+
     const handleSubscribe = async () => {
         try {
             const response = await apiClient.post(`http://localhost:4000/auth/toggleSubscription/${data.user._id}`, {}, {
@@ -122,8 +152,10 @@ const Video = () => {
             setIsSubscribed(response.data.isSubscribed);
         } catch (error) {
             toast.error("Please login first to subscribe");
+            console.error("Error in subscribing:", error);
         }
     };
+
     const handleLikeDislike = async (action) => {
         try {
             const response = await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${id}?action=${action}`, {}, {
@@ -141,20 +173,40 @@ const Video = () => {
             }
         } catch (error) {
             toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike video:", error);
         }
     };
+
+    const handleCommentLikeDislike = async (commentId, action) => {
+        try {
+            const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const { like, dislike } = response.data;
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, like, dislike }
+                        : comment
+                )
+            );
+        } catch (error) {
+            toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike comment:", error);
+        }
+    };
+
     if (loading) {
         return <p>Loading video...</p>;
     }
-    if (error) {
-        return <p>{error}</p>;
-    }
+
     return (
         <div className='video'>
             <div className="videoPostSection">
                 <div className="video_youtube">
                     {data && (
-                        <video width="400" controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
+                        <video controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
                             <source src={videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
@@ -192,15 +244,19 @@ const Video = () => {
                         </div>
                     </div>
                     <div className="youtube_video_About">
-                        <div>{data?.createdAt ? data.createdAt.slice(0, 10) : "Date not available"}</div>
+                        <div className="youtube_video_Info">
+                            <div>{data?.createdAt ? data.createdAt.slice(0, 10) : "Date not available"}</div>
+                            <div>{data?.views} views</div>
+                        </div>
                         <div>{data?.description}</div>
                     </div>
                 </div>
-                <CommentSection comments={comments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} handleComment={handleComment} />
+                <CommentSection id={id} comments={comments} setComments={setComments} fetchComments={fetchComments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} data={data} handleComment={handleComment} handleCommentLikeDislike={handleCommentLikeDislike} token={token} />
             </div>
             <VideoSuggestion suggestedVideos={suggestedVideos} />
             <ToastContainer />
         </div>
     );
 };
+
 export default Video;

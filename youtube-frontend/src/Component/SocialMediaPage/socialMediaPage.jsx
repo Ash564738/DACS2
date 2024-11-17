@@ -17,11 +17,6 @@ const SocialMediaPage = ({ sideNavbar }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [inputField, setInputField] = useState({"content": "","image": "","video": ""});
     const fileInputRef = useRef(null);
-    const handleOnChangeInput = (event, name) => {
-        setInputField({
-            ...inputField,[name]: event.target.value
-        });
-    };
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
@@ -58,9 +53,6 @@ const SocialMediaPage = ({ sideNavbar }) => {
         if(isLogin===null){
         }
     },[])
-    const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
-    };
 
     const openFileDialog = () => {
         fileInputRef.current.click();
@@ -116,23 +108,28 @@ const SocialMediaPage = ({ sideNavbar }) => {
             console.error('Post content or media is required');
         }
     };    
-    // Like post
-    const handleLike = (postId) => {
-        axios.put(`http://localhost:4000/posts/${postId}/like`)
-            .then(response => {
-                setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
-            })
-            .catch(error => console.error('Error liking post:', error));
+    // Toggle like or dislike a post
+    const handleLikeDislike = async (postId, action) => {
+        try {
+            const response = await apiClient.put(
+                `http://localhost:4000/posts/${postId}/${action}`, // Updated the URL to target the correct post
+                {},
+                { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
+            );
+            setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
+        } catch (error) {
+            console.error('Error toggling like/dislike:', error);
+        }
     };
     // Submit a comment
     const handleCommentSubmit = (postId) => {
         if (comment.trim()) {
-            axios.post(`http://localhost:4000/posts/${postId}/comments`, { user: user.name, content: comment })
-                .then(response => {
-                    setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
-                    setComment('');
-                })
-                .catch(error => console.error('Error adding comment:', error));
+        axios.post('http://localhost:4000/posts/${postId}/comments', { user: userId, content: comment })
+            .then(response => {
+            setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
+            setComment('');
+            })
+            .catch(error => console.error('Error adding comment:', error));
         }
     };
     // Toggle Chat function (moved outside of useEffect for better readability)
@@ -204,45 +201,60 @@ const SocialMediaPage = ({ sideNavbar }) => {
                         <a href="#"><i className="fa-regular fa-face-smile"></i>Feeling/Activity</a>
                     </div>
                 </div>
-    {posts.map(post => (
-    <div key={post._id} className="post-container">
-        <div className="post-row">
-            <div className="user-profile">
-                <img src={userPic} alt="User" />
-                <div>
-                    <p>{post.user?.name}</p> {/* Hiển thị người dùng đăng bài */}
-                    <span>{new Date(post.createdAt).toLocaleString()}</span> {/* Hiển thị ngày tạo */}
-                </div>
-            </div>
-            <a href="#"><i className="fa-solid fa-ellipsis-vertical"></i></a>
-        </div>
-        <p className="post-text">{post.content}</p> {/* Nội dung bài đăng */}
-        <div className= "img-post">{post.image && <img src={post.image} className="post-img" alt="Post" />}</div>
-        <div className="post-row">
-            <div className="activity-icons">
-                <div onClick={() => handleLike(post._id)}>
-                <i className="fas fa-thumbs-up"></i>{post.likes?.length || 0}
-                </div>
-                <div>
-                <i className="fas fa-comment"></i>{post.comments?.length || 0}
-                </div>
-                <div><i className="fas fa-share"></i> 20</div>
-            </div>
-            <div className="post-profile-icon">
-                <img src={userPic} alt="User" /><i className="fa-solid fa-caret-down"></i>
-            </div>
-        </div>
-        <div className="comment-section">
-            <input
-                type="text"
-                placeholder="Write a comment..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-            />
-            <button onClick={() => handleCommentSubmit(post._id)} className="comment-button">Comment</button>
-        </div>
-    </div>
-))}
+                {posts.map(post => (
+                    <div key={post._id} className="post-container">
+                        <div className="post-row">
+                            <div className="user-profile">
+                                <img src={userPic} alt="User" />
+                                <div>
+                                    <p>{post.user?.name}</p>
+                                    <span>{new Date(post.createdAt).toLocaleString()}</span>
+                                </div>
+                            </div>
+                            <a href="#"><i className="fa-solid fa-ellipsis-vertical"></i></a>
+                        </div>
+                        <p className="post-text">{post.content}</p>
+                        <div className="img-post">{post.image && <img src={post.image} className="post-img" alt="Post" />}</div>
+                        <div className="post-row">
+                            <div className="activity-icons">
+                            <div onClick={() => handleLikeDislike(post._id, 'like')}>
+                                    <i className="fas fa-thumbs-up"></i>{post.like.length}
+                                </div>
+                                <div onClick={() => handleLikeDislike(post._id, 'dislike')}>
+                                    <i className="fas fa-thumbs-down"></i>{post.dislike.length}
+                                </div>
+                                <div><i className="fas fa-share"></i> 20</div>
+                            </div>
+                            <div className="post-profile-icon">
+                                <img src={userPic} alt="User" /><i className="fa-solid fa-caret-down"></i>
+                            </div>
+                        </div>
+
+                        {/* Comment input */}
+                        <div className="comment-input">
+                            <input
+                                type="text"
+                                placeholder="Write a comment..."
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                            <button onClick={() => handleCommentSubmit(post._id)} className="comment-button">Comment</button>
+                        </div>
+
+                        {/* Comment display */}
+                        <div className="commentSection">
+                            {post.comments?.map((comment) => (
+                                <div key={comment._id} className="comment-item">
+                                    <img src={comment.userAvatar || userPic} alt="User" className="comment-avatar" />
+                                    <div className="comment-details">
+                                        <p className="comment-user">{comment.user}</p>
+                                        <p className="comment-text">{comment.content}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
 
 
                 <button type="button" className="load-more-btn">Load More</button>

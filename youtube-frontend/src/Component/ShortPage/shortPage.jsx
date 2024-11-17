@@ -11,7 +11,6 @@ const ShortPage = ({ sideNavbar }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [user, setUser] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
@@ -27,7 +26,6 @@ const ShortPage = ({ sideNavbar }) => {
                 withCredentials: true
             });
             const { profilePic, name, userName, about } = response.data.user;
-            setUser({ name, userName, about });
             setUserPic(profilePic);
         } catch (error) {
             toast.error("Failed to fetch user profile");
@@ -56,7 +54,7 @@ const ShortPage = ({ sideNavbar }) => {
                     <p>{error}</p>
                 ) : data.length > 0 ? (
                     data.map((item) => (
-                        <ShortItem key={item._id} item={item} userPic={userPic} />
+                        <ShortItem key={item._id} item={item} userId = {userId} userPic={userPic} token ={token}/>
                     ))
                 ) : (
                     <p>No videos available.</p>

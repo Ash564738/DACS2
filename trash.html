@@ -1,212 +1,30 @@
-<!-- import React, { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import './shortPage.css';
-import apiClient from '../../Utils/apiClient.js';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-const ShortPage = ({ sideNavbar }) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-     const [user, setUser] = useState({});
-    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-    useEffect(() => {
-        if (userId) {
-            fetchUserProfile(userId);
-        }
-    }, []);
-    const fetchUserProfile = async (userId) => {
-        try {
-            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {},{
-                headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true
-            });
-            const { profilePic, name, userName, about } = response.data.user;
-            setUser({ name, userName, about });
-            setUserPic(profilePic);
-        } catch (error) {
-            toast.error("Failed to fetch user profile");
-        }
-    };
-    useEffect(() => {
-        const fetchVideos = async () => {
-            try {
-                const res = await axios.get('http://localhost:4000/api/allVideo');
-                setData(res.data?.videos || []);
-            } catch (err) {
-                console.error("Error fetching videos:", err);
-                setError("Failed to load videos.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchVideos();
-    }, []);
-    return (
-        <div className={sideNavbar ? 'shortPage' : 'fullShortPage'}>
-            <div className="short_mainPage">
-                {loading ? (
-                    <p>Loading videos...</p>
-                ) : error ? (
-                    <p>{error}</p>
-                ) : data.length > 0 ? (
-                    data.map((item) => <ShortItem key={item._id} item={item} />)
-                ) : (
-                    <p>No videos available.</p>
-                )}
-            </div>
-        </div>
-    );
-};
-const ShortItem = ({ item }) => {
-    const [comments, setComments] = useState([]);
-    const [loadingComments, setLoadingComments] = useState(true);
-    const [showComments, setShowComments] = useState(false);
-    const [message, setMessage] = useState("");
-    const token = localStorage.getItem("token");
-    const handleComment = async () => {
-        const body = { message, video: item._id, user: item.user._id };
-        try {
-            const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, {
-                headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true,
-            });
-            setComments([resp.data.comment, ...comments]);
-            setMessage("");
-        } catch (err) {
-            toast.error("Failed to add comment.");
-        }
-    };
-    const fetchComments = useCallback(async () => {
-        try {
-            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
-            setComments(response.data.comments || []);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        } finally {
-            setLoadingComments(false);
-        }
-    }, [item._id]);
-    useEffect(() => {
-        fetchComments();
-    }, [fetchComments]);
-    const toggleComments = () => setShowComments((prev) => !prev);
-    return (
-        <div className="shortVideoBlock">
-            <div className="shortcontentBox">
-                <video src={item.videoLink} controls className="shortcontentVideo" />
-                <div className="shortTitleBox">
-                    <Link to={`/user/${item?.user?._id}`} className="shortTitleBoxProfile">
-                        <img src={item.user?.profilePic || "default_profile.jpg"} alt={`${item.user?.name || "Unknown"} profile`} className="shortTitleBoxProfilePic"/>
-                    </Link>
-                    <div className="shortTitleBoxTitle">
-                        <Link to={`/user/${item?.user?._id}`} className="shortUserName">{item.user?.name || "Unknown Channel"}</Link>
-                        <div className="shortVideoTitle">{item.title || "Untitled Video"}</div>
-                        <p className="shortVideoDescription">{item.description || "No description available"}</p>
-                    </div>
-                </div>
-            </div>
-            <div className="shortSideBar">
-                <div className="shortLikeBox">
-                    <i className="fas fa-thumbs-up"></i>
-                </div>
-                <span>{item.like?.length || 0}</span>
-                <div className="shortDislikeBox">
-                    <i className="fas fa-thumbs-down"></i>
-                </div>
-                <span>{item.dislike?.length || 0}</span>
-                <div className="shortCommentBox" onClick={toggleComments}>
-                    <i className="fas fa-comment"></i>
-                </div>
-                <span>{loadingComments ? 'Loading comments...' : comments.length}</span>
-                <div className="shortShareBox">
-                    <i className="fas fa-share"></i>
-                </div>
-            </div>
-            {showComments && (
-                <div className="commentBox">
-                    <h4>Comments ({comments.length})</h4>
-                    {loadingComments ? (
-                        <p>Loading...</p>
-                    ) : comments.length > 0 ? (
-                        comments.map((comment, index) => (
-                            <div key={index} className="comment">
-                                <Link to={`/user/${comment?.user?._id}`}>
-                                    <img src={comment.user.profilePic || "default_profile.jpg"} alt={`${comment.user.name} profile`} className="commentProfilePic"/>
-                                </Link>
-                                <div className="commentMessage">
-                                    <span>{comment.user.name}</span>
-                                    <p>{comment.message}</p>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No comments yet.</p>
-                    )}
-                    <div className="youtubeSelfComment">
-                        <Link to={`/user/${item?.user?._id}`}>
-                            <img className='video_youtubeSelfCommentProfile' src={item.user?.profilePic || "default_profile.jpg"} alt="User Profile" />
-                        </Link>
-                        <div className="addAComment">
-                            <input
-                                type="text"
-                                className="addAcommentInput"
-                                placeholder="Add a comment..."
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                            />
-                            <div className="cancelSubmitComment">
-                                <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
-                                <div className="cancelComment" onClick={handleComment}>Comment</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-export default ShortPage;
- -->
-
-
-
-
-
-
-
-
-
-<!-- 
-
- import React, { useState, useEffect, useCallback } from 'react';
+<!-- import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import CommentSection from './commentSection';
+import VideoSuggestion from './videoSuggestion';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
-import './shortPage.css';
-const ShortPage = ({ sideNavbar }) => {
+import './video.css';
+const Video = () => {
     const [like, setLike] = useState(0);
     const [dislike, setDislike] = useState(0);
+    const [userLiked, setUserLiked] = useState(false);
+    const [userDisliked, setUserDisliked] = useState(false);
     const [message, setMessage] = useState("");
-    const [data, setData] = useState(null);
+    const [replyMessage, setReplyMessage] = useState("");
     const [videoUrl, setVideoURL] = useState("");
     const { id } = useParams();
     const [comments, setComments] = useState([]);
-    const [loadingComments, setLoadingComments] = useState(true);
-    const [showComments, setShowComments] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [hasIncremented, setHasIncremented] = useState(false);
+    const [suggestedVideos, setSuggestedVideos] = useState([]);
     const [user, setUser] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [userLiked, setUserLiked] = useState(false);
-    const [userDisliked, setUserDisliked] = useState(false);
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     useEffect(() => {
@@ -224,80 +42,75 @@ const ShortPage = ({ sideNavbar }) => {
             setUser({ name, userName, about });
             setUserPic(profilePic);
         } catch (error) {
-            toast.error("Failed to fetch user profile");
+            console.error("Error fetching user profile:", error);
         }
     };
     const fetchVideoData = useCallback(async () => {
         try {
-            const res = await axios.get('http://localhost:4000/api/allVideo');
-            const fetchedData = res.data?.videos || [];
-            if (fetchedData.length > 0) {
-                setData(fetchedData[0]); 
-                setVideoURL(fetchedData[0].videoLink);
+            const videoResponse = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
+            const videoData = videoResponse.data.video;
+            setData(videoData);
+            setVideoURL(videoData.videoLink);
+            setLike(videoData.like ? videoData.like.length : 0);
+            setDislike(videoData.dislike ? videoData.dislike.length : 0);
+            if (userId) {
+                setUserLiked(videoData.like.includes(userId));
+                setUserDisliked(videoData.dislike.includes(userId));
             }
-                if (userId) {
+            const suggestedResponse = await axios.get(`http://localhost:4000/api/allVideo`);
+            setSuggestedVideos(suggestedResponse.data.videos || []);
+            if (userId) {
                 const subscriptionResponse = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
                     headers: { Authorization: `Bearer ${token}` },
                     withCredentials: true
                 });
                 const subscribedIds = subscriptionResponse.data.subscriptions.map(sub => sub._id);
-                    if (res.user && res.user._id) {
-                    setIsSubscribed(subscribedIds.includes(res.user._id));
-                }
+                setIsSubscribed(subscribedIds.includes(videoData.user._id));
             }
-    
         } catch (err) {
-            console.error("Error fetching videos:", err);
-            setError("Failed to load videos.");
+            console.error("Error fetching video data:", err);
         } finally {
             setLoading(false);
         }
-    }, [id, userId, token]);       
+    }, [id, userId, token]);
     useEffect(() => {
-            setData(null);
-            setVideoURL("");
-            setHasIncremented(false);
-            setLoading(true);
-            fetchVideoData();
+        setData(null);
+        setVideoURL("");
+        setHasIncremented(false);
+        setLoading(true);
+        fetchVideoData();
     }, [id, fetchVideoData]);
-    const fetchComments = useCallback(async () => {
-        if (!data?.id) {
-            return;
-        }
-        try {
-            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${data.id}`);
-            setComments(response.data.comments || []);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        } finally {
-            setLoadingComments(false);
-        }
-    }, [data?.id]);  
-    useEffect(() => {
-        if (data) {
-            fetchComments();
-        }
-    }, [data, fetchComments]);    
     const handleViewIncrement = async () => {
-        if (!hasIncremented && id) { // Check if id is defined
+        if (!hasIncremented) {
             try {
                 await axios.put(`http://localhost:4000/api/incrementViews/${id}`);
                 setHasIncremented(true);
             } catch (error) {
-                toast.error("Failed to increment views");
+                console.error("Error incrementing views:", error);
             }
         }
-    };    
+    };
     useEffect(() => {
         if (data && !hasIncremented) {
             handleViewIncrement();
             setHasIncremented(true);
         }
     }, [data, hasIncremented, handleViewIncrement]);
+    const fetchComments = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${id}`);
+            setComments(response.data.comments || []);
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    }, [id]);
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
     const handleComment = async () => {
         const body = { message, video: id, user: data.userId };
         try {
-            const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, {
+            const resp = await apiClient.post('http://localhost:4000/commentApi/addComment', body, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
@@ -305,7 +118,27 @@ const ShortPage = ({ sideNavbar }) => {
             setComments([newComment, ...comments]);
             setMessage("");
         } catch (err) {
+            console.error("Error in handleComment:", err);
             toast.error("Please login first to comment");
+        }
+    };
+    const handleReply = async (commentId) => {
+        if (!replyMessage) {
+            toast.error("Reply message cannot be empty");
+            return;
+        }
+        const body = { message: replyMessage, video: id, user: data.userId, parent: commentId };
+        try {
+            const resp = await apiClient.post(`http://localhost:4000/commentApi/addReply/${commentId}`, body, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const newReply = resp.data.comment;
+            setComments([newReply, ...comments]);
+            setReplyMessage("");
+        } catch (err) {
+            console.error("Error in handleReply:", err);
+            toast.error("Please login first to reply");
         }
     };
     const handleSubscribe = async () => {
@@ -317,6 +150,7 @@ const ShortPage = ({ sideNavbar }) => {
             setIsSubscribed(response.data.isSubscribed);
         } catch (error) {
             toast.error("Please login first to subscribe");
+            console.error("Error in subscribing:", error);
         }
     };
     const handleLikeDislike = async (action) => {
@@ -336,6 +170,25 @@ const ShortPage = ({ sideNavbar }) => {
             }
         } catch (error) {
             toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike video:", error);
+        }
+    };
+    const handleCommentLikeDislike = async (commentId, action) => {
+        try {
+            const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, 
+            {}, { headers: { Authorization: `Bearer ${token}` }, withCredentials: true });
+            const { like, dislike } = response.data;
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, like: Array(like).fill("dummy"), dislike: Array(dislike).fill("dummy") }
+                        : comment
+                )
+            );
+            await fetchComments();
+        } catch (error) {
+            toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike comment:", error);
         }
     };
     if (loading) {
@@ -344,90 +197,62 @@ const ShortPage = ({ sideNavbar }) => {
     if (error) {
         return <p>{error}</p>;
     }
-    const toggleComments = () => setShowComments((prev) => !prev);
     return (
-        <div className={sideNavbar ? 'shortPage' : 'fullShortPage'}>
-            <div className="short_mainPage">
-                {loading ? (<p>Loading videos...</p>) : error ? (<p>{error}</p>) : data && data.length > 0 ? (
-                    data.map((item) => 
-                        <div className="shortVideoBlock">
-                            <div className="shortcontentBox">
-                                <video src={item.videoLink} controls className="shortcontentVideo" />
-                                <div className="shortTitleBox">
-                                    <Link to={`/user/${item?.user?._id}`} className="shortTitleBoxProfile">
-                                        <img src={item.user?.profilePic || "default_profile.jpg"} alt={`${item.user?.name || "Unknown"} profile`} className="shortTitleBoxProfilePic"/>
-                                    </Link>
-                                    <div className="shortTitleBoxTitle">
-                                        <Link to={`/user/${item?.user?._id}`} className="shortUserName">{item.user?.name || "Unknown Channel"}</Link>
-                                        <div className="shortVideoTitle">{item.title || "Untitled Video"}</div>
-                                        <p className="shortVideoDescription">{item.description || "No description available"}</p>
-                                    </div>
+        <div className='video'>
+            <div className="videoPostSection">
+                <div className="video_youtube">
+                    {data && (
+                        <video width="400" controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
+                            <source src={videoUrl} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    )}
+                </div>
+                <div className="video_youtubeAbout">
+                    <div className="video_uTubeTitle">{data?.title}</div>
+                    <div className="youtube_video_ProfileBlock">
+                        <div className="youtube_video_ProfileBlock_left">
+                            <Link to={`/user/${data?.user?._id}`} className="youtube_video_ProfileBlock_left_img">
+                                <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} alt={`User Profile of ${data?.user?.name}`} />
+                            </Link>
+                            <Link to={`/user/${data?.user?._id}`} className="youtubeVideo_subsView">
+                                <div className="youtubePostProfileName">{data?.user?.name}</div>
+                                <div className="youtubePostProfileSubs">
+                                    {data?.user?.subscribers ? `${data.user.subscribers} subscribers` : "No subscribers"}
                                 </div>
-                            </div>
-                            <div className="shortSideBar">
-                                <div className="shortLikeBox">
-                                    <i className="fas fa-thumbs-up"></i>
-                                </div>
-                                <span>{item.like?.length || 0}</span>
-                                <div className="shortDislikeBox">
-                                    <i className="fas fa-thumbs-down"></i>
-                                </div>
-                                <span>{item.dislike?.length || 0}</span>
-                                <div className="shortCommentBox" onClick={toggleComments}>
-                                    <i className="fas fa-comment"></i>
-                                </div>
-                                <span>{Array.isArray(comments) ? comments.length : 0}</span>
-                                <div className="shortShareBox">
-                                    <i className="fas fa-share"></i>
-                                </div>
-                            </div>
-                            {showComments && (
-                                <div className="commentBox">
-                                    <h4>Comments ({comments.length})</h4>
-                                    {loadingComments ? (
-                                        <p>Loading...</p>
-                                    ) : comments.length > 0 ? (
-                                        comments.map((comment, index) => (
-                                            <div key={index} className="comment">
-                                                <Link to={`/user/${comment?.user?._id}`}>
-                                                    <img src={comment.user.profilePic || "default_profile.jpg"} alt={`${comment.user.name} profile`} className="commentProfilePic"/>
-                                                </Link>
-                                                <div className="commentMessage">
-                                                    <span>{comment.user.name}</span>
-                                                    <p>{comment.message}</p>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p>No comments yet.</p>
-                                    )}
-                                    <div className="youtubeSelfComment">
-                                        <Link to={`/user/${item?.user?._id}`}>
-                                            <img className='video_youtubeSelfCommentProfile' src={item.user?.profilePic || "default_profile.jpg"} alt="User Profile" />
-                                        </Link>
-                                        <div className="addAComment">
-                                            <input
-                                                type="text"
-                                                className="addAcommentInput"
-                                                placeholder="Add a comment..."
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                            />
-                                            <div className="cancelSubmitComment">
-                                                <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
-                                                <div className="cancelComment" onClick={handleComment}>Comment</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </Link>
+                            {data?.user?._id !== userId && (
+                                <div className="subscribeBtnYoutube" onClick={handleSubscribe}>
+                                    {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
                                 </div>
                             )}
                         </div>
-                    )
-                ) : (
-                    <p>No videos available.</p>
-                )}
+                        <div className="youtube_video_likeBlock">
+                            <div className="youtube_video_likeBlock_Like" onClick={() => handleLikeDislike("like")}>
+                                <i className={userLiked ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up"}></i>
+                                <div className="youtube_video_likeBlock_NoOfLikes">{like}</div>
+                            </div>
+                            <div className="youtubeVideoDivider"></div>
+                            <div className="youtube_video_likeBlock_Like" onClick={() => handleLikeDislike("dislike")}>
+                                <i className={userDisliked ? "fa-solid fa-thumbs-down" : "fa-regular fa-thumbs-down"}></i>
+                                <div className="youtube_video_likeBlock_NoOfDislikes">{dislike}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="youtube_video_About">
+                        <div className="youtube_video_Info">
+                            <div>{data?.createdAt ? data.createdAt.slice(0, 10) : "Date not available"}</div>
+                            <div>{data?.views} views</div>
+                        </div>
+                        <div>{data?.description}</div>
+                    </div>
+                </div>
+                <CommentSection comments={comments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} handleComment={handleComment} handleReply={handleReply} 
+                handleCommentLikeDislike={handleCommentLikeDislike} replyMessage={replyMessage} setReplyMessage={setReplyMessage}/>
             </div>
+            <VideoSuggestion suggestedVideos={suggestedVideos} />
+            <ToastContainer />
         </div>
     );
 };
-export default ShortPage; -->
+export default Video; -->

@@ -4,10 +4,10 @@ import './shortPage.css';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-const ShortItem = ({ item, userPic }) => {
+import CommentSection from '../../Pages/Video/commentSection';
+const ShortItem = ({ item, userId, userPic, token }) => {
     const [comments, setComments] = useState([]);
     const [message, setMessage] = useState("");
-    const [loadingComments, setLoadingComments] = useState(true);
     const [showComments, setShowComments] = useState(false);
     const [data, setData] = useState(null);
     const [like, setLike] = useState(0);
@@ -16,8 +16,6 @@ const ShortItem = ({ item, userPic }) => {
     const [userDisliked, setUserDisliked] = useState(false);
     const [hasIncremented, setHasIncremented] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(false);
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
     const videoRef = useRef(null);
     const MAX_DESCRIPTION_LENGTH = 70;
     const getShortDescription = (description) => {
@@ -49,11 +47,36 @@ const ShortItem = ({ item, userPic }) => {
             console.error("Error fetching like/dislike data:", error);
         }
     }, [item._id, userId, token]);
-
     useEffect(() => {
-        fetchLikeDislikeData();
-    }, [fetchLikeDislikeData]);
-    const handleLikeDislike = async (action) => {
+        if (item && item._id) {
+            fetchLikeDislikeData();
+        }
+    }, [fetchLikeDislikeData, item]);
+    const fetchComments = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
+            const commentsData = response.data.comments || [];
+            const commentsWithReplies = await Promise.all(commentsData.map(async (comment) => {
+                try {
+                    const repliesResponse = await axios.get(`http://localhost:4000/commentApi/getRepliesByCommentId/${comment._id}`);
+                    return {
+                        ...comment,
+                        replies: repliesResponse.data.replies || []
+                    };
+                } catch (error) {
+                    console.error(`Error fetching replies for comment ${comment._id}:`, error);
+                    return comment;
+                }
+            }));
+            setComments(commentsWithReplies);
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    }, [item._id]);
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
+    const handleVideoLikeDislike = async (action) => {
         try {
             const response = await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${item._id}?action=${action}`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -70,33 +93,41 @@ const ShortItem = ({ item, userPic }) => {
             }
         } catch (error) {
             toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike video:", error);
         }
     };
-    const fetchComments = useCallback(async () => {
-        console.log("Fetching comments for video:", item._id);
+    const handleCommentLikeDislike = async (commentId, action) => {
         try {
-            const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
-            setComments(response.data.comments || []);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        } finally {
-            setLoadingComments(false);
-        }
-    }, [item._id]);
-    useEffect(() => {
-        fetchComments();
-    }, [fetchComments]);
-    const handleComment = async () => {
-        const body = { message, video: item._id, user: userId };
-        try {
-            const resp = await apiClient.post('http://localhost:4000/commentApi/comment', body, {
+            const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true,
+                withCredentials: true
             });
-            setComments([resp.data.comment, ...comments]);
+            const { like, dislike } = response.data;
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, like, dislike }
+                        : comment
+                )
+            );
+        } catch (error) {
+            toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike comment:", error);
+        }
+    };
+    const handleComment = async () => {
+        const body = { message, video: item._id, user: data.userId };
+        try {
+            const resp = await apiClient.post('http://localhost:4000/commentApi/addComment', body, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const newComment = resp.data.comment;
+            setComments([newComment, ...comments]);
             setMessage("");
         } catch (err) {
-            toast.error("Failed to add comment.");
+            console.error("Error in handleComment:", err);
+            toast.error("Please login first to comment");
         }
     };
     const handleViewIncrement = async () => {
@@ -105,6 +136,7 @@ const ShortItem = ({ item, userPic }) => {
                 await axios.put(`http://localhost:4000/api/incrementViews/${item._id}`);
                 setHasIncremented(true);
             } catch (error) {
+                console.error("Error incrementing views:", error);
                 toast.error("Failed to increment views");
             }
         }
@@ -121,7 +153,9 @@ const ShortItem = ({ item, userPic }) => {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
-            setIsSubscribed(response.data.isSubscribed);
+            setIsSubscribed(prev => !prev);
+            toast.success(response.data.isSubscribed ? "Subscribed successfully!" : "Unsubscribed successfully!");
+            window.location.reload();
         } catch (error) {
             toast.error("Please login first to subscribe");
         }
@@ -173,30 +207,30 @@ const ShortItem = ({ item, userPic }) => {
                 <div className="customControls">
                     <div>
                         <button onClick={handlePlayPause}>
-                            {videoRef.current?.paused ?<i class="fa-solid fa-play"></i> : <i class="fa-solid fa-pause"></i>}
+                            {videoRef.current?.paused ? <i className="fa-solid fa-play"></i> : <i className="fa-solid fa-pause"></i>}
                         </button>
                         <button onClick={handleMuteUnmute}>
-                            {videoRef.current?.muted ? <i class="fa-solid fa-volume-xmark"></i> : <i class="fa-solid fa-volume-high"></i>}
+                            {videoRef.current?.muted ? <i className="fa-solid fa-volume-xmark"></i> : <i className="fa-solid fa-volume-high"></i>}
                         </button>
                     </div>
                     <button onClick={handleFullScreen}>
-                        <i class="fa-solid fa-expand"></i>
+                        <i className="fa-solid fa-expand"></i>
                     </button>
                 </div>
             </div>
             <div className="shortSideBar">
-                <div className="shortLikeBox" onClick={() => handleLikeDislike("like")}>
+                <div className="shortLikeBox" onClick={() => handleVideoLikeDislike("like")}>
                     <i className={userLiked ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up"}></i>
                 </div>
                 <span>{like}</span>
-                <div className="shortDislikeBox" onClick={() => handleLikeDislike("dislike")}>
+                <div className="shortDislikeBox" onClick={() => handleVideoLikeDislike("dislike")}>
                     <i className={userDisliked ? "fa-solid fa-thumbs-down" : "fa-regular fa-thumbs-down"}></i>
                 </div>
                 <span>{dislike}</span>
                 <div className="shortCommentBox" onClick={toggleComments}>
                     <i className="fas fa-comment"></i>
                 </div>
-                <span>{loadingComments ? 'Loading comments...' : comments.length}</span>
+                <span>{comments.length}</span>
                 <div className="shortShareBox">
                     <i className="fas fa-share"></i>
                 </div>
@@ -206,41 +240,11 @@ const ShortItem = ({ item, userPic }) => {
             </div>
             {showComments && (
                 <div className="commentBox">
-                    <div>
-                        <h4>Comments ({comments.length})</h4>
-                        {loadingComments ? (
-                            <p>Loading...</p>
-                        ) : comments.length > 0 ? (
-                            comments.map((comment, index) => (
-                                <div key={index} className="comment">
-                                    <Link to={`/user/${comment?.user?._id}`}>
-                                        <img src={comment.user.profilePic || "default_profile.jpg"} alt={`${comment.user.name} profile`} className="commentProfilePic" />
-                                    </Link>
-                                    <div className="commentMessage">
-                                        <span>{comment.user.name}</span>
-                                        <p>{comment.message}</p>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No comments yet.</p>
-                        )}
-                    </div>
-                    <div className="shortSelfComment">
-                        <Link to={`/user/${userId}`}>
-                            <img className='commentProfilePic' src={userPic} alt="User Profile" />
-                        </Link>
-                        <div className="addAComment">
-                            <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} />
-                            <div className="cancelSubmitComment">
-                                <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
-                                <div className="cancelComment" onClick={handleComment}>Comment</div>
-                            </div>
-                        </div>
-                    </div>
+                    <CommentSection id={item._id} comments={comments} setComments={setComments} fetchComments={fetchComments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} data={data} handleComment={handleComment} handleCommentLikeDislike={handleCommentLikeDislike} token={token}/>
                 </div>
             )}
         </div>
     );
 };
+
 export default ShortItem;

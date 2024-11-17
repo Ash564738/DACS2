@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const Post = require('../Modals/post');
+
 // Create a new post
 exports.createPost = async (req, res) => {
     try {
@@ -20,55 +22,125 @@ exports.createPost = async (req, res) => {
 
 // Get all posts
 exports.getAllPosts = async (req, res) => {
-    console.log("In Get All Posts Function");
     try {
-        const posts = await Post.find().populate('user', 'name profilePic userName createdAt about').sort({ createdAt: -1 });
-        console.log("Posts retrieved:", posts);
+        const posts = await Post.find().populate('user', 'name profilePic userName createdAt about')
+            .sort({ createdAt: -1 });
         res.status(200).json({ message: 'Success', posts });
     } catch (error) {
         console.error("Error in getAllPosts:", error);
         res.status(500).json({ message: 'Error fetching posts' });
     }
 };
-// Like a post
-exports.likePost = async (req, res) => {
-    console.log("In Like Post Function");
-    try {
-        const post = await Post.findById(req.params.id);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-        post.like.push(req.user._id);  // Add user ID to likes array
-        await post.save();
-        console.log("Post liked:", post);
 
-        res.status(200).json({ message: 'Post liked successfully', post });
-    } catch (error) {
-        console.error("Error in likePost:", error);
-        res.status(500).json({ message: 'Error liking post' });
-    }
-};
-// Add a comment to a post
-exports.addCommentToPost = async (req, res) => {
-    console.log("In Add Comment To Post Function");
-    const postId = req.params.id;
-    if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
-        return res.status(400).json({ message: 'Invalid post ID' });
-    }
+// Like or dislike a post
+exports.toggleLikeDislike = async (req, res) => {
+    const { id: postId } = req.params;
+    const userId = req.user._id; // Assuming you have middleware that sets req.user
+
     try {
         const post = await Post.findById(postId);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
-        post.comments.push({ user: req.user._id, content: req.body.content });
-        await post.save();
-        console.log("Comment added:", post);
 
-        res.status(201).json({ message: 'Comment added successfully', post });
+        const alreadyLiked = post.like.includes(userId);
+        const alreadyDisliked = post.dislike.includes(userId);
+
+        if (req.query.action === "like") {
+            if (alreadyLiked) {
+                post.like.pull(userId); // Remove like
+            } else {
+                post.like.push(userId); // Add like
+                post.dislike.pull(userId); // Remove from dislikes if present
+            }
+        } else if (req.query.action === "dislike") {
+            if (alreadyDisliked) {
+                post.dislike.pull(userId); // Remove dislike
+            } else {
+                post.dislike.push(userId); // Add dislike
+                post.like.pull(userId); // Remove from likes if present
+            }
+        } else {
+            return res.status(400).json({ message: 'Invalid action' });
+        }
+
+        await post.save();
+        res.status(200).json({ post });
+    } catch (error) {
+        console.error("Error in toggleLikeDislike:", error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Add a comment to a post
+exports.addCommentToPost = async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        const newComment = { user: req.user._id, content: req.body.content };
+        post.comments.push(newComment);
+        await post.save();
+
+        res.status(201).json(post);  // Return updated post with the new comment
     } catch (error) {
         console.error("Error in addCommentToPost:", error);
         res.status(500).json({ message: 'Error adding comment' });
     }
 };
 
+// Like a comment
+exports.likeComment = async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
 
+        const comment = post.comments.id(req.params.commentId);
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        if (comment.like.includes(req.user._id)) {
+            return res.status(400).json({ message: 'You have already liked this comment' });
+        }
+
+        comment.like.push(req.user._id);
+        await post.save();
+
+        res.status(200).json({ message: 'Comment liked successfully', post });
+    } catch (error) {
+        console.error("Error in likeComment:", error);
+        res.status(500).json({ message: 'Error liking comment' });
+    }
+};
+
+// Dislike a comment
+exports.dislikeComment = async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        const comment = post.comments.id(req.params.commentId);
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        if (comment.dislike.includes(req.user._id)) {
+            return res.status(400).json({ message: 'You have already disliked this comment' });
+        }
+
+        comment.dislike.push(req.user._id);
+        await post.save();
+
+        res.status(200).json({ message: 'Comment disliked successfully', post });
+    } catch (error) {
+        console.error("Error in dislikeComment:", error);
+        res.status(500).json({ message: 'Error disliking comment' });
+    }
+};
