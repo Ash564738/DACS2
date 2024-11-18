@@ -248,6 +248,8 @@
     cursor: grab;
     overflow-x: auto;
     white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .videoSuggestions_options.active {
     cursor: grabbing;
