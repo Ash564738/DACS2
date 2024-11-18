@@ -69,7 +69,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
                   <span className="likedVideoInfo">Nat King Cole · 3.9M views · 8 years ago</span>
                 </div>
               </div>
-              <div className="likedVideoOptions">
+              <div className="likedVideoFunctions">
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </div>
             </div>
@@ -84,7 +84,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
                   <span className="likedVideoInfo">Délicieuse Musique · 27M views · 11 years ago</span>
                 </div>
               </div>
-              <div className="likedVideoOptions">
+              <div className="likedVideoFunctions">
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </div>
             </div>
@@ -99,7 +99,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
                   <span className="likedVideoInfo">Jon Lajoie · 108M views · 16 years ago</span>
                 </div>
               </div>
-              <div className="likedVideoOptions">
+              <div className="likedVideoFunctions">
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </div>
             </div>
@@ -114,7 +114,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
                   <span className="likedVideoInfo">Jagwar Twin · 17M views · 11 months ago</span>
                 </div>
               </div>
-              <div className="likedVideoOptions">
+              <div className="likedVideoFunctions">
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </div>
             </div>
