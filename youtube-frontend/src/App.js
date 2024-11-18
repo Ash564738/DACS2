@@ -12,6 +12,7 @@ import axios from 'axios';
 import { RocketLaunch } from '@mui/icons-material';
 import SocialMedia from './Pages/SocialMedia/socialMedia';
 import Subscription from './Pages/Subscription/subscription';
+import LikedVideo from './Pages/LikedVideo/likedVideo';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
   const setSideNavbarFunc=(value)=>{
@@ -36,6 +37,7 @@ function App() {
         <Route path='/:id/upload' element={<VideoUpload/>} />
         <Route path='/signup' element={<SignUp/>} />
         <Route path='/subscription' element={<Subscription sideNavbar={sideNavbar}/>} />
+        <Route path='/likedVideo' element={<LikedVideo sideNavbar={sideNavbar}/>} />
       </Routes>
     </div>
   );

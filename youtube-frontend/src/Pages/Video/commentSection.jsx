@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../Utils/apiClient.js';
+
 const CommentSection = ({ id, comments, setComments, fetchComments, userId, userPic, message, setMessage, data, handleComment, handleCommentLikeDislike, token }) => {
     const [showReplyFunction, setShowReplyFunction] = useState({});
     const [showReplyInput, setShowReplyInput] = useState({});
@@ -8,24 +9,28 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
     const [replyMessage, setReplyMessage] = useState("");
     const [editCommentData, setEditCommentData] = useState({ id: null, message: "" });
     const [editReplyData, setEditReplyData] = useState({ commentId: null, replyId: null, message: "" });
+
     const toggleReplyFunction = (commentId) => {
         setShowReplyFunction((prev) => ({
             ...prev,
             [commentId]: !prev[commentId]
         }));
     };
+
     const toggleReplyInput = (commentId) => {
         setShowReplyInput((prev) => ({
             ...prev,
             [commentId]: !prev[commentId]
         }));
     };
+
     const toggleReplies = (commentId) => {
         setShowReplies((prev) => ({
             ...prev,
             [commentId]: !prev[commentId]
         }));
     };
+
     const handleReply = async (commentId) => {
         if (!replyMessage) {
             console.log("Reply message is empty");
@@ -48,6 +53,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
             console.error("Error in handleReply:", err);
         }
     };
+
     const handleReplyLikeDislike = async (commentId, replyId, action) => {
         try {
             const resp = await apiClient.put(`http://localhost:4000/commentApi/toggleReplyLikeDislike/${commentId}/${replyId}?action=${action}`, {}, {
@@ -69,6 +75,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
             console.error("Error in handleReplyLikeDislike:", err);
         }
     };
+
     const handleDeleteComment = async (commentId) => {
         try {
             await apiClient.delete(`http://localhost:4000/commentApi/deleteComment/${commentId}`, {
@@ -80,6 +87,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
             console.error("Error in handleDeleteComment:", err);
         }
     };
+
     const handleDeleteReply = async (commentId, replyId) => {
         try {
             await apiClient.delete(`http://localhost:4000/commentApi/deleteReply/${commentId}/${replyId}`, {
@@ -95,14 +103,17 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
             console.error("Error in handleDeleteReply:", err);
         }
     };
+
     const handleEditComment = (commentId, message) => {
         setEditCommentData({ id: commentId, message });
         setEditReplyData({ commentId: null, replyId: null, message: "" });
-    };    
+    };
+
     const handleEditReply = (commentId, replyId, message) => {
         setEditReplyData({ commentId, replyId, message });
         setEditCommentData({ id: null, message: "" });
     };
+
     const handleSaveEdit = async () => {
         if (editCommentData.id) {
             try {
@@ -143,9 +154,14 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
             }
         }
     };
+
+    const getTotalCommentsAndReplies = () => {
+        return comments.reduce((total, comment) => total + 1 + (comment.replies ? comment.replies.length : 0), 0);
+    };
+
     return (
         <div className="youtubeCommentSection">
-            <div className="youtubeCommentSectionTitle">{comments.length} Comments</div>
+            <div className="youtubeCommentSectionTitle">{getTotalCommentsAndReplies()} Comments</div>
             <div className="youtubeSelfComment">
                 <Link to={`/user/${userId}`}>
                     <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />

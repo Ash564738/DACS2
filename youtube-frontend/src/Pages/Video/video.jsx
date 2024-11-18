@@ -201,14 +201,12 @@ const Video = () => {
     return (
         <div className='video'>
             <div className="videoPostSection">
-                <div className="video_youtube">
                     {data && (
                         <video controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
                             <source src={videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
                     )}
-                </div>
                 <div className="video_youtubeAbout">
                     <div className="video_uTubeTitle">{data?.title}</div>
                     <div className="youtube_video_ProfileBlock">

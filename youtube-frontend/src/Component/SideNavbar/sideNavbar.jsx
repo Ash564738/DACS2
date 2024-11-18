@@ -17,58 +17,89 @@ import WatchLaterRounded from '@mui/icons-material/WatchLaterRounded';
 import SmartDisplayRounded from '@mui/icons-material/SmartDisplayRounded';
 import { Home, Videocam, Subscriptions, ChevronRight, History, PlaylistAdd, SmartDisplayOutlined, WatchLaterOutlined, ThumbUpAltOutlined, List, TrendingUp, MusicNoteRounded, VideogameAssetRounded, EmojiEventsRounded, NewspaperRounded, Settings, FeedbackOutlined, HelpOutlineOutlined, FlagRounded } from '@mui/icons-material';
 import axios from 'axios';
+
 const SideNavbar = ({ sideNavbar }) => {
     const [subscriptions, setSubscriptions] = useState([]);
     const [activeIcons, setActiveIcons] = useState({
         home: false,
         shorts: false,
         socialMedia: false,
-        subscriptions: false
+        subscriptions: false,
+        history: false,
+        playlist: false,
+        yourVideos: false,
+        watchLater: false,
+        likedVideos: false,
+        trending: false,
+        music: false,
+        gaming: false,
+        news: false,
+        sports: false,
+        settings: false,
+        reportHistory: false,
+        help: false,
+        sendFeedback: false
     });
     const location = useLocation();
+
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) fetchUserSubscriptions(userId);
     }, []);
+
     const fetchUserSubscriptions = async (userId) => {
         try {
-          const token = localStorage.getItem("token");
-          const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-          });
-          console.log("Subscriptions Response:", response.data);
-          setSubscriptions(response.data.subscribedUsers || []);
+            const token = localStorage.getItem("token");
+            const response = await apiClient.get(`http://localhost:4000/auth/getSubscriptions`, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            });
+            console.log("Subscriptions Response:", response.data);
+            setSubscriptions(response.data.subscribedUsers || []);
         } catch (error) {
-          console.error("Error fetching subscriptions:", error.response?.data || error.message);
+            console.error("Error fetching subscriptions:", error.response?.data || error.message);
         }
-      };          
+    };
+
     useEffect(() => {
         console.log("Updated subscriptions:", subscriptions);
     }, [subscriptions]);
+
     useEffect(() => {
         const pathToIcon = {
             "/": "home",
             "/short": "shorts",
             "/socialMedia": "socialMedia",
-            "/subscription": "subscriptions"
+            "/subscription": "subscriptions",
+            "/history": "history",
+            "/playlist": "playlist",
+            "/your-videos": "yourVideos",
+            "/watch-later": "watchLater",
+            "/likedVideo": "likedVideos",
+            "/trending": "trending",
+            "/music": "music",
+            "/gaming": "gaming",
+            "/news": "news",
+            "/sports": "sports",
+            "/settings": "settings",
+            "/report-history": "reportHistory",
+            "/help": "help",
+            "/send-feedback": "sendFeedback"
         };
         const activeIcon = pathToIcon[location.pathname];
-        setActiveIcons({
-            home: activeIcon === "home",
-            shorts: activeIcon === "shorts",
-            socialMedia: activeIcon === "socialMedia",
-            subscriptions: activeIcon === "subscriptions"
-        });
+        setActiveIcons((prevIcons) => ({
+            ...prevIcons,
+            [activeIcon]: true
+        }));
     }, [location.pathname]);
+
     const handleIconToggle = (iconName) => {
-        setActiveIcons({
-            home: iconName === "home",
-            shorts: iconName === "shorts",
-            socialMedia: iconName === "socialMedia",
-            subscriptions: iconName === "subscriptions"
-        });
+        setActiveIcons((prevIcons) => ({
+            ...prevIcons,
+            [iconName]: !prevIcons[iconName]
+        }));
     };
+
     const sidebarOptions = [
         {
             icon: activeIcons.home ? <Home /> : <HomeOutlinedIcon />,
@@ -95,19 +126,28 @@ const SideNavbar = ({ sideNavbar }) => {
             name: "subscriptions"
         }
     ];
+
     const middleOptions = [
-        { icon: <History />, label: "History" },
-        { icon: <PlaylistAdd />, label: "Playlist" },
-        { icon: <SmartDisplayOutlined />, label: "Your Videos" }, // SmartDisplayRounded
-        { icon: <WatchLaterOutlined />, label: "Watch Later" }, // WatchLaterRounded
-        { icon: <ThumbUpAltOutlined />, label: "Liked Videos" } // ThumbUpAltRounded
+        { icon: activeIcons.history ? <History /> : <History />, label: "History", link: "/history", name: "history" },
+        { icon: activeIcons.playlist ? <PlaylistAdd /> : <PlaylistAdd />, label: "Playlist", link: "/playlist", name: "playlist" },
+        { icon: activeIcons.yourVideos ? <SmartDisplayRounded /> : <SmartDisplayOutlined />, label: "Your Videos", link: "/your-videos", name: "yourVideos" },
+        { icon: activeIcons.watchLater ? <WatchLaterRounded /> : <WatchLaterOutlined />, label: "Watch Later", link: "/watch-later", name: "watchLater" },
+        { icon: activeIcons.likedVideos ? <ThumbUpAltRounded /> : <ThumbUpAltOutlined />, label: "Liked Videos", link: "/likedVideo", name: "likedVideos" }
     ];
+
     const exploreOptions = [
-        { icon: <TrendingUp />, label: "Trending" },
-        { icon: <MusicNoteRounded />, label: "Music" },
-        { icon: <VideogameAssetOutlinedIcon />, label: "Gaming" }, // VideogameAssetRounded
-        { icon: <NewspaperRounded />, label: "News" },
-        { icon: <EmojiEventsOutlinedIcon />, label: "Sports" } // EmojiEventsRounded
+        { icon: activeIcons.trending ? <TrendingUp /> : <TrendingUp />, label: "Trending", link: "/trending", name: "trending" },
+        { icon: activeIcons.music ? <MusicNoteRounded /> : <MusicNoteRounded />, label: "Music", link: "/music", name: "music" },
+        { icon: activeIcons.gaming ? <VideogameAssetRounded /> : <VideogameAssetOutlinedIcon />, label: "Gaming", link: "/gaming", name: "gaming" },
+        { icon: activeIcons.news ? <NewspaperRounded /> : <NewspaperRounded />, label: "News", link: "/news", name: "news" },
+        { icon: activeIcons.sports ? <EmojiEventsRounded /> : <EmojiEventsOutlinedIcon />, label: "Sports", link: "/sports", name: "sports" }
+    ];
+
+    const footerOptions = [
+        { icon: activeIcons.settings ? <Settings /> : <SettingsOutlinedIcon />, label: "Settings", link: "/settings", name: "settings" },
+        { icon: activeIcons.reportHistory ? <FlagRounded /> : <EmojiFlagsIcon />, label: "Report History", link: "/report-history", name: "reportHistory" },
+        { icon: activeIcons.help ? <HelpOutlineOutlined /> : <HelpOutlineOutlined />, label: "Help", link: "/help", name: "help" },
+        { icon: activeIcons.sendFeedback ? <FeedbackOutlined /> : <FeedbackOutlined />, label: "Send Feedback", link: "/send-feedback", name: "sendFeedback" }
     ];
 
     const footerLinks = [
@@ -135,10 +175,10 @@ const SideNavbar = ({ sideNavbar }) => {
                     <ChevronRight />
                 </div>
                 {middleOptions.map((option, index) => (
-                    <div key={index} className="home_sideNavbarTopOption">
+                    <Link to={option.link} key={index} className="home_sideNavbarTopOption" onClick={() => handleIconToggle(option.name)}>
                         {option.icon}
                         <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
-                    </div>
+                    </Link>
                 ))}
             </div>
             <div className="home_sideNavbarMiddle">
@@ -155,30 +195,29 @@ const SideNavbar = ({ sideNavbar }) => {
                 ) : (
                     <div className="home_sideNavbarTopOptionTitle">No subscriptions available</div>
                 )}
-                <div className="home_sideNavbarTopOption">
+                <Link to="/all-subscriptions" className="home_sideNavbarTopOption">
                     <List />
                     <div className="home_sideNavbarTopOptionTitle">All Subscriptions</div>
-                </div>
+                </Link>
             </div>
             <div className="home_sideNavbarMiddle">
                 <div className="home_sideNavbarTopOption">
                     <div className="home_sideNavbarTopOptionTitleHeader">Explore</div>
                 </div>
                 {exploreOptions.map((option, index) => (
-                    <div key={index} className="home_sideNavbarTopOption">
+                    <Link to={option.link} key={index} className="home_sideNavbarTopOption" onClick={() => handleIconToggle(option.name)}>
                         {option.icon}
                         <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
-                    </div>
+                    </Link>
                 ))}
             </div>
             <div className="home_sideNavbarMiddle">
-                {[{ icon: <SettingsOutlinedIcon />, label: "Settings" }, { icon: <EmojiFlagsIcon />, label: "Report History" }, { icon: <HelpOutlineOutlined />, label: "Help" }, { icon: <FeedbackOutlined />, label: "Send Feedback" }]
-                    .map((option, index) => (
-                        <div key={index} className="home_sideNavbarTopOption">
-                            {option.icon}
-                            <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
-                        </div>
-                    ))}
+                {footerOptions.map((option, index) => (
+                    <Link to={option.link} key={index} className="home_sideNavbarTopOption" onClick={() => handleIconToggle(option.name)}>
+                        {option.icon}
+                        <div className="home_sideNavbarTopOptionTitle">{option.label}</div>
+                    </Link>
+                ))}
             </div>
             <div className="copyright">
                 {footerLinks.map((links, index) => (

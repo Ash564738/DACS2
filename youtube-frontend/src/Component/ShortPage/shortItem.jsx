@@ -5,6 +5,7 @@ import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import CommentSection from '../../Pages/Video/commentSection';
+
 const ShortItem = ({ item, userId, userPic, token }) => {
     const [comments, setComments] = useState([]);
     const [message, setMessage] = useState("");
@@ -18,12 +19,14 @@ const ShortItem = ({ item, userId, userPic, token }) => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const videoRef = useRef(null);
     const MAX_DESCRIPTION_LENGTH = 70;
+
     const getShortDescription = (description) => {
         if (!description) return "No description available";
         return description.length > MAX_DESCRIPTION_LENGTH
             ? `${description.substring(0, MAX_DESCRIPTION_LENGTH)}...`
             : description;
     };
+
     const fetchLikeDislikeData = useCallback(async () => {
         try {
             const videoResponse = await axios.get(`http://localhost:4000/api/getVideoById/${item._id}`);
@@ -47,11 +50,13 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             console.error("Error fetching like/dislike data:", error);
         }
     }, [item._id, userId, token]);
+
     useEffect(() => {
         if (item && item._id) {
             fetchLikeDislikeData();
         }
     }, [fetchLikeDislikeData, item]);
+
     const fetchComments = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:4000/commentApi/getCommentByVideoId/${item._id}`);
@@ -73,9 +78,11 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             console.error("Error fetching comments:", error);
         }
     }, [item._id]);
+
     useEffect(() => {
         fetchComments();
     }, [fetchComments]);
+
     const handleVideoLikeDislike = async (action) => {
         try {
             const response = await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${item._id}?action=${action}`, {}, {
@@ -96,6 +103,7 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             console.error("Error in like/dislike video:", error);
         }
     };
+
     const handleCommentLikeDislike = async (commentId, action) => {
         try {
             const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, {}, {
@@ -115,6 +123,7 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             console.error("Error in like/dislike comment:", error);
         }
     };
+
     const handleComment = async () => {
         const body = { message, video: item._id, user: data.userId };
         try {
@@ -130,6 +139,7 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             toast.error("Please login first to comment");
         }
     };
+
     const handleViewIncrement = async () => {
         if (!hasIncremented) {
             try {
@@ -141,12 +151,14 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             }
         }
     };
+
     useEffect(() => {
         if (data && !hasIncremented) {
             handleViewIncrement();
             setHasIncremented(true);
         }
     }, [data, hasIncremented, handleViewIncrement]);
+
     const handleSubscribe = async () => {
         try {
             const response = await apiClient.post(`http://localhost:4000/auth/toggleSubscription/${data.user._id}`, {}, {
@@ -160,7 +172,9 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             toast.error("Please login first to subscribe");
         }
     };
+
     const toggleComments = () => setShowComments((prev) => !prev);
+
     const handlePlayPause = () => {
         if (videoRef.current.paused) {
             videoRef.current.play();
@@ -168,9 +182,11 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             videoRef.current.pause();
         }
     };
+
     const handleMuteUnmute = () => {
         videoRef.current.muted = !videoRef.current.muted;
     };
+
     const handleFullScreen = () => {
         if (videoRef.current.requestFullscreen) {
             videoRef.current.requestFullscreen();
@@ -182,6 +198,11 @@ const ShortItem = ({ item, userId, userPic, token }) => {
             videoRef.current.msRequestFullscreen();
         }
     };
+
+    const getTotalCommentsAndReplies = () => {
+        return comments.reduce((total, comment) => total + 1 + (comment.replies ? comment.replies.length : 0), 0);
+    };
+
     return (
         <div className="shortVideoBlock">
             <div className="shortContentBox">
@@ -230,7 +251,7 @@ const ShortItem = ({ item, userId, userPic, token }) => {
                 <div className="shortCommentBox" onClick={toggleComments}>
                     <i className="fas fa-comment"></i>
                 </div>
-                <span>{comments.length}</span>
+                <span>{getTotalCommentsAndReplies()}</span>
                 <div className="shortShareBox">
                     <i className="fas fa-share"></i>
                 </div>
