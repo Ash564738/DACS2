@@ -216,14 +216,15 @@
     font-size: 12px;
 }
 
-.post-input-container, .comment-section{
+.post-input-container, .comment-input{
     display: flex;
     align-items: center;
     padding-left: 55px;
     padding-top: 20px;
+    width: 100%;
 }
 
-.post-input-container textarea, .comment-section input{
+.post-input-container textarea, .comment-input input{
     width: 100%;
     border: 0;
     outline: 0;
@@ -241,11 +242,16 @@
 
 .add-post-links a{
     text-decoration: none;
-    display: flex;
     align-items: center;
     color: #ffff;
     margin-right: 30px;
-    font-size: 13px;
+    margin-left: 10px;
+    size: 14px;
+    cursor: pointer;
+}
+
+.add-post-links a i{
+    margin-right: 5px;
 }
 
 .add-post-links a img{
@@ -260,6 +266,11 @@
     padding: 20px;
     color: white;
     margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
 }
 
 .user-profile span{
@@ -272,6 +283,7 @@
     margin: 15px 0;
     font-size: 15px;
     display: flex;
+    width: 100%;
 }
 
 .post-text span{
@@ -284,8 +296,19 @@
     text-decoration: none;
 }
 
+.img-post{
+    justify-items: center;
+    position: relative;
+    display: flex;
+}
+.img-post img {
+    display: flex;
+    position: relative;
+    align-self: center;
+}
+
 .post-img{
-    width: 100%;
+    width: auto;
     border-radius: 4px;
     margin-bottom: 5px;
 }
@@ -294,6 +317,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    width: 100%;
 }
 
 .activity-icons div .fas{
@@ -306,6 +331,7 @@
     align-items: center;
     margin-right: 30px;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .post-profile-icon{
