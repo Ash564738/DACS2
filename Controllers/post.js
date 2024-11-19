@@ -23,7 +23,12 @@ exports.createPost = async (req, res) => {
 // Get all posts
 exports.getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find().populate('user', 'name profilePic userName createdAt about')
+        const posts = await Post.find()
+            .populate('user')
+            .populate({
+                path: 'comments.user',
+                model: 'User'
+            })
             .sort({ createdAt: -1 });
         res.status(200).json({ message: 'Success', posts });
     } catch (error) {
@@ -74,17 +79,21 @@ exports.toggleLikeDislike = async (req, res) => {
 
 // Add a comment to a post
 exports.addCommentToPost = async (req, res) => {
+    console.log("In addCommentToPost");
     try {
         const post = await Post.findById(req.params.id);
         if (!post) {
+            console.log("Post not found");
             return res.status(404).json({ message: 'Post not found' });
         }
-
-        const newComment = { user: req.user._id, content: req.body.content };
+        const newComment = {
+            user: req.user.userId,
+            content: req.body.content
+        };
         post.comments.push(newComment);
         await post.save();
 
-        res.status(201).json(post);  // Return updated post with the new comment
+        res.status(201).json(post);
     } catch (error) {
         console.error("Error in addCommentToPost:", error);
         res.status(500).json({ message: 'Error adding comment' });

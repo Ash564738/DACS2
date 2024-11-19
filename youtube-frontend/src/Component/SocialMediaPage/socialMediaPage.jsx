@@ -123,49 +123,18 @@ const SocialMediaPage = ({ sideNavbar }) => {
     };
     // Submit a comment
     const handleCommentSubmit = (postId) => {
+        console.log("In handleCommentSubmit");
         if (comment.trim()) {
-        axios.post('http://localhost:4000/posts/${postId}/comments', { user: userId, content: comment })
-            .then(response => {
-            setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
-            setComment('');
-            })
-            .catch(error => console.error('Error adding comment:', error));
-        }
-    };
-    // Toggle Chat function (moved outside of useEffect for better readability)
-    const toggleChat = () => {
-        const chatWidget = document.querySelector('.chat-container');
-        if (chatWidget) {
-            chatWidget.style.display = chatWidget.style.display === 'none' || chatWidget.style.display === '' ? 'block' : 'none';
-        }
-    };
-    // Send Message function (also moved outside of useEffect)
-    const sendMessage = () => {
-        const inputField = document.getElementById('chatInput');
-        const chatBody = document.querySelector('.chat-body');
-        const userMessage = inputField.value.trim();
-        if (userMessage === '') return;
-        const userMessageElement = document.createElement('div');
-        userMessageElement.classList.add('message', 'user-message');
-        userMessageElement.textContent = userMessage;
-        chatBody.appendChild(userMessageElement);
-        const systemResponse = generateResponse(userMessage);
-        const systemMessageElement = document.createElement('div');
-        systemMessageElement.classList.add('message', 'system-message');
-        systemMessageElement.textContent = systemResponse;
-        chatBody.appendChild(systemMessageElement);
-        chatBody.scrollTop = chatBody.scrollHeight;
-        inputField.value = '';
-    };
-    const generateResponse = (userMessage) => {
-        const responses = [
-            "Xin chào! Tôi có thể giúp gì cho bạn?",
-            "Cảm ơn bạn đã nhắn tin!",
-            "Để biết thêm thông tin, vui lòng chờ trong giây lát.",
-            "Tôi đang xử lý yêu cầu của bạn, xin đợi chút nhé."
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
-    };
+            apiClient.post(`http://localhost:4000/posts/${postId}/comments`,{ user: userId, content: comment }, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            }).then(response => {
+                setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
+                setComment('');
+                })
+                .catch(error => console.error('Error adding comment:', error));
+            }
+        };
     return (
         <div className={sideNavbar ? 'socialMediaPage' : 'fullSocialMediaPage'}>
             <div className="main-content">
@@ -205,7 +174,7 @@ const SocialMediaPage = ({ sideNavbar }) => {
                     <div key={post._id} className="post-container">
                         <div className="post-row">
                             <div className="user-profile">
-                                <img src={userPic} alt="User" />
+                                <img src={post.user?.profilePic} alt="User" />
                                 <div>
                                     <p>{post.user?.name}</p>
                                     <span>{new Date(post.createdAt).toLocaleString()}</span>
@@ -245,9 +214,9 @@ const SocialMediaPage = ({ sideNavbar }) => {
                         <div className="commentSection">
                             {post.comments?.map((comment) => (
                                 <div key={comment._id} className="comment-item">
-                                    <img src={comment.userAvatar || userPic} alt="User" className="comment-avatar" />
+                                    <img src={comment.user?.profilePic} alt="User" className="comment-avatar" />
                                     <div className="comment-details">
-                                        <p className="comment-user">{comment.user}</p>
+                                        <p className="comment-user">{comment.user?.name}</p>
                                         <p className="comment-text">{comment.content}</p>
                                     </div>
                                 </div>
@@ -324,36 +293,6 @@ const SocialMediaPage = ({ sideNavbar }) => {
             </div>
         </div>
 
-        <div className="chat-icon" onClick={toggleChat}>
-                <i className="fa-solid fa-comment-dots"></i>
-            </div>
-
-            <div className="chat-container">
-                <div className="chat-header">
-                    <img src="user-profile.jpg" alt="Profile" className="profile-pic" />
-                    <div className="user-info">
-                        <h3>Mèo méo meo mèo meo</h3>
-                        <span>Hoạt động 12 phút trước</span>
-                    </div>
-                    <div className="chat-actions">
-                        <button>📞</button>
-                        <button>📹</button>
-                        <button>⬜</button>
-                    </div>
-                    <button className="close-chat" onClick={toggleChat}>×</button>
-                </div>
-                <div className="chat-body">
-                    <div className="message">Hello! How can I help you today?</div>
-                </div>
-                <div className="chat-footer">
-                    <button>🖼️</button>
-                    <button>🎥</button>
-                    <button>GIF</button>
-                    <input id="chatInput" type="text" placeholder="Aa" />
-                    <button onClick={sendMessage}>Gửi</button>
-                    <button>👍</button>
-                </div>
-            </div>
         </div>
     );
 };

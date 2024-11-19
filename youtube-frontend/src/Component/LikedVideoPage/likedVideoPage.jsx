@@ -38,6 +38,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (data.length === 0) return;
     const slider = document.querySelector('.likedVideoPage_options');
@@ -80,6 +81,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
         slider.removeEventListener('mousemove', handleMouseMove);
     };
   }, [data]);
+
   const options = [
     "All",
     "Music",
@@ -113,12 +115,16 @@ const LikedVideoPage = ({ sideNavbar }) => {
     <div className={sideNavbar ? 'likedVideoPage' : 'fullLikedVideoPage'}>
       <div className={sideNavbar ? "likedVideo_mainPage" : "likedVideo_mainPageWithoutLink"}>
         <div className="likedVideoCard">
-          <img className="likedVideoCardImg" src={firstVideoThumbnail} alt="First Video Thumbnail" />
-          <div className="likedVideoCardInfo">
-            <span className="likedVideoCardTitle">Liked videos</span>
-            <span className="likedVideoCardOwner">{ownerName}</span>
-            <span className="likedVideoCardStats">{data.length} videos · No views · Updated {lastUpdated}</span>
-            <div className="likedVideoCardControl">
+          <div className="likedVideoCardOverlay" style={{ backgroundImage: `url(${firstVideoThumbnail})` }}></div>
+          <div className= "likedVideoCardContent">
+            <img className="likedVideoCardImg" src={firstVideoThumbnail} alt="First Video Thumbnail" />
+            <div className="likedVideoCardInfo">
+              <h3 className="likedVideoCardTitle">Liked videos</h3>
+              <span className="likedVideoCardOwner">{ownerName}</span>
+              <span className="likedVideoCardStats">{data.length} videos · No views · Updated {lastUpdated}</span>
+            </div>
+          </div>
+          <div className="likedVideoCardControl">
               <div className="likedVideoCardControlButton">
                 <i className="fa fa-play"></i>
                 <span>Play all</span>
@@ -128,7 +134,6 @@ const LikedVideoPage = ({ sideNavbar }) => {
                 <span>Shuffle</span>
               </div>
             </div>
-          </div>
         </div>
         <div className="likedVideoWrapper">
           <div className="likedVideoPage_options">

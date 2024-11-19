@@ -80,20 +80,16 @@ exports.toggleLikeDislike = async (req, res) => {
         if (action === "like") {
             if (video.like.includes(userId)) {
                 video.like.pull(userId);
-                console.log("User removed from likes:", userId);
             } else {
                 video.like.push(userId);
                 video.dislike.pull(userId);
-                console.log("User added to likes and removed from dislikes:", userId);
             }
         } else if (action === "dislike") {
             if (video.dislike.includes(userId)) {
                 video.dislike.pull(userId);
-                console.log("User removed from dislikes:", userId);
             } else {
                 video.dislike.push(userId);
                 video.like.pull(userId);
-                console.log("User added to dislikes and removed from likes:", userId);
             }
         } else {
             console.log("Invalid action:", action);

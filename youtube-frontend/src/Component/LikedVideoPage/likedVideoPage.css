@@ -34,36 +34,82 @@
   align-items: center;
   min-height: 85vh;
   padding: 25px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #0F0F0F;
   border-radius: 20px;
   min-width: 380px;
   max-width: 380px;
+  gap: 15px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.likedVideoCardOverlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: inherit;
+  background-size: cover;
+  background-position: center;
+  background: linear-gradient(to top, #0F0F0F, transparent);
+  z-index: 2;
+}
+
+.likedVideoCardOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(20px);
+  z-index: 2;
+}
+.likedVideoCardContent{
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+  width: 100%;
+  z-index: 3;
 }
 
 .likedVideoCardImg {
   display: flex;
   align-self: center;
+  object-fit: cover;
   width: 100%;
   height: 180px;
-  border-radius: 8px;
+  border-radius: 10px;
+  z-index: 3;
 }
 
 .likedVideoCardInfo {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
   width: 100%;
+  z-index: 3;
 }
 
-.likedVideoCardOwner,.likedVideoCardTitle,.likedVideoTitle, .likedVideoCardControl {
+.likedVideoCardOwner,
+.likedVideoCardTitle,
+.likedVideoTitle,
+.likedVideoCardControl {
   font-weight: bold;
 }
-.likedVideoCardStats, .likedVideoInfo{
+
+.likedVideoCardStats,
+.likedVideoInfo {
   color: rgb(168, 168, 168);
 }
 
 .likedVideoCardControl {
+  z-index: 3;
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -79,7 +125,8 @@
   color: black;
   border: none;
   background-color: white;
-  padding: 5px 30px;
+  height: 35px;
+  padding: 0 38px;
   border-radius: 30px;
   gap: 5px;
 }
@@ -90,8 +137,9 @@
 
 .likedVideoWrapper {
   display: flex;
+  position: relative;
   flex-direction: column;
-  width: 65%;
+  width: 100%;
   gap: 15px;
   margin-left: 390px;
   min-height: 85vh;
@@ -102,21 +150,24 @@
   position: fixed;
   box-sizing: border-box;
   z-index: 1;
+  top: 56px;
   width: 100%;
   gap: 10px;
   flex-shrink: 0;
   height: auto;
   background-color: #0F0F0F;
-  padding: 0 0 10px 38.91px;
+  padding: 20px 0 10px 38.91px;
   cursor: grab;
   overflow-x: auto;
   white-space: nowrap;
   -webkit-user-select: none;
   user-select: none;
 }
+
 .likedVideoPage_options.active {
   cursor: grabbing;
 }
+
 .likedVideoPage_options::-webkit-scrollbar {
   height: 5px;
 }
@@ -134,21 +185,23 @@
   align-items: center;
   cursor: pointer;
 }
+
 .likedVideoPage_option.active {
   font-weight: bold;
   background-color: white;
   color: black;
 }
+
 .likedVideoList {
   display: flex;
   flex-direction: column;
   position: relative;
   overflow-y: auto;
-  white-space: nowrap;
   top: 50px;
   width: 100%;
   gap: 15px;
 }
+
 .likedVideo {
   display: flex;
   flex-direction: row;
@@ -182,7 +235,10 @@
 
 .likedVideo img {
   height: 100px;
+  min-width: 200px;
+  max-width: 200px;
   border-radius: 10px;
+  object-fit: cover;
 }
 
 .likedVideoDetails p:first-child {
@@ -195,9 +251,65 @@
   color: gray;
 }
 
-.likedVideoFunctions{
+.likedVideoFunctions {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1000px) {
+  .likedVideo_mainPageWithoutLink, .likedVideo_mainPage {
+    white-space: wrap;
+    flex-direction: column;
+  }
+  .likedVideoCard {
+    position: relative;
+    padding: 20px 38.91px 20px 38.91px;
+    margin: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 260px;
+    min-height: 260px;
+    max-height: 260px;
+  }
+  .likedVideoCardContent{
+    flex-direction: row;
+    justify-content: center;
+  }
+  .likedVideoCardImg {
+    width: 40%;
+    object-fit: cover;
+  }
+  .likedVideoCardControl {
+    justify-content: center;
+    width: 100%;
+  }
+  .likedVideoCardControl div{
+    justify-content: center;
+    width: 50%;
+  }
+  .likedVideoWrapper {
+    margin-left: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .likedVideoPage_options {
+    position: relative;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    top: 0;
+    padding: 15px 0 10px 0;
+    margin: 0;
+  }
+  .likedVideoList {
+    top: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
 }
