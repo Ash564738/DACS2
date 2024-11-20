@@ -120,6 +120,18 @@ exports.getVideosByUserId = async (req, res) => {
   }
 };
 
+// Get all users
+exports.getAllUsers = async (req, res) => {
+  console.log("In getAllUsers Function");
+  try {
+    const users = await User.find();
+    res.json({ users });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 exports.getUserById = async (req, res) => {
   console.log("In getUserById Function");
   try {

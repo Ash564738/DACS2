@@ -9,9 +9,6 @@ const commentPostSchema = new mongoose.Schema({
     like: [{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
     }],
-    dislike: [{ 
-        type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
-    }]
 }, { timestamps: true });
 const postSchema = new mongoose.Schema({
     user: {
@@ -23,9 +20,6 @@ const postSchema = new mongoose.Schema({
     image: String,
     video: String,
     like: [{ 
-        type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
-    }],
-    dislike: [{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'user', default: [] 
     }],
     comments: [commentPostSchema]

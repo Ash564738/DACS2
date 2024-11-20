@@ -6,23 +6,31 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
+import Chat from '../Chat/chat.jsx'
 const SocialMediaPage = ({ sideNavbar }) => {
     const [posts, setPosts] = useState([]);
     const [newPost, setNewPost] = useState('');
     const [comment, setComment] = useState('');
     const [user, setUser] = useState({});
+    const [friendId, setfriendId] = useState({});
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-    const [selectedFile, setSelectedFile] = useState(null);
     const [inputField, setInputField] = useState({"content": "","image": "","video": ""});
     const fileInputRef = useRef(null);
+    const [likedComments, setLikedComments] = useState({});
+    const [replyFields, setReplyFields] = useState({});
+    const [replyText, setReplyText] = useState({});
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [isChatVisible, setIsChatVisible] = useState(false);
+
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
             fetchUserProfile(userId);
         }
     }, []);
+
     const fetchUserProfile = async (userId) => {
         try {
             const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {},{
@@ -36,6 +44,7 @@ const SocialMediaPage = ({ sideNavbar }) => {
             console.error("Error fetching user data:", error);
         }
     };
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -47,32 +56,36 @@ const SocialMediaPage = ({ sideNavbar }) => {
         };
         fetchPosts();
     }, []);
-    console.log(inputField);
-    useEffect(()=>{
-        let isLogin = localStorage.getItem("userId");
-        if(isLogin===null){
-        }
-    },[])
+
+    useEffect(() => {
+        console.log('fetchOnlineUsers:');
+        const fetchOnlineUsers = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/auth/getAllUsers');
+                setOnlineUsers(response.data.users);
+            } catch (error) {
+                console.error('Error fetching online users:', error);
+            }
+        };
+        fetchOnlineUsers();
+    }, []);
 
     const openFileDialog = () => {
         fileInputRef.current.click();
     };
+
     const uploadImage = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-    
         const data = new FormData();
         data.append('file', file);
         data.append('upload_preset', 'Metube');
-    
         const type = file.type.startsWith('image') ? 'image' : 'video';
-        
         try {
             const response = await axios.post(
                 `https://api.cloudinary.com/v1_1/dicsxejp4/${type}/upload`,
                 data
             );
-    
             if (response.data.secure_url) {
                 setInputField((prev) => ({
                     ...prev,
@@ -82,7 +95,8 @@ const SocialMediaPage = ({ sideNavbar }) => {
         } catch (error) {
             console.error('Error uploading file:', error);
         }
-    };    
+    };
+
     const handlePostSubmit = async () => {
         if (newPost.trim() || inputField.image || inputField.video) {
             try {
@@ -92,12 +106,10 @@ const SocialMediaPage = ({ sideNavbar }) => {
                     image: inputField.image,
                     video: inputField.video,
                 };
-    
                 const response = await axios.post(
                     'http://localhost:4000/posts/createPost',
                     postData
                 );
-    
                 setPosts((prevPosts) => [response.data.post, ...prevPosts]);
                 setNewPost('');
                 setInputField({ content: '', image: '', video: '' });
@@ -107,65 +119,74 @@ const SocialMediaPage = ({ sideNavbar }) => {
         } else {
             console.error('Post content or media is required');
         }
-    };    
-    // Toggle like or dislike a post
-    const handleLikeDislike = async (postId, action) => {
-        try {
-            const response = await apiClient.put(
-                `http://localhost:4000/posts/${postId}/${action}`, // Updated the URL to target the correct post
-                {},
-                { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
-            );
-            setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
-        } catch (error) {
-            console.error('Error toggling like/dislike:', error);
-        }
     };
-    // Submit a comment
+
     const handleCommentSubmit = (postId) => {
+        console.log("In handleCommentSubmit");
         if (comment.trim()) {
-        axios.post('http://localhost:4000/posts/${postId}/comments', { user: userId, content: comment })
-            .then(response => {
-            setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
-            setComment('');
-            })
-            .catch(error => console.error('Error adding comment:', error));
+            apiClient.post(`http://localhost:4000/posts/${postId}/comments`,{ user: userId, content: comment }, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            }).then(response => {
+                setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data : post));
+                setComment('');
+                })
+                .catch(error => console.error('Error adding comment:', error));
+            }
+        };
+
+    const handleLikePost = async (postId) => {
+        console.log("In handleLikePost ")
+        try {
+            const response = await apiClient.post(`http://localhost:4000/posts/${postId}/like`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            });
+            setPosts(prevPosts => prevPosts.map(post => post._id === postId ? response.data.post : post));
+        } catch (error) {
+            console.error('Error liking post:', error);
         }
     };
-    // Toggle Chat function (moved outside of useEffect for better readability)
-    const toggleChat = () => {
-        const chatWidget = document.querySelector('.chat-container');
-        if (chatWidget) {
-            chatWidget.style.display = chatWidget.style.display === 'none' || chatWidget.style.display === '' ? 'block' : 'none';
+
+    const handleReplySubmit = async (commentId) => {
+        if (replyText[commentId]?.trim()) {
+            try {
+                const response = await apiClient.post(
+                    `http://localhost:4000/comments/${commentId}/reply`,
+                    { content: replyText[commentId], user: userId },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                        withCredentials: true,
+                    }
+                );
+                setPosts((prevPosts) =>
+                    prevPosts.map((post) =>
+                        post.comments.some((c) => c._id === commentId)
+                            ? {
+                                  ...post,
+                                  comments: post.comments.map((c) =>
+                                      c._id === commentId
+                                          ? { ...c, replies: [...(c.replies || []), response.data.reply] }
+                                          : c
+                                  ),
+                              }
+                            : post
+                    )
+                );
+                setReplyFields((prev) => ({ ...prev, [commentId]: false }));
+                setReplyText((prev) => ({ ...prev, [commentId]: '' }));
+            } catch (error) {
+                console.error('Error submitting reply:', error);
+            }
         }
     };
-    // Send Message function (also moved outside of useEffect)
-    const sendMessage = () => {
-        const inputField = document.getElementById('chatInput');
-        const chatBody = document.querySelector('.chat-body');
-        const userMessage = inputField.value.trim();
-        if (userMessage === '') return;
-        const userMessageElement = document.createElement('div');
-        userMessageElement.classList.add('message', 'user-message');
-        userMessageElement.textContent = userMessage;
-        chatBody.appendChild(userMessageElement);
-        const systemResponse = generateResponse(userMessage);
-        const systemMessageElement = document.createElement('div');
-        systemMessageElement.classList.add('message', 'system-message');
-        systemMessageElement.textContent = systemResponse;
-        chatBody.appendChild(systemMessageElement);
-        chatBody.scrollTop = chatBody.scrollHeight;
-        inputField.value = '';
+
+    const handleUserClick = (id) => {
+        console.log("Clicked user ID:", id);
+        setfriendId(id);
+        setIsChatVisible(true);
     };
-    const generateResponse = (userMessage) => {
-        const responses = [
-            "Xin chào! Tôi có thể giúp gì cho bạn?",
-            "Cảm ơn bạn đã nhắn tin!",
-            "Để biết thêm thông tin, vui lòng chờ trong giây lát.",
-            "Tôi đang xử lý yêu cầu của bạn, xin đợi chút nhé."
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
-    };
+
     return (
         <div className={sideNavbar ? 'socialMediaPage' : 'fullSocialMediaPage'}>
             <div className="main-content">
@@ -190,7 +211,6 @@ const SocialMediaPage = ({ sideNavbar }) => {
                         <a onClick={openFileDialog}>
                             <i className="fa-regular fa-image"></i>Photo/Video
                         </a>
-                        {/* Hidden file input */}
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -205,7 +225,7 @@ const SocialMediaPage = ({ sideNavbar }) => {
                     <div key={post._id} className="post-container">
                         <div className="post-row">
                             <div className="user-profile">
-                                <img src={userPic} alt="User" />
+                                <img src={post.user?.profilePic} alt="User" />
                                 <div>
                                     <p>{post.user?.name}</p>
                                     <span>{new Date(post.createdAt).toLocaleString()}</span>
@@ -217,11 +237,11 @@ const SocialMediaPage = ({ sideNavbar }) => {
                         <div className="img-post">{post.image && <img src={post.image} className="post-img" alt="Post" />}</div>
                         <div className="post-row">
                             <div className="activity-icons">
-                            <div onClick={() => handleLikeDislike(post._id, 'like')}>
-                                    <i className="fas fa-thumbs-up"></i>{post.like.length}
-                                </div>
-                                <div onClick={() => handleLikeDislike(post._id, 'dislike')}>
-                                    <i className="fas fa-thumbs-down"></i>{post.dislike.length}
+                                <div onClick={() => handleLikePost(post._id)}>
+                                    <i className={post.like.includes(userId) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}
+                                    style={{ color: post.like.includes(userId) ? 'lightcoral' : 'white' }}>
+                                    </i>
+                                     {post.like.length}
                                 </div>
                                 <div><i className="fas fa-share"></i> 20</div>
                             </div>
@@ -230,7 +250,6 @@ const SocialMediaPage = ({ sideNavbar }) => {
                             </div>
                         </div>
 
-                        {/* Comment input */}
                         <div className="comment-input">
                             <input
                                 type="text"
@@ -240,23 +259,40 @@ const SocialMediaPage = ({ sideNavbar }) => {
                             />
                             <button onClick={() => handleCommentSubmit(post._id)} className="comment-button">Comment</button>
                         </div>
-
-                        {/* Comment display */}
                         <div className="commentSection">
                             {post.comments?.map((comment) => (
                                 <div key={comment._id} className="comment-item">
-                                    <img src={comment.userAvatar || userPic} alt="User" className="comment-avatar" />
-                                    <div className="comment-details">
-                                        <p className="comment-user">{comment.user}</p>
+                                    <div className="comment-post">
+                                    <img src={comment.user?.profilePic} alt="User" className="comment-avatar" />
+                                    <div className="comment-details"onClick={() =>setReplyFields((prev) => ({...prev,[comment._id]: !prev[comment._id],}))}>
+                                        <p className="comment-user">{comment.user?.name}</p>
                                         <p className="comment-text">{comment.content}</p>
                                     </div>
+                                    <div className="comment-icon" onClick={() => {setLikedComments((prev) => ({
+                                                ...prev,[comment._id]: !prev[comment._id],}));}}>
+                                        <i className={likedComments[comment._id] ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}
+                                            style={{ color: likedComments[comment._id] ? 'lightcoral' : 'inherit' }}></i>
+                                    </div>
+                                    </div>
+                                    {replyFields[comment._id] && (
+                                        <div className="reply-input">
+                                            <input
+                                                type="text"
+                                                placeholder="Write a reply..."
+                                                value={replyText[comment._id] || ''}
+                                                onChange={(e) =>
+                                                    setReplyText((prev) => ({
+                                                        ...prev,
+                                                        [comment._id]: e.target.value,
+                                                    }))
+                                                }/>
+                                        <button onClick={() => handleReplySubmit(comment._id)}className="reply-button">Reply</button></div>
+                                    )}
                                 </div>
                             ))}
                         </div>
                     </div>
                 ))}
-
-
                 <button type="button" className="load-more-btn">Load More</button>
             </div>
 
@@ -303,57 +339,15 @@ const SocialMediaPage = ({ sideNavbar }) => {
             </div>
 
             <div className="online-list">
-                <div className="online">
-                    <img src="https://thuthuatnhanh.com/wp-content/uploads/2022/06/hinh-meme-meo-dap-mat-na.jpg" alt=""/>
-                </div>
-                <p>Mèo méo meo mèo meo</p>
-            </div>
-
-            <div className="online-list">
-                <div className="online">
-                    <img src="https://i.pinimg.com/736x/f7/a0/24/f7a024308c46cc9d9d4660efda1af734.jpg" alt=""/>
-                </div>
-                <p>Hông biết nựa</p>
-            </div>
-
-            <div className="online-list">
-                <div className="online">
-                    <img src="https://i.pinimg.com/736x/39/9e/41/399e41e882c143c64948007dce366c7f.jpg" alt=""/>
-                </div>
-                <p>Sợ hãi</p>
+                {onlineUsers.map((user) => (
+                    <div key={user._id} className="online" onClick={() => handleUserClick(user._id)}>
+                        <img src={user.profilePic} alt={user.name} />
+                        <p>{user.name}</p>
+                    </div>
+                ))}
             </div>
         </div>
-
-        <div className="chat-icon" onClick={toggleChat}>
-                <i className="fa-solid fa-comment-dots"></i>
-            </div>
-
-            <div className="chat-container">
-                <div className="chat-header">
-                    <img src="user-profile.jpg" alt="Profile" className="profile-pic" />
-                    <div className="user-info">
-                        <h3>Mèo méo meo mèo meo</h3>
-                        <span>Hoạt động 12 phút trước</span>
-                    </div>
-                    <div className="chat-actions">
-                        <button>📞</button>
-                        <button>📹</button>
-                        <button>⬜</button>
-                    </div>
-                    <button className="close-chat" onClick={toggleChat}>×</button>
-                </div>
-                <div className="chat-body">
-                    <div className="message">Hello! How can I help you today?</div>
-                </div>
-                <div className="chat-footer">
-                    <button>🖼️</button>
-                    <button>🎥</button>
-                    <button>GIF</button>
-                    <input id="chatInput" type="text" placeholder="Aa" />
-                    <button onClick={sendMessage}>Gửi</button>
-                    <button>👍</button>
-                </div>
-            </div>
+        {isChatVisible && <Chat friendId={friendId} />}
         </div>
     );
 };

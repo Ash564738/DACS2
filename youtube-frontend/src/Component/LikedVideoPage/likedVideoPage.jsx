@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './likedVideoPage.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
 const LikedVideoPage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);

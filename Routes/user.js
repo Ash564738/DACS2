@@ -9,4 +9,5 @@ router.post('/toggleSubscription/:subscribeToId',auth, UserController.toggleSubs
 router.get('/getSubscriptions',auth, UserController.getSubscriptions);
 router.get('/getVideosByUserId/:id',UserController.getVideosByUserId);
 router.get('/getUserById/:id',auth, UserController.getUserById);
+router.get('/getAllUsers', UserController.getAllUsers);
 module.exports = router;

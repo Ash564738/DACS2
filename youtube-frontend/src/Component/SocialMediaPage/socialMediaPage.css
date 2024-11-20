@@ -95,19 +95,28 @@
 
 .online-list{
     display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+    flex-direction: column;
+}
+
+.online{
+    display: flex;
+    cursor: pointer;
 }
 
 .online-list .online img{
     width: 40px;
+    height: 40px;
     border-radius: 50%;
+}
+
+.online-list .online p{
+    margin: 0 0 8px 10px;
 }
 
 .online-list .online{
     width: 40px;
     border-radius: 50%;
-    margin-right: 15px;
+    margin: 10px 15px 0 0;
 }
 
 .online-list .online::after{
@@ -188,7 +197,7 @@
 }
 
 .write-post-container{
-    width: 900px;
+    width: 100%;
     background-color: rgb(26, 26, 26);
     color: white;
     border-radius: 6px;
@@ -267,7 +276,6 @@
     color: white;
     margin: 20px 0;
     display: flex;
-    align-items: center;
     justify-content: center;
     flex-direction: column;
     position: relative;
@@ -296,10 +304,11 @@
     text-decoration: none;
 }
 
-.img-post{
-    justify-items: center;
-    position: relative;
+.img-post {
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
     display: flex;
+    position: relative;
 }
 .img-post img {
     display: flex;
@@ -321,7 +330,7 @@
     width: 100%;
 }
 
-.activity-icons div .fas{
+.activity-icons div .fas, .activity-icons div .fa-regular{
     width: 18px;
     margin-right: 5px;
 }
@@ -329,7 +338,7 @@
 .activity-icons div{
     display: inline-flex;
     align-items: center;
-    margin-right: 30px;
+    margin-right: 20px;
     margin-left: 10px;
     cursor: pointer;
 }
@@ -360,156 +369,6 @@
     border-radius: 4px;
 }
 
-.chat-container {
-    width: 400px; /* Độ rộng khung chat */
-    border-radius: 10px;
-    background-color: #1c1e21;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Thêm bóng cho khung chat */
-    transition: transform 0.3s ease; /* Hiệu ứng chuyển động khi mở/đóng */
-    position: fixed;
-    bottom: 90px; /* Cách biểu tượng một khoảng nhỏ */
-    right: 20px;
-    display: none; /* Ban đầu ẩn */
-}
-
-.chat-header {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid #333;
-    background-color: #2c2f33; /* Màu nền cho header */
-}
-
-.profile-pic {
-    width: 45px; /* Kích thước biểu tượng người dùng */
-    height: 45px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
-.user-info h3 {
-    margin: 0;
-    font-size: 18px; /* Kích thước chữ lớn hơn */
-}
-
-.user-info span {
-    font-size: 12px;
-    color: #aaa;
-}
-
-.chat-actions button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    transition: color 0.3s;
-    padding: 10px 4px;
-    font-size: 14px;
-    margin-left: 3px;
-}
-
-.chat-actions button:hover {
-    color: #007bff;
-}
-
-.chat-body {
-    flex-grow: 1;
-    padding: 10px;
-    overflow-y: auto;
-    max-height: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.chat-footer {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-top: 1px solid #333;
-    background-color: #2c2f33;
-}
-
-.chat-footer button {
-    background: none;
-    border: none;
-    color: white;
-    margin-right: 5px;
-    cursor: pointer;
-    padding: 10px 5px;
-    font-size: 13px;
-}
-
-.chat-footer input {
-    flex-grow: 1;
-    padding: 8px;
-    border-radius: 20px;
-    border: 1px solid #555;
-    margin-right: 5px;
-    background-color: #2c2f33;
-    color: white;
-}
-
-.chat-footer input::placeholder {
-    color: #aaa;
-}
-
-.close-chat {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 25px;
-    margin-left: auto;
-    padding: 10px 5px;
-}
-
-.chat-icon {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    font-size: 28px;
-    transition: background-color 0.3s;
-}
-
-.chat-icon:hover {
-    background-color: #0056b3;
-}
-
-.user-message, .system-message {
-    display: inline-block;
-    padding: 8px 12px;
-    border-radius: 15px;
-    max-width: 70%; 
-    word-wrap: break-word;
-    margin-bottom: 0;
-}
-
-.user-message {
-    align-self: flex-end;
-    background-color: #4caf50;
-    color: white;
-}
-
-.system-message {
-    align-self: flex-start;
-    background-color: #555;
-    color: white;
-}
-
 .post-button{
     display: block;
     margin-top: 42px;
@@ -522,7 +381,60 @@
     border-radius: 4px;
 }
 
-.comment-button{
+.comment-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Căn chỉnh phần nội dung và avatar theo hàng trên cùng */
+    margin-top: 8px;
+    
+}
+.comment-post{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.comment-avatar {
+    flex-shrink: 0; /* Ngăn avatar co lại hoặc di chuyển */
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.comment-details {
+    display: flex;
+    flex-direction: column; /* Các phần tử con xếp theo chiều dọc */
+    flex-wrap: wrap;
+    position: relative;
+    width: auto; /* Đảm bảo chiều rộng tự động theo nội dung nếu không muốn full width */
+    padding: 5px 15px 15px 15px;
+    background: #272727;
+    border-radius: 10px;
+}
+
+.comment-details p {
+    word-break: break-word; /* Ngắt từ nếu quá dài */
+    white-space: normal; /* Cho phép ngắt dòng nếu cần */
+    padding: 0;
+    margin: 0;
+}
+
+.comment-user{
+    white-space: nowrap; /* Giữ tên người dùng trên một dòng */
+    font-weight: bold;
+}
+
+.comment-text{
+    white-space: normal; /* Cho phép xuống dòng trong nội dung bình luận */
+}
+
+.comment-icon {
+    margin: 20px 0 0 10px;
+    align-self: flex-start;
+}
+
+.comment-button, .reply-button{
     display: block;
     margin-left: 10px;
     cursor: pointer;
@@ -532,4 +444,24 @@
     background: transparent;
     border-radius: 4px;
 }
+
+.reply-input{
+    display: flex;
+    align-items: center;
+    padding-left: 55px;
+    padding-top: 20px;
+    width: 100%;
+}
+
+.reply-input input{
+    width: 100%;
+    border: 0;
+    outline: 0;
+    color: #fff;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
+    resize: none;
+}
+
+
 
