@@ -26,6 +26,8 @@
     cursor: grab;
     overflow-x: auto;
     white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .subscriptionPage_options.active {
     cursor: grabbing;

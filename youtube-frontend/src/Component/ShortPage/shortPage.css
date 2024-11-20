@@ -11,7 +11,7 @@
 }
 .shortPage {
     margin-left: 260px;
-    width: 100%;
+    width: calc(100% - 260px);
 }
 .short_mainPage {
     position: relative;
@@ -22,6 +22,8 @@
     flex-wrap: wrap;
     background-color: #0F0F0F;
     gap: 20px;
+    width: 100%;
+    overflow-x: hidden;
 }
 .shortVideoBlock {
     display: flex;

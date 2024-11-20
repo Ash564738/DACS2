@@ -30,7 +30,6 @@ const VideoSuggestion = ({ id }) => {
 
     useEffect(() => {
         if (data.length === 0) return;
-
         const slider = document.querySelector('.videoSuggestions_options');
         if (!slider) {
             console.warn("Slider not found.");

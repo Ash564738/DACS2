@@ -96,11 +96,14 @@
 .online-list{
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
 }
 
 .online{
     display: flex;
     cursor: pointer;
+=======
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
 }
 
 .online-list .online img{
@@ -330,7 +333,11 @@
     width: 100%;
 }
 
+<<<<<<< HEAD
 .activity-icons div .fas, .activity-icons div .fa-regular{
+=======
+.activity-icons div .fas, .fa-regular{
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
     width: 18px;
     margin-right: 5px;
 }
@@ -444,7 +451,10 @@
     background: transparent;
     border-radius: 4px;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
 .reply-input{
     display: flex;
     align-items: center;
@@ -452,7 +462,10 @@
     padding-top: 20px;
     width: 100%;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
 .reply-input input{
     width: 100%;
     border: 0;
@@ -461,7 +474,11 @@
     border-bottom: 1px solid #ccc;
     background: transparent;
     resize: none;
+<<<<<<< HEAD
 }
 
 
 
+=======
+}
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e

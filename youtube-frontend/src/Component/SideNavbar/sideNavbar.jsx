@@ -54,16 +54,11 @@ const SideNavbar = ({ sideNavbar }) => {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true,
             });
-            console.log("Subscriptions Response:", response.data);
             setSubscriptions(response.data.subscribedUsers || []);
         } catch (error) {
             console.error("Error fetching subscriptions:", error.response?.data || error.message);
         }
     };
-
-    useEffect(() => {
-        console.log("Updated subscriptions:", subscriptions);
-    }, [subscriptions]);
 
     useEffect(() => {
         const pathToIcon = {

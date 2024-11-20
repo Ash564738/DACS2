@@ -30,7 +30,10 @@ const HomePage = ({ sideNavbar }) => {
   }, []);
   useEffect(() => {
     if (data.length === 0) return;
+<<<<<<< HEAD
 
+=======
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
     const slider = document.querySelector('.homePage_options');
     if (!slider) {
         console.warn("Slider not found.");
@@ -70,7 +73,12 @@ const HomePage = ({ sideNavbar }) => {
         slider.removeEventListener('mouseup', handleMouseUp);
         slider.removeEventListener('mousemove', handleMouseMove);
     };
+<<<<<<< HEAD
 }, [data]);
+=======
+  }, [data]);
+
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
   const options = [
     "All",
     "Music",
@@ -100,11 +108,7 @@ const HomePage = ({ sideNavbar }) => {
     <div className={sideNavbar ? 'homePage' : 'fullHomePage'}>
       <div className="homePage_options">
         {options.map((item, index) => (
-          <div 
-            key={index} 
-            className={`homePage_option ${selectedCategory === item ? "active" : ""}`} 
-            onClick={() => handleCategoryClick(item)}
-          >
+          <div key={index} className={`homePage_option ${selectedCategory === item ? "active" : ""}`} onClick={() => handleCategoryClick(item)}>
             {item}
           </div>
         ))}

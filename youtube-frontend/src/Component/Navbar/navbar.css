@@ -110,8 +110,8 @@
 }
 .header-modal{
     position: absolute;
-    top: 10;
-    right: 70px;
+    top: 2px;
+    right: 55px;
     z-index: 20;
     background: rgb(65, 65, 65);
     border-radius: 10px;

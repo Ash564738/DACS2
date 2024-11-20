@@ -6,7 +6,11 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
+<<<<<<< HEAD
 import Chat from '../Chat/chat.jsx'
+=======
+
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
 const SocialMediaPage = ({ sideNavbar }) => {
     const [posts, setPosts] = useState([]);
     const [newPost, setNewPost] = useState('');
@@ -22,7 +26,10 @@ const SocialMediaPage = ({ sideNavbar }) => {
     const [replyFields, setReplyFields] = useState({});
     const [replyText, setReplyText] = useState({});
     const [onlineUsers, setOnlineUsers] = useState([]);
+<<<<<<< HEAD
     const [isChatVisible, setIsChatVisible] = useState(false);
+=======
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
 
     useEffect(() => {
         const userId = localStorage.getItem("userId");
@@ -61,7 +68,11 @@ const SocialMediaPage = ({ sideNavbar }) => {
         console.log('fetchOnlineUsers:');
         const fetchOnlineUsers = async () => {
             try {
+<<<<<<< HEAD
                 const response = await axios.get('http://localhost:4000/auth/getAllUsers');
+=======
+                const response = await axios.get('http://localhost:4000/users/all');
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
                 setOnlineUsers(response.data.users);
             } catch (error) {
                 console.error('Error fetching online users:', error);
@@ -181,10 +192,16 @@ const SocialMediaPage = ({ sideNavbar }) => {
         }
     };
 
+<<<<<<< HEAD
     const handleUserClick = (id) => {
         console.log("Clicked user ID:", id);
         setfriendId(id);
         setIsChatVisible(true);
+=======
+    const handleUserClick = (userId) => {
+        console.log("Clicked user ID:", userId);
+        // Perform any action with the clicked user ID
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
     };
 
     return (
@@ -347,7 +364,10 @@ const SocialMediaPage = ({ sideNavbar }) => {
                 ))}
             </div>
         </div>
+<<<<<<< HEAD
         {isChatVisible && <Chat friendId={friendId} />}
+=======
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
         </div>
     );
 };

@@ -107,20 +107,16 @@ exports.toggleCommentLikeDislike = async (req, res) => {
         if (action === "like") {
             if (comment.like.includes(userId)) {
                 comment.like.pull(userId);
-                console.log("User removed from likes:", userId);
             } else {
                 comment.like.push(userId);
                 comment.dislike.pull(userId);
-                console.log("User removed from dislikes:", userId);
             }
         } else if (action === "dislike") {
             if (comment.dislike.includes(userId)) {
                 comment.dislike.pull(userId);
-                console.log("User removed from dislikes:", userId);
             } else {
                 comment.dislike.push(userId);
                 comment.like.pull(userId);
-                console.log("User added to dislikes and removed from likes:", userId);
             }
         } else {
             console.log("Invalid action:", action);
@@ -155,20 +151,16 @@ exports.toggleReplyLikeDislike = async (req, res) => {
         if (action === "like") {
             if (reply.like.includes(userId)) {
                 reply.like.pull(userId);
-                console.log("User removed from likes:", userId);
             } else {
                 reply.like.push(userId);
                 reply.dislike.pull(userId);
-                console.log("User removed from dislikes:", userId);
             }
         } else if (action === "dislike") {
             if (reply.dislike.includes(userId)) {
                 reply.dislike.pull(userId);
-                console.log("User removed from dislikes:", userId);
             } else {
                 reply.dislike.push(userId);
                 reply.like.pull(userId);
-                console.log("User added to dislikes and removed from likes:", userId);
             }
         } else {
             console.log("Invalid action:", action);

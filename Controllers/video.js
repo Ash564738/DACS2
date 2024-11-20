@@ -80,20 +80,16 @@ exports.toggleLikeDislike = async (req, res) => {
         if (action === "like") {
             if (video.like.includes(userId)) {
                 video.like.pull(userId);
-                console.log("User removed from likes:", userId);
             } else {
                 video.like.push(userId);
                 video.dislike.pull(userId);
-                console.log("User added to likes and removed from dislikes:", userId);
             }
         } else if (action === "dislike") {
             if (video.dislike.includes(userId)) {
                 video.dislike.pull(userId);
-                console.log("User removed from dislikes:", userId);
             } else {
                 video.dislike.push(userId);
                 video.like.pull(userId);
-                console.log("User added to dislikes and removed from likes:", userId);
             }
         } else {
             console.log("Invalid action:", action);
@@ -106,7 +102,6 @@ exports.toggleLikeDislike = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
 exports.incrementViews = async (req, res) => {
     console.log("In incrementViews Function");
     try {
@@ -119,5 +114,21 @@ exports.incrementViews = async (req, res) => {
     } catch (error) {
         console.error("Error in incrementViews:", error);
         res.status(500).json({ error: 'Server error' });
+    }
+};
+exports.getLikedVideos = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+        if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+    const likedVideos = await Video.find({ like: userId }).populate('user');
+      if (!likedVideos || likedVideos.length === 0) {
+        return res.status(404).json({ message: 'No liked videos found.' });
+    }
+      res.status(200).json({ likedVideos });
+    } catch (error) {
+      console.error("Error in getLikedVideos:", error);
+      res.status(500).json({ error: 'Server error' });
     }
 };

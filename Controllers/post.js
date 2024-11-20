@@ -23,9 +23,17 @@ exports.createPost = async (req, res) => {
 // Get all posts
 exports.getAllPosts = async (req, res) => {
     try {
+<<<<<<< HEAD
         const posts = await Post.find().populate('user').populate({
                 path: 'comments.user',
                 model: 'user'
+=======
+        const posts = await Post.find()
+            .populate('user')
+            .populate({
+                path: 'comments.user',
+                model: 'User'
+>>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
             })
             .sort({ createdAt: -1 });
         res.status(200).json({ message: 'Success', posts });
