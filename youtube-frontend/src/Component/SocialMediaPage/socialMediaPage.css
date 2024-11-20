@@ -95,8 +95,7 @@
 
 .online-list{
     display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+    flex-direction: column;
 }
 
 .online-list .online img{
@@ -267,7 +266,6 @@
     color: white;
     margin: 20px 0;
     display: flex;
-    align-items: center;
     justify-content: center;
     flex-direction: column;
     position: relative;
@@ -296,10 +294,11 @@
     text-decoration: none;
 }
 
-.img-post{
-    justify-items: center;
-    position: relative;
+.img-post {
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
     display: flex;
+    position: relative;
 }
 .img-post img {
     display: flex;
@@ -321,7 +320,7 @@
     width: 100%;
 }
 
-.activity-icons div .fas{
+.activity-icons div .fas, .fa-regular{
     width: 18px;
     margin-right: 5px;
 }
@@ -329,7 +328,7 @@
 .activity-icons div{
     display: inline-flex;
     align-items: center;
-    margin-right: 30px;
+    margin-right: 20px;
     margin-left: 10px;
     cursor: pointer;
 }
@@ -360,28 +359,6 @@
     border-radius: 4px;
 }
 
-
-/* .user-message, .system-message {
-    display: inline-block;
-    padding: 8px 12px;
-    border-radius: 15px;
-    max-width: 70%; 
-    word-wrap: break-word;
-    margin-bottom: 0;
-}
-
-.user-message {
-    align-self: flex-end;
-    background-color: #4caf50;
-    color: white;
-}
-
-.system-message {
-    align-self: flex-start;
-    background-color: #555;
-    color: white;
-} */
-
 .post-button{
     display: block;
     margin-top: 42px;
@@ -396,9 +373,15 @@
 
 .comment-item {
     display: flex;
+    flex-direction: column;
     align-items: flex-start; /* Căn chỉnh phần nội dung và avatar theo hàng trên cùng */
     margin-top: 8px;
     
+}
+.comment-post{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 
 .comment-avatar {
@@ -411,10 +394,11 @@
 
 .comment-details {
     display: flex;
-    flex-direction: column; /* Đảm bảo các phần tử con xếp theo chiều dọc */
+    flex-direction: column; /* Các phần tử con xếp theo chiều dọc */
     flex-wrap: wrap;
     position: relative;
-    width: 100%;
+    width: auto; /* Đảm bảo chiều rộng tự động theo nội dung nếu không muốn full width */
+    padding: 5px 15px 15px 15px;
     background: #272727;
     border-radius: 10px;
 }
@@ -422,33 +406,25 @@
 .comment-details p {
     word-break: break-word; /* Ngắt từ nếu quá dài */
     white-space: normal; /* Cho phép ngắt dòng nếu cần */
+    padding: 0;
+    margin: 0;
 }
 
 .comment-user{
-    padding: 10px 10px 5px 10px;
     white-space: nowrap; /* Giữ tên người dùng trên một dòng */
+    font-weight: bold;
 }
 
 .comment-text{
-    padding: 10px 10px 5px 10px;
-    margin-top: 0px;
     white-space: normal; /* Cho phép xuống dòng trong nội dung bình luận */
 }
-/* .comment-item{
-    display: flex;
-    position: relative;
-    left: -395px;
-    margin-top: 8px;
+
+.comment-icon {
+    margin: 20px 0 0 10px;
+    align-self: flex-start;
 }
 
-.comment-item .comment-avatar{
-    width: 43px;
-    height: 43px;
-    border-radius: 50%;
-    margin-right: 10px;
-} */
-
-.comment-button{
+.comment-button, .reply-button{
     display: block;
     margin-left: 10px;
     cursor: pointer;
@@ -457,4 +433,20 @@
     color: #ffff;
     background: transparent;
     border-radius: 4px;
+}
+.reply-input{
+    display: flex;
+    align-items: center;
+    padding-left: 55px;
+    padding-top: 20px;
+    width: 100%;
+}
+.reply-input input{
+    width: 100%;
+    border: 0;
+    outline: 0;
+    color: #fff;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
+    resize: none;
 }

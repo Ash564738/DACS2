@@ -94,7 +94,7 @@ exports.getSubscriptions = async (req, res) => {
       if (!user) {
           return res.status(404).json({ error: 'User not found' });
       }
-      console.log(user.subscriptions);
+      console.log(user.subscriptions);  // Log the subscriptions field
       const subscribedUserIds = user.subscriptions.map((sub) => sub._id);
       const videos = await Video.find({ user: { $in: subscribedUserIds } }).populate('user');
       res.json({
@@ -116,6 +116,18 @@ exports.getVideosByUserId = async (req, res) => {
     res.json({ videos });
   } catch (error) {
     console.error("Error fetching videos:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Get all users
+exports.getAllUsers = async (req, res) => {
+  console.log("In getAllUsers Function");
+  try {
+    const users = await User.find();
+    res.json({ users });
+  } catch (error) {
+    console.error("Error fetching users:", error);
     res.status(500).json({ error: 'Server error' });
   }
 };

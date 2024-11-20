@@ -35,7 +35,7 @@
   min-height: 85vh;
   padding: 25px;
   background-color: #0F0F0F;
-  border-radius: 20px;
+  border-radius: 10px;
   min-width: 380px;
   max-width: 380px;
   gap: 15px;
@@ -205,9 +205,14 @@
 .likedVideo {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 10px;
   width: 100%;
-  border-radius: 20px;
+  border-radius: 10px;
+  height: 130px;
+}
+.likedVideo:hover{
+  background-color: rgb(255, 255, 255, 0.1);
 }
 
 .likedVideoIndex {
@@ -234,7 +239,7 @@
 }
 
 .likedVideo img {
-  height: 100px;
+  height: 110px;
   min-width: 200px;
   max-width: 200px;
   border-radius: 10px;
@@ -250,12 +255,42 @@
   font-size: 12px;
   color: gray;
 }
-
-.likedVideoFunctions {
+.likedVideoFuntionSectionBox{
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0 10px;
+}
+.likedVideoFunctionsToggle {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 10px;
+  width: 30px;
+  height: 30px;
+}
+.likedVideoFunctionsToggle:hover{
+  background-color: rgb(255, 255, 255, 0.1);
+}
+.videoFunction {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  background-color: #282828;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
+}
+.videoFunctionItem{
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  align-items: center;
 }
 
 /* Media Queries for Responsiveness */

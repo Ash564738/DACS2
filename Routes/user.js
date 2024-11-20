@@ -8,5 +8,6 @@ router.post('/logOut',UserController.logOut);
 router.post('/toggleSubscription/:subscribeToId',auth, UserController.toggleSubscription);
 router.get('/getSubscriptions',auth, UserController.getSubscriptions);
 router.get('/getVideosByUserId/:id',UserController.getVideosByUserId);
+router.get('/getAllUsers',UserController.getAllUsers);
 router.get('/getUserById/:id',auth, UserController.getUserById);
 module.exports = router;
