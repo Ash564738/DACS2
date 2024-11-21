@@ -1,7 +1,9 @@
 
 .chat-container {
     width: 280px; /* Độ rộng khung chat */
-    border-radius: 20px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    overflow: hidden;
     background-color: #1c1e21;
     color: white;
     display: flex;
@@ -9,7 +11,7 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Thêm bóng cho khung chat */
     transition: transform 0.3s ease; /* Hiệu ứng chuyển động khi mở/đóng */
     position: fixed;
-    bottom: 90px; /* Cách biểu tượng một khoảng nhỏ */
+    bottom: 0;
     right: 20px;
 }
 

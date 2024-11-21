@@ -2,44 +2,49 @@ import React, { useState, useEffect } from 'react';
 import './chat.css';
 import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPhone, faVideo, faExpand, faImage, faSmile, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
-const Chat = ({ friendId }) => {
+const Chat = ({ friendId, closeChat }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [isChatVisible, setIsChatVisible] = useState(false);
-    const [chatPosition, setChatPosition] = useState({ bottom: 0, right: 267 }); // Tọa độ mặc định
     const userId = localStorage.getItem("userId");
-    const [user, setUser] = useState({});
-    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
+    const [friend, setFriend] = useState({});
+    const [friendPic, setFriendPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                const response = await axios.get(`http://localhost:4000/chat/getMessages/${userId}/${friendId}`);
-                setMessages(response.data.data);
-            } catch (error) {
-                console.error('Error fetching messages:', error);
-            }
-        };
-        if (userId && friendId) fetchMessages();
-    }, [userId, friendId]);
+        if (friendId) {
+            fetchFriendProfile(friendId);
+        }
+    }, [friendId]);
 
     useEffect(() => {
-        if (userId) fetchUserProfile(userId);
-    }, [userId]);
+        if (userId && friendId) {
+            fetchMessages(userId, friendId);
+        }
+    }, [userId, friendId]);
 
-    const fetchUserProfile = async (userId) => {
+    const fetchFriendProfile = async (friendId) => {
         try {
-            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {}, {
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${friendId}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true,
             });
             const { profilePic, name } = response.data.user;
-            setUser({ name });
-            setUserPic(profilePic);
+            setFriend({ name });
+            setFriendPic(profilePic);
         } catch (error) {
-            console.error("Error fetching user data:", error);
+            console.error("Error fetching friend data:", error);
+        }
+    };
+
+    const fetchMessages = async (userId, friendId) => {
+        try {
+            const response = await axios.get(`http://localhost:4000/chat/getMessages/${userId}/${friendId}`);
+            setMessages(response.data.data);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
         }
     };
 
@@ -59,56 +64,37 @@ const Chat = ({ friendId }) => {
     };
 
     const toggleChat = () => {
-        setIsChatVisible(!isChatVisible);
-        console.log('Chat visibility:', !isChatVisible); // Debug trạng thái
+        closeChat();
     };
-
-    const moveChat = (newPosition) => {
-        setChatPosition(newPosition);
-    };
-
+    if (!friendId) return null;
     return (
         <div>
-            <div className="chat-icon" onClick={toggleChat}>
-                <i className="fa-solid fa-comment-dots"></i>
-            </div>
-
-            {isChatVisible && (
-                <div
-                    className="chat-container"
-                    style={{ bottom: `${chatPosition.bottom}px`, right: `${chatPosition.right}px` }}
-                >
-                    <div className="chat-header">
-                        <img src={userPic} alt="" className="profile-pic" />
-                        <h3>{user.name}</h3>
-                        <div className="chat-actions">
-                            <button>📞</button>
-                            <button>📹</button>
-                            <button>⬜</button>
-                        </div>
-                        <button className="close-chat" onClick={toggleChat}>×</button>
+            <div className="chat-container">
+                <div className="chat-header">
+                    <img src={friendPic} alt="" className="profile-pic" />
+                    <h3>{friend.name}</h3>
+                    <div className="chat-actions">
+                        <button><FontAwesomeIcon icon={faPhone} /></button>
+                        <button><FontAwesomeIcon icon={faVideo} /></button>
+                        <button><FontAwesomeIcon icon={faExpand} /></button>
                     </div>
-                    <div className="chat-body">
-                        {messages.map((msg, index) => (
-                            <div key={index} className={`message ${msg.senderId === userId ? 'user-message' : 'friend-message'}`}>
-                                {msg.message}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="chat-footer">
-                        <button>🖼️</button>
-                        <button>GIF</button>
-                        <textarea
-                            type="text"
-                            placeholder="Aa"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                        />
-                        <button onClick={handleSendMessage}>Send</button>
-                        <button>👍</button>
-                    </div>
+                    <button className="close-chat" onClick={toggleChat}>×</button>
                 </div>
-            )}
+                <div className="chat-body">
+                    {messages.map((msg, index) => (
+                        <div key={index} className={`message ${msg.senderId === userId ? 'user-message' : 'friend-message'}`}>
+                            {msg.message}
+                        </div>
+                    ))}
+                </div>
+                <div className="chat-footer">
+                    <button><FontAwesomeIcon icon={faImage} /></button>
+                    <button><FontAwesomeIcon icon={faSmile} /></button>
+                    <textarea type="text" placeholder="Aa"value={newMessage}onChange={(e) => setNewMessage(e.target.value)}/>
+                    <button onClick={handleSendMessage}>Send</button>
+                    <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                </div>
+            </div>
         </div>
     );
 };
