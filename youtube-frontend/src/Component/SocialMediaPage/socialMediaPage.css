@@ -102,7 +102,6 @@
     display: flex;
     cursor: pointer;
 }
-
 .online-list .online img{
     width: 40px;
     height: 40px;
@@ -460,6 +459,3 @@
     background: transparent;
     resize: none;
 }
-
-
-

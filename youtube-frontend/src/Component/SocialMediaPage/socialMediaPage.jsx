@@ -180,7 +180,6 @@ const SocialMediaPage = ({ sideNavbar }) => {
             }
         }
     };
-
     const handleUserClick = (id) => {
         console.log("Clicked user ID:", id);
         setfriendId(id);
