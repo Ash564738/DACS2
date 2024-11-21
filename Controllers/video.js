@@ -117,6 +117,7 @@ exports.incrementViews = async (req, res) => {
     }
 };
 exports.getLikedVideos = async (req, res) => {
+    console.log("In getLikedVideos Function");
     try {
       const userId = req.params.userId;
         if (!userId) {

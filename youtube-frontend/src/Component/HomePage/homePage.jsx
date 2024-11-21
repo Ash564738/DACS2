@@ -69,7 +69,7 @@ const HomePage = ({ sideNavbar }) => {
         slider.removeEventListener('mouseup', handleMouseUp);
         slider.removeEventListener('mousemove', handleMouseMove);
     };
-}, [data]);
+  }, [data]);
   const options = [
     "All",
     "Music",
