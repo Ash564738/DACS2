@@ -13,6 +13,7 @@ import { RocketLaunch } from '@mui/icons-material';
 import SocialMedia from './Pages/SocialMedia/socialMedia';
 import Subscription from './Pages/Subscription/subscription';
 import LikedVideo from './Pages/LikedVideo/likedVideo';
+import Chat from '../src/Component/Chat/chat.jsx';
 function App() {
   const [sideNavbar,setSideNavbar] = useState(true);
   const setSideNavbarFunc=(value)=>{
@@ -39,6 +40,7 @@ function App() {
         <Route path='/subscription' element={<Subscription sideNavbar={sideNavbar}/>} />
         <Route path='/likedVideo' element={<LikedVideo sideNavbar={sideNavbar}/>} />
       </Routes>
+      {/* <Chat/> */}
     </div>
   );
 }
