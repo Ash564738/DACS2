@@ -117,7 +117,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
     ? data 
     : data.filter((video) => video.category === selectedCategory);
 
-  const firstVideoThumbnail = data.length > 0 ? data[0].thumbnail : '';
+  const firstVideoThumbnail = data.length > 0 && data[0]?.thumbnail ? data[0].thumbnail : '';
   const lastUpdated = data.length > 0 ? new Date(data[0].updatedAt).toLocaleDateString() : '';
   const ownerName = data.length > 0 ? data[0].user?.name : '';
   const handleLikeDislike = async (videoId, action) => {
@@ -183,10 +183,10 @@ const LikedVideoPage = ({ sideNavbar }) => {
                     <span>{index + 1}</span>
                   </div>
                   <div className="likedVideoContent">
-                    <img src={video.thumbnail || ''} alt={video.title} className="likedVideoThumbnail" />
+                    <img src={video?.thumbnail || ''} alt={video?.title || 'Video Thumbnail'} className="likedVideoThumbnail" />
                     <div className="likedVideoDetails">
-                      <span className="likedVideoTitle">{video.title}</span>
-                      <span className="likedVideoInfo">{video.user?.name} · {video.views} views · {new Date(video.createdAt).toLocaleDateString()}</span>
+                      <span className="likedVideoTitle">{video?.title}</span>
+                      <span className="likedVideoInfo">{video?.user?.name} · {video?.views} views · {new Date(video?.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                   <div className='likedVideoFuntionSectionBox' onClick={handleFunctionItemClick}>
@@ -196,23 +196,23 @@ const LikedVideoPage = ({ sideNavbar }) => {
                     {showVideoFunction[video._id] && (
                       <div className='videoFunction' onClick={handleFunctionItemClick}>
                         <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
-                          <i className="fa-solid fa-plus" ></i>
+                          <i className="fa-solid fa-plus"></i>
                           Add to queue
                         </div>
                         <div className='videoFunctionItem' onClick={handleFunctionItemClick}>
-                          <i className="fa-solid fa-clock" onClick={handleFunctionItemClick}></i>
+                          <i className="fa-solid fa-clock"></i>
                           Save to Watch later
                         </div>
                         <div className='videoFunctionItem' onClick={handleFunctionItemClick}>
-                          <i className="fa-solid fa-list" onClick={handleFunctionItemClick}></i>
+                          <i className="fa-solid fa-list"></i>
                           Save to playlist
                         </div>
                         <div className='videoFunctionItem' onClick={handleFunctionItemClick}>
-                          <i className="fa-solid fa-share" onClick={handleFunctionItemClick}></i>
+                          <i className="fa-solid fa-share"></i>
                           Share
                         </div>
                         <div className='videoFunctionItem' onClick={(e) => { handleLikeDislike(video._id, "like"); handleFunctionItemClick(e); }}>
-                          <i className="fa-solid fa-trash" onClick={handleFunctionItemClick}></i>
+                          <i className="fa-solid fa-trash" ></i>
                           Remove from liked videos
                         </div>
                       </div>
