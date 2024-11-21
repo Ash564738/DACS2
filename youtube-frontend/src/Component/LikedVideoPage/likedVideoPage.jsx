@@ -2,13 +2,10 @@ import React, { useEffect, useState } from 'react';
 import './likedVideoPage.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-<<<<<<< HEAD
-=======
 import { toast } from 'react-toastify';
 import apiClient from '../../Utils/apiClient.js';
 import 'react-toastify/dist/ReactToastify.css';
 
->>>>>>> d220ad6971b31171f3e30efb4fcfbb14c1355e4e
 const LikedVideoPage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
