@@ -19,14 +19,17 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
+import axios from 'axios';
 const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain")
     const [user, setUser] = useState({});
     const [navbarModal,setNavbarModal] = useState(false);
-    const [login,setLogin] = useState(false);
-    const [isLogedIn,setIsLogedIn] = useState(false)
+    const [chatModal,setChatModal] = useState(false);
+    const [isLogedIn,setIsLogedIn] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [friendId, setfriendId] = useState({});
+
     const navigate = useNavigate();
     const modalRef = useRef();
     const token = localStorage.getItem('token');
@@ -68,6 +71,9 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
     const handleModalToggle = () => {
         setNavbarModal((prev) => !prev);
     };
+    const handleModalChat = () => {
+        setChatModal((prev) => !prev);
+    };
     const handleProfile = () => {
         const userId = localStorage.getItem("userId");
         navigate(`/user/${userId}`);
@@ -96,6 +102,22 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
             console.error("Error fetching user data:", error);
         }
     };
+    const handleUserClick = (id) => {
+        console.log("Clicked user ID:", id);
+        setfriendId(id);
+    };
+    useEffect(() => {
+        console.log('fetchOnlineUsers:');
+        const fetchOnlineUsers = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/auth/getAllUsers');
+                setOnlineUsers(response.data.users);
+            } catch (error) {
+                console.error('Error fetching online users:', error);
+            }
+        };
+        fetchOnlineUsers();
+    }, []);
     return (
         <div className="navbar">
             <div className="nav-middle">
@@ -119,6 +141,19 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                     </div>
                 </div>
                 <div className="header__infor">
+                    <i onClick = {handleModalChat}className="fas fa-comment header__chat"></i>
+                    {chatModal && (
+                        <div className="header__chat_modal">
+                            <h3>Chats</h3>
+                            <hr className="header-modal-separator"/>
+                        {onlineUsers.map((user) => (
+                            <div key={user._id} className="header__chat_modal_online" onClick={() => handleUserClick(user._id)}>
+                                <img src={user.profilePic} alt={user.name} />
+                                <p>{user.name}</p>
+                            </div>
+                        ))}
+                        </div>
+                    )}
                     <Link to = {'/${userId}/upload'}>
                         <VideoCallIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
                     </Link>
@@ -134,7 +169,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                                     <div className="header-modal-channel-profile" onClick={handleProfile}>View your channel</div>
                                 </div>
                             </div>
-                            <hr className="header-modal-separator" />
+                            <hr className="header-modal-separator"/>
                             {!isLogedIn && <Link to={"/signup"} className="header-modal-option">
                                 <LoginIcon /> Sign In
                             </Link>}
