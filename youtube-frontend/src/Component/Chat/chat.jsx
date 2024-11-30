@@ -7,31 +7,32 @@ const Chat = ({ friendId }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [isChatVisible, setIsChatVisible] = useState(false);
-    const [chatPosition, setChatPosition] = useState({ bottom: 0, right: 267 }); // Tọa độ mặc định
+    const [chatPosition, setChatPosition] = useState({ bottom: 0, right: 267 });
     const userId = localStorage.getItem("userId");
     const [user, setUser] = useState({});
+    const [friend, setFriend] = useState({});
+    const [friendPic, setFriendPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                const response = await axios.get(`http://localhost:4000/chat/getMessages/${userId}/${friendId}`);
-                setMessages(response.data.data);
-            } catch (error) {
-                console.error('Error fetching messages:', error);
-            }
-        };
-        if (userId && friendId) fetchMessages();
+        if (userId) {
+            fetchUserProfile(userId);
+        }
+        if (friendId) {
+            fetchFriendProfile(friendId);
+        }
     }, [userId, friendId]);
 
     useEffect(() => {
-        if (userId) fetchUserProfile(userId);
-    }, [userId]);
+        if (userId && friendId) {
+            fetchMessages(userId, friendId);
+        }
+    }, [userId, friendId]);
 
     const fetchUserProfile = async (userId) => {
         try {
-            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {}, {
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true,
             });
@@ -40,6 +41,29 @@ const Chat = ({ friendId }) => {
             setUserPic(profilePic);
         } catch (error) {
             console.error("Error fetching user data:", error);
+        }
+    };
+
+    const fetchFriendProfile = async (friendId) => {
+        try {
+            const response = await apiClient.get(`http://localhost:4000/auth/getUserById/${friendId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            });
+            const { profilePic, name } = response.data.user;
+            setFriend({ name });
+            setFriendPic(profilePic);
+        } catch (error) {
+            console.error("Error fetching friend data:", error);
+        }
+    };
+
+    const fetchMessages = async (userId, friendId) => {
+        try {
+            const response = await axios.get(`http://localhost:4000/chat/getMessages/${userId}/${friendId}`);
+            setMessages(response.data.data);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
         }
     };
 
@@ -60,7 +84,6 @@ const Chat = ({ friendId }) => {
 
     const toggleChat = () => {
         setIsChatVisible(!isChatVisible);
-        console.log('Chat visibility:', !isChatVisible); // Debug trạng thái
     };
 
     const moveChat = (newPosition) => {
@@ -79,8 +102,8 @@ const Chat = ({ friendId }) => {
                     style={{ bottom: `${chatPosition.bottom}px`, right: `${chatPosition.right}px` }}
                 >
                     <div className="chat-header">
-                        <img src={userPic} alt="" className="profile-pic" />
-                        <h3>{user.name}</h3>
+                        <img src={friendPic} alt="" className="profile-pic" />
+                        <h3>{friend.name}</h3>
                         <div className="chat-actions">
                             <button>📞</button>
                             <button>📹</button>
