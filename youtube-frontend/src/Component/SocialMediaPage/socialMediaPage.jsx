@@ -62,13 +62,15 @@ const SocialMediaPage = ({ sideNavbar }) => {
         const fetchOnlineUsers = async () => {
             try {
                 const response = await axios.get('http://localhost:4000/auth/getAllUsers');
-                setOnlineUsers(response.data.users);
+                const allUsers = response.data.users;
+                const filteredUsers = allUsers.filter(user => user._id !== userId);
+                setOnlineUsers(filteredUsers);
             } catch (error) {
                 console.error('Error fetching online users:', error);
             }
         };
         fetchOnlineUsers();
-    }, []);
+    }, [userId]);
 
     const openFileDialog = () => {
         fileInputRef.current.click();

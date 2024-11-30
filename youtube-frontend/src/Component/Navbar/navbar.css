@@ -115,7 +115,7 @@
     overflow: hidden;
     background: #252728;
     border-radius: 10px;
-    width: 200px;
+    width: 250px;
     right: 200px;
 }
 .header__chat_modal h3{
@@ -145,6 +145,12 @@
 }
 .header__chat_modal_online p{
     font-weight: bold;
+    padding: 0;
+    margin: 0;
+}
+.header__chat_modal_online_info{
+    display: flex;
+    flex-direction: column;
 }
 .header__chat_modal img{
     width: 40px;

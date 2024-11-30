@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './navbar.css';
 import Logo from '../../Component/Logo/logo';
+import Chat from '../../Component/Chat/chat';
 import {
     Menu as MenuIcon,
     Search as SearchIcon,
@@ -21,20 +22,20 @@ import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
-const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
+const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain")
     const [user, setUser] = useState({});
+    const [friend, setFriend] = useState({});
+    const [messages, setMessages] = useState([]);
     const [navbarModal,setNavbarModal] = useState(false);
     const [chatModal,setChatModal] = useState(false);
     const [isLogedIn,setIsLogedIn] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState([]);
-    const [friendId, setfriendId] = useState({});
-
     const navigate = useNavigate();
     const modalRef = useRef();
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem("userId");
     useEffect(() => {
-        const userId = localStorage.getItem("userId");
         if (userId) {
             fetchUserProfile(userId);
             setIsLogedIn(true);
@@ -102,22 +103,48 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
             console.error("Error fetching user data:", error);
         }
     };
-    const handleUserClick = (id) => {
-        console.log("Clicked user ID:", id);
-        setfriendId(id);
+    const handleUserClick = (friendId) => {
+        console.log("Clicked friendId:", friendId);
+        onFriendSelect(friendId);
+
     };
+    const fetchLatestMessages = async () => {
+        try {
+            const latestMessagesMap = {};
+                for (const onlineUser of onlineUsers) {
+                const response = await axios.get(
+                    `http://localhost:4000/chat/getMessages/${userId}/${onlineUser._id}`
+                );
+                    const messages = response.data.data;
+                if (messages.length > 0) {
+                    latestMessagesMap[onlineUser._id] = messages[messages.length - 1];
+                }
+            }
+    
+            setMessages(latestMessagesMap);
+        } catch (error) {
+            console.error('Error fetching latest messages:', error);
+        }
+    };
+        useEffect(() => {
+        if (onlineUsers.length > 0) {
+            fetchLatestMessages();
+        }
+    }, [onlineUsers]);    
     useEffect(() => {
         console.log('fetchOnlineUsers:');
         const fetchOnlineUsers = async () => {
             try {
                 const response = await axios.get('http://localhost:4000/auth/getAllUsers');
-                setOnlineUsers(response.data.users);
+                const allUsers = response.data.users;
+                const filteredUsers = allUsers.filter(user => user._id !== userId);
+                setOnlineUsers(filteredUsers);
             } catch (error) {
                 console.error('Error fetching online users:', error);
             }
         };
         fetchOnlineUsers();
-    }, []);
+    }, [userId]);
     return (
         <div className="navbar">
             <div className="nav-middle">
@@ -146,12 +173,15 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar }) => {
                         <div className="header__chat_modal">
                             <h3>Chats</h3>
                             <hr className="header-modal-separator"/>
-                        {onlineUsers.map((user) => (
-                            <div key={user._id} className="header__chat_modal_online" onClick={() => handleUserClick(user._id)}>
-                                <img src={user.profilePic} alt={user.name} />
-                                <p>{user.name}</p>
-                            </div>
-                        ))}
+                            {onlineUsers.map((user) => (
+                                <div key={user._id}className="header__chat_modal_online"onClick={() => handleUserClick(user._id)}>
+                                    <img src={user.profilePic} alt={user.name} />
+                                    <div className = "header__chat_modal_online_info">
+                                        <p>{user.name}</p>
+                                        <span>{messages[user._id]?.message || "No messages yet"}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                     <Link to = {'/${userId}/upload'}>
