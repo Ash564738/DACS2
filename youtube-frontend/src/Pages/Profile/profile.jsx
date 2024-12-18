@@ -39,7 +39,7 @@ const Profile = ({ sideNavbar }) => {
                     <div className="profile_top_section_About">
                         <div className="profile_top_section_About_Name">{user?.name}</div>
                         <div className="profile_top_section_info">
-                            @{user?.userName} . {data.length} videos . {user?.subscribers || 0} subscribers
+                            @{user?.userName} · {data.length} videos · {user?.subscribers || 0} subscribers
                         </div>
                         <div className="profile_top_section_info">
                             {user?.about || user?.name}

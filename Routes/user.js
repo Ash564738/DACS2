@@ -5,6 +5,7 @@ const auth = require('../middleware/authentication');
 router.post("/signUp",UserController.signUp)
 router.post('/signIn',UserController.signIn);
 router.post('/logOut',UserController.logOut);
+router.post('/changePassword',UserController.changePassword)
 router.post('/toggleSubscription/:subscribeToId',auth, UserController.toggleSubscription);
 router.get('/getSubscriptions',auth, UserController.getSubscriptions);
 router.get('/getVideosByUserId/:id',UserController.getVideosByUserId);

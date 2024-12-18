@@ -64,7 +64,24 @@ exports.logOut = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
-
+exports.changePassword = async (req, res) => {
+  const { userName, newPassword } = req.body;
+  console.log(`Received request to change password for user: ${userName}`);
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log(`Hashed new password for user: ${userName}`);
+    const result = await User.updateOne({ userName }, { password: hashedPassword });
+    if (result.nModified === 0) {
+      console.error(`No user found with userName: ${userName}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(`Password updated successfully for user: ${userName}`);
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error(`Failed to update password for user: ${userName}`, error);
+    res.status(500).json({ error: 'Failed to update password' });
+  }
+};
 exports.toggleSubscription = async (req, res) => {
   console.log("In toggleSubscription Function");
   try {
