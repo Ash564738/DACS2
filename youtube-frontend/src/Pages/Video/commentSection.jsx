@@ -183,7 +183,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                             </Link>
                             <div className="others_commentSection">
                                 <div className="otherCommentSectionHeader">
-                                    <div className="channelName_comment">{item?.user?.userName}</div>
+                                    <div className="channelName_comment">{item?.user?.name}</div>
                                     <div className="commentTimingOthers">
                                         {item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Date not available"}
                                     </div>
@@ -243,7 +243,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                                             </Link>
                                                             <div className="others_commentSection">
                                                                 <div className="otherCommentSectionHeader">
-                                                                    <div className="channelName_comment">{reply?.user?.userName || "Unknown User"}</div>
+                                                                    <div className="channelName_comment">{reply?.user?.name || "Unknown User"}</div>
                                                                     <div className="commentTimingOthers">
                                                                         {reply?.createdAt ? new Date(reply.createdAt).toLocaleDateString() : "Date not available"}
                                                                     </div>

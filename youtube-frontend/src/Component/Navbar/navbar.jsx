@@ -184,7 +184,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                             ))}
                         </div>
                     )}
-                    <Link to = {'/${userId}/upload'}>
+                    <Link to={`/${userId}/upload`}>
                         <VideoCallIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
                     </Link>
                     <NotificationsIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
