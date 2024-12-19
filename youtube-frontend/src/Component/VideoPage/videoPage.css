@@ -1,0 +1,354 @@
+.videoPage {
+    background-color: #0F0F0F;
+    color: white;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.videoPostSection {
+    width: 60%;
+    padding: 0 20px;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.video_youtube_video {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.video_youtubeAbout {
+    display: flex;
+    flex-direction: column;
+}
+.video_uTubeTitle {
+    font-weight: bold;
+}
+.youtube_video_ProfileBlock {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 15px;
+}
+.youtube_video_ProfileBlock_left {
+    display: flex;
+    gap: 15px;
+}
+.youtube_video_ProfileBlock_left_img {
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+}
+.youtube_video_ProfileBlock_left_image {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+.youtubeVideo_subsView {
+    display: flex;
+    flex-direction: column;
+    height: 36px;
+    justify-content: center;
+}
+.youtubePostProfileName {
+    font-weight: bold;
+}
+.youtubePostProfileSubs {
+    color: #AAAAAA;
+}
+.subscribeBtnYoutube {
+    background-color: white;
+    color: black;
+    padding: 0px 16px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    align-self: center;
+    cursor: pointer;
+}
+
+.youtube_video_likeBlock {
+    display: flex;
+    gap: 10px;
+    background-color: rgb(255, 255, 255, 0.1);
+    justify-content: center;
+    padding: 10px 10px;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 18px;
+    height: 36px;
+    align-self: center;
+    cursor: pointer;
+}
+.youtube_video_likeBlock i{
+    align-self: center;
+}
+.youtube_video_likeBlock_Like {
+    display: flex;
+    gap: 10px;
+}
+.youtube_video_likeBlock_NoOfLikes {
+    font-weight: 500;
+}
+.youtubeVideoDivider {
+    width: 0px;
+    height: 20px;
+    border: 1px solid;
+}
+.youtube_video_About {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: rgb(255, 255, 255, 0.1);
+    width: 100%;
+    border-radius: 10px;
+    padding: 12px;
+    gap: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+.youtube_video_Info{
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    font-weight: bold;
+}
+.youtubeCommentSection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.youtubeCommentSectionTitle {
+    font-weight: bold;
+}
+.youtubeSelfComment {
+    display: flex;
+    gap: 10px;
+    max-width: 100%;
+}
+.video_youtubeSelfCommentProfile {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+.addAComment {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.addAcommentInput {
+    width: 100%;
+    background-color: transparent;
+    color: white;
+    height: 36px;
+    border: none;
+    border-bottom: 1px solid gray;
+}
+.addAcommentInput:focus {
+    outline: none;
+}
+.addAcommentInput::placeholder {
+}
+.cancelSubmitComment {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-top: 10px;
+}
+.cancelComment {
+    padding: 5px 15px;
+    border-radius: 20px;
+    border: 1px solid;
+    cursor: pointer;
+    font-weight: bold;
+}
+.cancelComment:hover {
+    background-color: white;
+    color: black;
+}
+.youtubeOthersComments {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 100%;
+}
+.others_commentSection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.otherCommentSectionHeader {
+    display: flex;
+    gap: 5px;
+}
+.channelName_comment {
+    font-weight: bold;
+}
+.commentTimingOthers {
+    color: #AAAAAA;
+}
+.commentFuntionSectionBox{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    margin-left: auto;
+    cursor: pointer;
+    align-items: center;
+    gap: 10px;
+}
+.commentFuntionToggle{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+}
+.commentFuntionToggle:hover{
+    background-color: rgb(255, 255, 255, 0.1);
+}
+.commentFunction {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1;
+}
+.commentReply{
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+}
+/* ------------------------------------ */
+.videoSuggestions {
+    width: 40%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+.videoSuggestions_options {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 10px;
+    flex-shrink: 0;
+    height: auto;
+    cursor: grab;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.videoSuggestions_options.active {
+    cursor: grabbing;
+}
+.videoSuggestions_options::-webkit-scrollbar {
+    height: 5px;
+}
+.videoSuggestions_option {
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0px 10px;
+    background-color: rgb(42, 42, 42);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.videoSuggestions_option.active {
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+}
+.videoSuggestions_blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+.videoSuggestionsBlock {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    cursor: pointer;
+}
+.video_suggestion_link {
+    display: flex;
+    gap: 10px;
+}
+.video_suggestion_thumbnail {
+    display: flex;
+    min-width: 170px;
+    width: 170px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.video_suggestion_thumbnail_img {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 170px;
+    object-fit: cover;
+}
+.video_suggestions_about {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.video_suggestions_about_title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.video_suggestions_about_profile {
+    color: #ffffff9c;
+}
+.video_suggestions_about_profile,
+.video_suggestions_about_views {
+    color: #aaa;
+}
+/* Responsive Styles */
+@media (max-width: 1500) and (min-width: 1151px) {
+    .videoPostSection {
+        min-width: 900px;
+    }
+}
+@media (max-width: 1150px) and (min-width: 951px) {
+    .videoPostSection {
+        min-width: 700px;
+    }
+    .videoSuggestions {
+        padding: 0 15px 0 0;
+    }
+}
+@media (max-width: 950px) {
+    .videoPage {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .videoPostSection {
+        padding: 0;
+        width: 100%;
+    }
+    .videoSuggestions {
+        padding: 20px 0 0 0;
+        width: 100%;
+    }
+}

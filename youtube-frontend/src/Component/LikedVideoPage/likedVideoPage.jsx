@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './likedVideoPage.css';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import apiClient from '../../Utils/apiClient.js';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,29 +24,29 @@ const LikedVideoPage = ({ sideNavbar }) => {
   };
 
   useEffect(() => {
+    const fetchLikedVideos = async (userId) => {
+      try {
+        const response = await apiClient.get(`http://localhost:4000/api/getLikedVideos/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        if (response.data && response.data.likedVideos) {
+          setData(response.data.likedVideos);
+        } else {
+          console.warn("No liked videos found in response.");
+        }
+      } catch (err) {
+        console.error("Error fetching liked videos:", err);
+        setError("Failed to load liked videos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (userId) {
       fetchLikedVideos(userId);
     }
-  }, [userId]);
-
-  const fetchLikedVideos = async (userId) => {
-    try {
-      const response = await apiClient.get(`http://localhost:4000/api/getLikedVideos/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-      if (response.data && response.data.likedVideos) {
-        setData(response.data.likedVideos);
-      } else {
-        console.warn("No liked videos found in response.");
-      }
-    } catch (err) {
-      console.error("Error fetching liked videos:", err);
-      setError("Failed to load liked videos.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [userId, token]);
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -93,21 +92,22 @@ const LikedVideoPage = ({ sideNavbar }) => {
   }, [data]);
 
   const options = [
-    "All",
-    "Music",
-    "Animation",
-    "Documentary",
-    "Education",
-    "Entertainment",
-    "Playlists",
-    "Mixes",
-    "Gaming",
-    "Food",
-    "Comedy",
-    "Recently Uploaded",
-    "Watched",
-    "New to you",
-  ];
+    'All',
+    'Music',
+    'Animal',
+    'Animation',
+    'Documentary',
+    'Education',
+    'Entertainment',
+    'Playlists',
+    'Mixes',
+    'Gaming',
+    'Food',
+    'Comedy',
+    'Recently Uploaded',
+    'Watched',
+    'New to you',
+];
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -122,7 +122,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
   const ownerName = data.length > 0 ? data[0].user?.name : '';
   const handleLikeDislike = async (videoId, action) => {
     try {
-      const response = await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${videoId}?action=${action}`, {}, {
+      await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${videoId}?action=${action}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true
       });

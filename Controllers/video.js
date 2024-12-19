@@ -64,6 +64,18 @@ exports.getAllVideoByUserID = async (req, res) => {
     }
 };
 
+exports.getAllVideoByName = async (req, res) => {
+    console.log("In getAllVideoByName Function");
+    try {
+        const { title } = req.params;
+        const videos = await Video.find({ title: { $regex: title, $options: 'i' } }).populate('user');
+        res.status(200).json({ success: true, videos });
+    } catch (error) {
+        console.error("Error in getAllVideoByName:", error);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 exports.toggleLikeDislike = async (req, res) => {
     console.log("In toggleLikeDislike Function");
     const { id: videoId } = req.params;

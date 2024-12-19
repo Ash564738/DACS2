@@ -1,58 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './navbar.css';
 import Logo from '../../Component/Logo/logo';
-import Chat from '../../Component/Chat/chat';
-import {
-    Menu as MenuIcon,
-    Search as SearchIcon,
-    KeyboardVoice as KeyBoardVoiceIcon,
-    VideoCall as VideoCallIcon,
-    Notifications as NotificationsIcon,
-    Login as LoginIcon,
-    Logout as LogoutIcon,
-    Brightness3 as Brightness3Icon,
-    Settings as SettingsIcon,
-    Translate as TranslateIcon,
-    Language as LanguageIcon,
-    FeedbackOutlined as FeedbackOutlinedIcon,
-    HelpOutlineOutlined as HelpOutlineOutlinedIcon,
-} from '@mui/icons-material';
+import { Menu as MenuIcon, Search as SearchIcon, KeyboardVoice as KeyBoardVoiceIcon, VideoCall as VideoCallIcon, Notifications as NotificationsIcon, Login as LoginIcon, Logout as LogoutIcon, Brightness3 as Brightness3Icon, Settings as SettingsIcon, Translate as TranslateIcon, Language as LanguageIcon, FeedbackOutlined as FeedbackOutlinedIcon, HelpOutlineOutlined as HelpOutlineOutlinedIcon } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast,ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
-    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain")
+    const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [user, setUser] = useState({});
-    const [friend, setFriend] = useState({});
     const [messages, setMessages] = useState([]);
-    const [navbarModal,setNavbarModal] = useState(false);
-    const [chatModal,setChatModal] = useState(false);
-    const [isLogedIn,setIsLogedIn] = useState(false);
+    const [navbarModal, setNavbarModal] = useState(false);
+    const [chatModal, setChatModal] = useState(false);
+    const [isLogedIn, setIsLogedIn] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const modalRef = useRef();
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem("userId");
-    useEffect(() => {
-        if (userId) {
-            fetchUserProfile(userId);
-            setIsLogedIn(true);
-        } else {
-            console.error("No user ID found in local storage");
-        }        
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                setNavbarModal(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-    const fetchUserProfile = async (userId) => {
+    const fetchUserProfile = useCallback(async (userId) => {
         if (!userId) {
             console.error("User ID is undefined");
             return;
@@ -68,8 +36,64 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
         } catch (error) {
             console.error("Error fetching user data:", error.response ? error.response.data : error.message);
         }
-    };    
-    const handleModalToggle = () => {
+    }, [token]);
+    useEffect(() => {
+        if (userId) {
+            fetchUserProfile(userId);
+            setIsLogedIn(true);
+        } else {
+            console.error("No user ID found in local storage");
+        }
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setTimeout(() => {
+                    setNavbarModal(false);
+                }, 100);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [userId, fetchUserProfile]);
+    const fetchLatestMessages = useCallback(async () => {
+        try {
+            const latestMessagesMap = {};
+            for (const onlineUser of onlineUsers) {
+                const response = await axios.get(
+                    `http://localhost:4000/chat/getMessages/${userId}/${onlineUser._id}`
+                );
+                const messages = response.data.data;
+                if (messages.length > 0) {
+                    latestMessagesMap[onlineUser._id] = messages[messages.length - 1];
+                }
+            }
+            setMessages(latestMessagesMap);
+        } catch (error) {
+            console.error('Error fetching latest messages:', error);
+        }
+    }, [onlineUsers, userId]);
+    useEffect(() => {
+        if (onlineUsers.length > 0) {
+            fetchLatestMessages();
+        }
+    }, [onlineUsers, fetchLatestMessages]);
+    useEffect(() => {
+        console.log('fetchOnlineUsers:');
+        const fetchOnlineUsers = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/auth/getAllUsers');
+                const allUsers = response.data.users;
+                const filteredUsers = allUsers.filter(user => user._id !== userId);
+                setOnlineUsers(filteredUsers);
+            } catch (error) {
+                console.error('Error fetching online users:', error);
+            }
+        };
+        fetchOnlineUsers();
+    }, [userId]);
+    const handleModalToggle = (event) => {
+        event.stopPropagation();
         setNavbarModal((prev) => !prev);
     };
     const handleModalChat = () => {
@@ -83,10 +107,10 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
     const sideNavbarFunc = () => {
         setSideNavbarFunc(!sideNavbar);
     };
-    const handleLogout = async() => {
+    const handleLogout = async () => {
         try {
-            await apiClient.post(`http://localhost:4000/auth/logOut`,{},{
-                headers: {Authorization: `Bearer ${token}`},
+            await apiClient.post(`http://localhost:4000/auth/logOut`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             }).then((response) => {
                 if (response.data.success) {
@@ -106,45 +130,32 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
     const handleUserClick = (friendId) => {
         console.log("Clicked friendId:", friendId);
         onFriendSelect(friendId);
-
     };
-    const fetchLatestMessages = async () => {
-        try {
-            const latestMessagesMap = {};
-                for (const onlineUser of onlineUsers) {
-                const response = await axios.get(
-                    `http://localhost:4000/chat/getMessages/${userId}/${onlineUser._id}`
-                );
-                    const messages = response.data.data;
-                if (messages.length > 0) {
-                    latestMessagesMap[onlineUser._id] = messages[messages.length - 1];
-                }
-            }
-    
-            setMessages(latestMessagesMap);
-        } catch (error) {
-            console.error('Error fetching latest messages:', error);
-        }
+    const handleSearchInputChange = (event) => {
+        setSearchQuery(event.target.value);
     };
-        useEffect(() => {
-        if (onlineUsers.length > 0) {
-            fetchLatestMessages();
-        }
-    }, [onlineUsers]);    
-    useEffect(() => {
-        console.log('fetchOnlineUsers:');
-        const fetchOnlineUsers = async () => {
+    const handleSearchSubmit = async () => {
+        if (searchQuery.trim()) {
             try {
-                const response = await axios.get('http://localhost:4000/auth/getAllUsers');
-                const allUsers = response.data.users;
-                const filteredUsers = allUsers.filter(user => user._id !== userId);
-                setOnlineUsers(filteredUsers);
+                const response = await axios.get('http://localhost:4000/api/allVideo');
+                const allVideos = response.data.videos;
+                // Filter videos by name
+                const searchResults = allVideos.filter(video => 
+                    video.title.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+                // Handle the search results as needed
+                console.log(searchResults);
+                navigate(`/search?query=${searchQuery}`, { state: { results: searchResults } });
             } catch (error) {
-                console.error('Error fetching online users:', error);
+                console.error('Error performing search:', error);
             }
-        };
-        fetchOnlineUsers();
-    }, [userId]);
+        }
+    };
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearchSubmit();
+        }
+    };
     return (
         <div className="navbar">
             <div className="nav-middle">
@@ -158,8 +169,8 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                 </div>
                 <div className="header__center">
                     <div className="header__search">
-                        <input type="text" className="header__input" placeholder="Search" />
-                        <div className="search--btn">
+                        <input type="text" className="header__input" placeholder="Search" value={searchQuery} onChange={handleSearchInputChange} onKeyPress={handleKeyPress} />
+                        <div className="search--btn" onClick={handleSearchSubmit}>
                             <SearchIcon sx={{ fontSize: "28px", color: "white" }} />
                         </div>
                     </div>
@@ -168,15 +179,15 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                     </div>
                 </div>
                 <div className="header__infor">
-                    <i onClick = {handleModalChat}className="fas fa-comment header__chat"></i>
+                    <i onClick={handleModalChat} className="fas fa-comment header__chat"></i>
                     {chatModal && (
                         <div className="header__chat_modal">
                             <h3>Chats</h3>
-                            <hr className="header-modal-separator"/>
+                            <hr className="header-modal-separator" />
                             {onlineUsers.map((user) => (
-                                <div key={user._id}className="header__chat_modal_online"onClick={() => handleUserClick(user._id)}>
+                                <div key={user._id} className="header__chat_modal_online" onClick={() => handleUserClick(user._id)}>
                                     <img src={user.profilePic} alt={user.name} />
-                                    <div className = "header__chat_modal_online_info">
+                                    <div className="header__chat_modal_online_info">
                                         <p>{user.name}</p>
                                         <span>{messages[user._id]?.message || "No messages yet"}</span>
                                     </div>
@@ -199,7 +210,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                                     <div className="header-modal-channel-profile" onClick={handleProfile}>View your channel</div>
                                 </div>
                             </div>
-                            <hr className="header-modal-separator"/>
+                            <hr className="header-modal-separator" />
                             {!isLogedIn && <Link to={"/signup"} className="header-modal-option">
                                 <LoginIcon /> Sign In
                             </Link>}
@@ -237,4 +248,5 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
         </div>
     );
 };
+
 export default Navbar;

@@ -77,21 +77,22 @@ const SubscriptionPage = ({ sideNavbar }) => {
     };
   }, []);
   const options = [
-    "All",
-    "Music",
-    "Animation",
-    "Documentary",
-    "Education",
-    "Entertainment",
-    "Playlists",
-    "Mixes",
-    "Gaming",
-    "Food",
-    "Comedy",
-    "Recently Uploaded",
-    "Watched",
-    "New to you",
-  ];
+    'All',
+    'Music',
+    'Animal',
+    'Animation',
+    'Documentary',
+    'Education',
+    'Entertainment',
+    'Playlists',
+    'Mixes',
+    'Gaming',
+    'Food',
+    'Comedy',
+    'Recently Uploaded',
+    'Watched',
+    'New to you',
+];
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setSelectedUser(null);

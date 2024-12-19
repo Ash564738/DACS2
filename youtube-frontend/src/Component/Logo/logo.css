@@ -1,0 +1,55 @@
+.animation-wrapper {
+    display: flex;
+	position: relative;
+	flex-direction: row;
+}
+.animation-wrapper.hidden,.logo.hidden {
+    display: none !important;
+}
+.logo.visible {
+    display: flex;
+	position: relative;
+	align-items: center;
+	justify-content: center;
+    transition: all 1s;
+}
+.cat {
+    display: flex;
+    width: 100%;
+    overflow: visible;
+}
+.cat-wrapper {
+    display: flex;
+	position: relative;
+	top: -12px;
+    width: 50px;
+}
+.logoani {
+    display: flex;
+	position: relative;
+	top: 5px;
+	right: -5px;
+}
+.eyes circle {
+    fill: #000;
+}
+.body-backcircle,.body-frontcircle,.body-between,.head,.ears polygon, .tail,.backlegs path,.frontlegs path {
+    fill: #fff;
+}
+.logo span, .logoani span {
+    font-size: 10px;
+    font-weight: 500;
+    color: #909090 !important;
+    position: absolute;
+	top: 0px;
+    right: -15px;
+}
+.youtubetitle {
+    font-size: 20px;
+    word-spacing: 0px;
+    letter-spacing: 0px;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    position: relative;
+}

@@ -73,6 +73,7 @@ const VideoSuggestion = ({ id }) => {
     const options = [
         'All',
         'Music',
+        'Animal',
         'Animation',
         'Documentary',
         'Education',
