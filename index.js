@@ -16,6 +16,8 @@ const CommentRoutes = require('./Routes/comment');
 const PostRoutes = require('./Routes/post')
 const ChatRoutes = require('./Routes/chat')
 const OtpRoutes = require('./Routes/otp');
+const NotificationRoutes = require('./Routes/notification');
+app.use('/notification',NotificationRoutes);
 app.use('/otp',OtpRoutes);
 app.use('/auth',AuthRoutes);
 app.use('/api',VideoRoutes);

@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
+
 const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [user, setUser] = useState({});
@@ -16,10 +17,13 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
     const [isLogedIn, setIsLogedIn] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [notifications, setNotifications] = useState([]);
+    const [notificationModal, setNotificationModal] = useState(false);
     const navigate = useNavigate();
     const modalRef = useRef();
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem("userId");
+
     const fetchUserProfile = useCallback(async (userId) => {
         if (!userId) {
             console.error("User ID is undefined");
@@ -37,6 +41,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
             console.error("Error fetching user data:", error.response ? error.response.data : error.message);
         }
     }, [token]);
+
     useEffect(() => {
         if (userId) {
             fetchUserProfile(userId);
@@ -56,6 +61,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [userId, fetchUserProfile]);
+
     const fetchLatestMessages = useCallback(async () => {
         try {
             const latestMessagesMap = {};
@@ -73,11 +79,13 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
             console.error('Error fetching latest messages:', error);
         }
     }, [onlineUsers, userId]);
+
     useEffect(() => {
         if (onlineUsers.length > 0) {
             fetchLatestMessages();
         }
     }, [onlineUsers, fetchLatestMessages]);
+
     useEffect(() => {
         console.log('fetchOnlineUsers:');
         const fetchOnlineUsers = async () => {
@@ -92,21 +100,44 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
         };
         fetchOnlineUsers();
     }, [userId]);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/notification/getNotifications', {
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true
+                });
+                setNotifications(response.data.notifications);
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+    
+        if (userId) {
+            fetchNotifications();
+        }
+    }, [userId, token]);
+
     const handleModalToggle = (event) => {
         event.stopPropagation();
         setNavbarModal((prev) => !prev);
     };
+
     const handleModalChat = () => {
         setChatModal((prev) => !prev);
     };
+
     const handleProfile = () => {
         const userId = localStorage.getItem("userId");
         navigate(`/user/${userId}`);
         setNavbarModal(false);
     };
+
     const sideNavbarFunc = () => {
         setSideNavbarFunc(!sideNavbar);
     };
+
     const handleLogout = async () => {
         try {
             await apiClient.post(`http://localhost:4000/auth/logOut`, {}, {
@@ -127,23 +158,24 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
             console.error("Error fetching user data:", error);
         }
     };
+
     const handleUserClick = (friendId) => {
         console.log("Clicked friendId:", friendId);
         onFriendSelect(friendId);
     };
+
     const handleSearchInputChange = (event) => {
         setSearchQuery(event.target.value);
     };
+
     const handleSearchSubmit = async () => {
         if (searchQuery.trim()) {
             try {
                 const response = await axios.get('http://localhost:4000/api/allVideo');
                 const allVideos = response.data.videos;
-                // Filter videos by name
                 const searchResults = allVideos.filter(video => 
                     video.title.toLowerCase().includes(searchQuery.toLowerCase())
                 );
-                // Handle the search results as needed
                 console.log(searchResults);
                 navigate(`/search?query=${searchQuery}`, { state: { results: searchResults } });
             } catch (error) {
@@ -151,11 +183,17 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
             }
         }
     };
+
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearchSubmit();
         }
     };
+
+    const handleNotificationToggle = () => {
+        setNotificationModal((prev) => !prev);
+    };
+
     return (
         <div className="navbar">
             <div className="nav-middle">
@@ -182,7 +220,7 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                     <i onClick={handleModalChat} className="fas fa-comment header__chat"></i>
                     {chatModal && (
                         <div className="header__chat_modal">
-                            <h3>Chats</h3>
+                            <h5>Chats</h5>
                             <hr className="header-modal-separator" />
                             {onlineUsers.map((user) => (
                                 <div key={user._id} className="header__chat_modal_online" onClick={() => handleUserClick(user._id)}>
@@ -198,7 +236,27 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                     <Link to={`/${userId}/upload`}>
                         <VideoCallIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
                     </Link>
-                    <NotificationsIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} />
+                    <NotificationsIcon sx={{ color: "white", fontSize: "30px", cursor: "pointer" }} onClick={handleNotificationToggle} />
+                    {notificationModal && (
+                        <div className="notification-modal">
+                            <h5>Notifications</h5>
+                            <hr className="header-modal-separator" />
+                            {notifications.length > 0 ? (
+                                notifications.map((notification) => (
+                                    <div key={notification._id} className="notification-item">
+                                        <img src={notification.profilePic} alt="Profile" className="notification-profile-pic" />
+                                        <div className="notification-content">
+                                            <p>{notification.message}</p>
+                                            <img src={notification.thumbnail} alt="Thumbnail" className="notification-thumbnail" />
+                                            <span>{new Date(notification.date).toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No notifications yet</p>
+                            )}
+                        </div>
+                    )}
                     <img onClick={handleModalToggle} src={userPic} className="header__userava" alt="Ava" />
                     {navbarModal && (
                         <div className="header-modal" ref={modalRef}>

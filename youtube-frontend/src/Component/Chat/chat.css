@@ -13,6 +13,7 @@
     position: fixed;
     bottom: 0;
     right: 20px;
+    z-index: 20;
 }
 
 .chat-header {

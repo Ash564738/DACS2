@@ -1,3 +1,5 @@
+const Notification = require('../Modals/notification');
+const User = require('../Modals/user');
 const Video = require('../Modals/video');
 const ffmpeg = require('fluent-ffmpeg');
 
@@ -18,6 +20,15 @@ exports.uploadVideo = async (req, res) => {
         const videoUpload = new Video({ user: req.user.userId, title, description, videoLink, videoType, thumbnail, duration: formattedDuration });
         await videoUpload.save();
         console.log("Video uploaded successfully:", videoUpload);
+        const user = await User.findById(req.user.userId).populate('subscriptions');
+        const notifications = user.subscriptions.map(subscriber => ({
+            user: subscriber._id,
+            video: videoUpload._id,
+            message: `${user.name} uploaded a new video: ${title}`,
+            thumbnail: videoUpload.thumbnail,
+            profilePic: user.profilePic
+        }));
+        await Notification.insertMany(notifications);
         res.status(201).json({ success: true, videoUpload });
     } catch (error) {
         console.error("Error in uploadVideo:", error);
