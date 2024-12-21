@@ -160,10 +160,10 @@
 }
 .header__userava {
     width: 30px;
+    height: 30px;
     object-fit: cover;
     border-radius: 50%;
     cursor: pointer;
-    margin: 0 10px 0 0;
 }
 .header-modal{
     display: flex;
@@ -227,7 +227,7 @@
     border-radius: 10px;
     overflow: hidden;
     color: white;
-    width: 250px;
+    width: 400px;
 }
 .notification-modal h5{
     padding: 10px;
@@ -261,13 +261,13 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    margin-right: 10px;
 }
 
 .notification-thumbnail {
     width: 100px;
     height: 60px;
-    margin-top: 10px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
 .notification-content {

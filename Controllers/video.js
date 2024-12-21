@@ -1,8 +1,8 @@
 const Notification = require('../Modals/notification');
 const User = require('../Modals/user');
 const Video = require('../Modals/video');
+const Comment = require('../Modals/comment');
 const ffmpeg = require('fluent-ffmpeg');
-
 exports.uploadVideo = async (req, res) => {
     console.log("In uploadVideo Function");
     try {
@@ -35,7 +35,22 @@ exports.uploadVideo = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
+exports.editVideo = async (req, res) => {
+    console.log("In editVideo Function");
+    try {
+        const { id } = req.params;
+        const { title, description, videoLink, videoType, thumbnail } = req.body;
+        const video = await Video.findByIdAndUpdate(id, { title, description, videoLink, videoType, thumbnail }, { new: true });
+        if (!video) {
+            console.log("Video not found for ID:", id);
+            return res.status(404).json({ error: 'Video not found' });
+        }
+        res.status(200).json({ success: true, video });
+    } catch (error) {
+        console.error("Error in editVideo:", error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
 exports.getAllVideo = async (req, res) => {
     console.log("In getAllVideo Function");
     try {
@@ -46,7 +61,6 @@ exports.getAllVideo = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
 exports.getVideoById = async (req, res) => {
     console.log("In getVideoById Function");
     try {
@@ -62,7 +76,6 @@ exports.getVideoById = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
 exports.getAllVideoByUserID = async (req, res) => {
     console.log("In getAllVideoByUserID Function");
     try {
@@ -74,7 +87,6 @@ exports.getAllVideoByUserID = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
 exports.getAllVideoByName = async (req, res) => {
     console.log("In getAllVideoByName Function");
     try {
@@ -86,7 +98,6 @@ exports.getAllVideoByName = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 }
-
 exports.toggleLikeDislike = async (req, res) => {
     console.log("In toggleLikeDislike Function");
     const { id: videoId } = req.params;
@@ -122,6 +133,23 @@ exports.toggleLikeDislike = async (req, res) => {
         res.status(200).json({ like: video.like.length, dislike: video.dislike.length });
     } catch (error) {
         console.error("Error in toggleLikeDislike:", error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+exports.deleteVideo = async (req, res) => {
+    console.log("In deleteVideo Function");
+    try {
+        const { id } = req.params;
+        const video = await Video.findByIdAndDelete(id);
+        if (!video) {
+            console.log("Video not found for ID:", id);
+            return res.status(404).json({ error: 'Video not found' });
+        }
+        await Notification.deleteMany({ video: id });
+        await Comment.deleteMany({ video: id });
+        res.status(200).json({ success: true, video });
+    } catch (error) {
+        console.error("Error in deleteVideo:", error);
         res.status(500).json({ error: 'Server error' });
     }
 };

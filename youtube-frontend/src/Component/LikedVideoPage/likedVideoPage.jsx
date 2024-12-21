@@ -189,20 +189,20 @@ const LikedVideoPage = ({ sideNavbar }) => {
                     </div>
                   </div>
                   <div className="likedVideoFuntionSectionBox">
-                    <div className="likedVideoFunctionsToggle"onClick={(e) => {e.stopPropagation();toggleVideoFunction(video._id, e);}}>
+                    <div className="likedVideoFunctionsToggle" onClick={(e) => {e.stopPropagation(); toggleVideoFunction(video._id, e);}}>
                       <i className="fa-solid fa-ellipsis-vertical"></i>
                     </div>
                     {showVideoFunction[video._id] && (
                       <div className="videoFunction">
-                        <div className="videoFunctionItem"onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
+                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
                           <i className="fa-solid fa-plus"></i>
                           Add to queue
                         </div>
-                        <div className="videoFunctionItem"onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
+                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
                           <i className="fa-solid fa-clock"></i>
                           Save to Watch later
                         </div>
-                        <div className="videoFunctionItem"onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
+                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
                           <i className="fa-solid fa-list"></i>
                           Save to playlist
                         </div>

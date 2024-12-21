@@ -190,11 +190,13 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                 </div>
                                 <div className="otherCommentSectionComment">
                                     {editCommentData.id === item._id ? (
-                                        <input
-                                            type="text"
-                                            value={editCommentData.message}
-                                            onChange={(e) => setEditCommentData({ ...editCommentData, message: e.target.value })}
-                                        />
+                                        <>
+                                            <input className="addAcommentInput" type="text" value={editCommentData.message} onChange={(e) => setEditCommentData({ ...editCommentData, message: e.target.value })}/>
+                                            <div className="cancelSubmitComment">
+                                                <div className = "cancelComment" onClick={() => { setEditCommentData({ id: null, message: "" }); setEditReplyData({ commentId: null, replyId: null, message: "" }); }}>Cancel</div>
+                                                <div className = "cancelComment" onClick={handleSaveEdit}>Save</div>
+                                            </div>
+                                        </>
                                     ) : (
                                         item.message
                                     )}
@@ -250,11 +252,13 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                                                 </div>
                                                                 <div className="otherCommentSectionComment">
                                                                     {editReplyData.replyId === reply._id ? (
-                                                                        <input
-                                                                            type="text"
-                                                                            value={editReplyData.message}
-                                                                            onChange={(e) => setEditReplyData({ ...editReplyData, message: e.target.value })}
-                                                                        />
+                                                                        <>
+                                                                            <input className="addAcommentInput" type="text" value={editReplyData.message} onChange={(e) => setEditReplyData({ ...editReplyData, message: e.target.value })}/>
+                                                                            <div className="cancelSubmitComment">
+                                                                                <div className = "cancelComment"onClick={() => { setEditCommentData({ id: null, message: "" }); setEditReplyData({ commentId: null, replyId: null, message: "" }); }}>Cancel</div>
+                                                                                <div className = "cancelComment" onClick={handleSaveEdit}>Save</div>
+                                                                            </div>
+                                                                        </>
                                                                     ) : (
                                                                         reply.message
                                                                     )}
@@ -271,30 +275,30 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                                                 </div>
                                                             </div>
                                                             <div className="commentFuntionSectionBox">
-                                                                    <div className="commentFuntionToggle" onClick={() => toggleReplyFunction(reply._id)}>
-                                                                        <i className="fa-solid fa-ellipsis-vertical" ></i>
-                                                                    </div>
-                                                                    {showReplyFunction[reply._id] && (
-                                                                        <div className='commentFunction'>
-                                                                            {reply.user._id === userId ? (
-                                                                                <>
-                                                                                    <div className="commentReply" onClick={() => handleDeleteReply(item._id, reply._id)}>
-                                                                                        <i className="fa-solid fa-trash"></i>
-                                                                                        Delete
-                                                                                    </div>
-                                                                                    <div className='commentReply' onClick={() => handleEditReply(item._id, reply._id, reply.message)}>
-                                                                                        <i className="fa-solid fa-pen-to-square"></i>
-                                                                                        Edit
-                                                                                    </div>
-                                                                                </>
-                                                                            ) : (
-                                                                                <div className='commentReply'>
-                                                                                    <i className="fa-solid fa-flag"></i>
-                                                                                    Report
+                                                                <div className="commentFuntionToggle" onClick={() => toggleReplyFunction(reply._id)}>
+                                                                    <i className="fa-solid fa-ellipsis-vertical" ></i>
+                                                                </div>
+                                                                {showReplyFunction[reply._id] && (
+                                                                    <div className='commentFunction'>
+                                                                        {reply.user._id === userId ? (
+                                                                            <>
+                                                                                <div className="commentReply" onClick={() => handleDeleteReply(item._id, reply._id)}>
+                                                                                    <i className="fa-solid fa-trash"></i>
+                                                                                    Delete
                                                                                 </div>
-                                                                            )}
-                                                                        </div>
-                                                                    )}
+                                                                                <div className='commentReply' onClick={() => handleEditReply(item._id, reply._id, reply.message)}>
+                                                                                    <i className="fa-solid fa-pen-to-square"></i>
+                                                                                    Edit
+                                                                                </div>
+                                                                            </>
+                                                                        ) : (
+                                                                            <div className='commentReply'>
+                                                                                <i className="fa-solid fa-flag"></i>
+                                                                                Report
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -334,12 +338,6 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                     </div>
                 ))}
             </div>
-            {(editCommentData.id || editReplyData.replyId) && (
-                <div className="editActions">
-                    <button onClick={handleSaveEdit}>Save</button>
-                    <button onClick={() => { setEditCommentData({ id: null, message: "" }); setEditReplyData({ commentId: null, replyId: null, message: "" }); }}>Cancel</button>
-                </div>
-            )}
         </div>
     );
 };
