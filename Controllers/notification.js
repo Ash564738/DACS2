@@ -12,7 +12,6 @@ exports.getNotifications = async (req, res) => {
                 path: 'video',
                 select: 'thumbnail'
             });
-
         res.status(200).json({ success: true, notifications });
     } catch (error) {
         console.error("Error fetching notifications:", error);

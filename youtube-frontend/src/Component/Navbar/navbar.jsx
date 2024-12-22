@@ -243,14 +243,14 @@ const Navbar = ({ setSideNavbarFunc, sideNavbar, onFriendSelect }) => {
                             <hr className="header-modal-separator" />
                             {notifications.length > 0 ? (
                                 notifications.map((notification) => (
-                                    <div key={notification._id} className="notification-item">
+                                    <Link to={`/watch/${notification.video._id}`} key={notification._id} className="notification-item">
                                         <img src={notification.profilePic} alt="Profile" className="notification-profile-pic" />
                                         <div className="notification-content">
                                             <p>{notification.message}</p>
-                                            <img src={notification.thumbnail} alt="Thumbnail" className="notification-thumbnail" />
                                             <span>{new Date(notification.date).toLocaleString()}</span>
                                         </div>
-                                    </div>
+                                        <img src={notification.thumbnail} alt="Thumbnail" className="notification-thumbnail" />
+                                    </Link>
                                 ))
                             ) : (
                                 <p>No notifications yet</p>

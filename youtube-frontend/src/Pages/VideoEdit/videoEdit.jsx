@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './videoUpload.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,7 +8,8 @@ import Loader from '../../Component/Loader/loader';
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '../../Utils/apiClient.js';
-const VideoUpload = () => {
+const VideoEdit = () => {
+    const {id} = useParams();
     const GradientBorderSVG = ({ gradientId, maskId, className }) => {
         return (
             <svg className={`position-absolute gradient-border-svg top-0 w-100 h-100 pointer-events-none ${className}`}>
@@ -66,18 +66,20 @@ const VideoUpload = () => {
         if (isLogin === null) {
             toast.error("Please Login First");
             navigate('/');
+        } else {
+            fetchVideoData();
         }
     }, [navigate]);    
-    const handleUploadVideo = async () => {
+    const handleEditVideo = async () => {
         setLoader(true);
         try {
-            await apiClient.post('http://localhost:4000/api/video', inputField, { 
+            await apiClient.post(`http://localhost:4000/api/editVideo/${id}`, inputField, { 
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             }).then((response) => {
                 if (response.data.success) {
                     setLoader(false);
-                    toast.success("Video Uploaded Successfully");
+                    toast.success("Video Edited Successfully");
                     navigate('/');
                 }
             }
@@ -89,40 +91,71 @@ const VideoUpload = () => {
             setLoader(false);
         }
     };
+    const fetchVideoData = async () => {
+        try {
+            const response = await apiClient.get(`http://localhost:4000/api/getVideoById/${id}`);
+            console.log("Video data:", response.data);
+            setInputField({
+                title: response.data.video.title,
+                description: response.data.video.description,
+                videoType: response.data.video.videoType,
+                thumbnail: response.data.video.thumbnail,
+                videoLink: response.data.video.videoLink
+            });
+        } catch (error) {
+            console.error("Error fetching video data:", error);
+        }
+    };
     return (
         <div className='videoUpload'>
             <div className="uploadBoxWrapper">
                 <div className="uploadBox">
                     <div className="uploadVideoTitle">
                         <img src="https://cdn140.picsart.com/272733942032211.png?r1024x1024" alt="Metube logo" width="60" height="41" loading="lazy"/>
-                        Upload Video
+                        Edit Video
                     </div>
                     <div className="uploadForm">
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-2 form-floating w-100 position-relative">
                             <input type="text" value={inputField.title} onChange={(e) => handleOnChangeInput(e, "title")} className="form-control gradient-input" placeholder="Enter Video Title" autoComplete="on" required/>
                             <label className="form-label">Video Title</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
                         </div>
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-2 form-floating w-100 position-relative">
                             <input type="text" value={inputField.description} onChange={(e) => handleOnChangeInput(e, "description")} className="form-control gradient-input" placeholder="Enter Video Description" autoComplete="on" required/>
                             <label className="form-label"> Video Description</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
                         </div>
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-2 form-floating w-100 position-relative">
                             <input type="text" value={inputField.videoType}onChange={(e) => handleOnChangeInput(e, "videoType")} className="form-control gradient-input" placeholder="Enter Video Category" autoComplete="on" required/>
                             <label className="form-label">Video Category</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
+                        </div>
+                        <div className="w-100 position-relative">
+                            <input type="file" onChange={(e) => uploadImage(e, "image")} accept="image/*" />
+                            {inputField.thumbnail && (
+                                <div className="w-100 position-relative d-flex flex-row">
+                                    <p className="p-0 m-0">Thumbnail uploaded:</p>
+                                    <img src={inputField.thumbnail} alt="Thumbnail preview" style={{ maxWidth: '90px'}} />
+                                </div>
+                            )}
+                        </div>
+                        <div className="w-100 position-relative">
+                            <input type="file" onChange={(e) => uploadImage(e, "video")} accept="video/mp4, video/webm, video/*" />
+                            {inputField.videoLink && (
+                                <div className="w-100 position-relative d-flex flex-row">
+                                    <p className="p-0 m-0">Video uploaded:</p>
+                                    <a href={inputField.videoLink} target="_blank" rel="noopener noreferrer">View uploaded video</a>
+                                </div>
+                            )}
                         </div>
                         {loader && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '40px', height: '40px'}}>
                             <Loader/>
                         </Box>
                         )}
-                        <div>Thumbnail <input type="file" onChange={(e) => uploadImage(e, "image")} accept='image/*'/></div>
-                        <div>Video <input type="file" onChange={(e) => uploadImage(e, "video")} accept='video/mp4, video/webm, video/*'/></div>
                     </div>
                     <div className="uploadBtns">
-                        <div className="uploadBtn-form fw-bold fs-6 form-floating w-100 position-relative" onClick={handleUploadVideo}>Upload</div>
+                        <div className="uploadBtn-form fw-bold fs-6 form-floating w-100 position-relative" onClick={handleEditVideo}>Save</div>
                         <Link to="/" className="uploadBtn-form fw-bold fs-6 form-floating w-100 position-relative">Home</Link>
                     </div>
                 </div>
@@ -131,4 +164,4 @@ const VideoUpload = () => {
         </div>
     );
 };
-export default VideoUpload;
+export default VideoEdit;

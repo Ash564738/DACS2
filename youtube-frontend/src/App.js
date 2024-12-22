@@ -13,7 +13,7 @@ import Subscription from './Pages/Subscription/subscription';
 import LikedVideo from './Pages/LikedVideo/likedVideo';
 import Chat from '../src/Component/Chat/chat.jsx';
 import Search from './Pages/Search/search';
-
+import VideoEdit from './Pages/VideoEdit/videoEdit';
 function App() {
   const [sideNavbar, setSideNavbar] = useState(true);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
@@ -49,6 +49,7 @@ function App() {
         <Route path="/watch/:id" element={<Video sideNavbar={sideNavbar}/>} />
         <Route path="/user/:id" element={<Profile sideNavbar={sideNavbar} />} />
         <Route path="/:id/upload" element={<VideoUpload />} />
+        <Route path="/:id/edit" element={<VideoEdit />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/subscription" element={<Subscription sideNavbar={sideNavbar} />} />
         <Route path="/likedVideo" element={<LikedVideo sideNavbar={sideNavbar} />} />

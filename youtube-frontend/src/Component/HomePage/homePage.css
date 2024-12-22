@@ -136,7 +136,10 @@
     font-size: 18px;
     color: rgb(170,170,170);
 }
-
+.videoFunction hr{
+    padding: 0;
+    margin: 0;
+}
 .youtubeVideo_views {
     font-size: 14px;
     color: rgb(170,170,170);
