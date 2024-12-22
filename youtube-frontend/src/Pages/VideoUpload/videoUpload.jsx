@@ -98,28 +98,44 @@ const VideoUpload = () => {
                         Upload Video
                     </div>
                     <div className="uploadForm">
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-2 form-floating w-100 position-relative">
                             <input type="text" value={inputField.title} onChange={(e) => handleOnChangeInput(e, "title")} className="form-control gradient-input" placeholder="Enter Video Title" autoComplete="on" required/>
                             <label className="form-label">Video Title</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
                         </div>
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-2 form-floating w-100 position-relative">
                             <input type="text" value={inputField.description} onChange={(e) => handleOnChangeInput(e, "description")} className="form-control gradient-input" placeholder="Enter Video Description" autoComplete="on" required/>
                             <label className="form-label"> Video Description</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
                         </div>
-                        <div className="mb-3 form-floating w-100 position-relative">
+                        <div className="mb-2 form-floating w-100 position-relative">
                             <input type="text" value={inputField.videoType}onChange={(e) => handleOnChangeInput(e, "videoType")} className="form-control gradient-input" placeholder="Enter Video Category" autoComplete="on" required/>
                             <label className="form-label">Video Category</label>
                             <GradientBorderSVG gradientId="signinEmailGradient" maskId="signinEmailBorderMask" />
+                        </div>
+                        <div className="w-100 position-relative">
+                            <input type="file" onChange={(e) => uploadImage(e, "image")} accept="image/*" />
+                            {inputField.thumbnail && (
+                                <div className="w-100 position-relative d-flex flex-row">
+                                    <p className="p-0 m-0">Thumbnail uploaded:</p>
+                                    <img src={inputField.thumbnail} alt="Thumbnail preview" style={{ maxWidth: '90px'}} />
+                                </div>
+                            )}
+                        </div>
+                        <div className="w-100 position-relative">
+                            <input type="file" onChange={(e) => uploadImage(e, "video")} accept="video/mp4, video/webm, video/*" />
+                            {inputField.videoLink && (
+                                <div className="w-100 position-relative d-flex flex-row">
+                                    <p className="p-0 m-0">Video uploaded:</p>
+                                    <a href={inputField.videoLink} target="_blank" rel="noopener noreferrer">View uploaded video</a>
+                                </div>
+                            )}
                         </div>
                         {loader && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '40px', height: '40px'}}>
                             <Loader/>
                         </Box>
                         )}
-                        <div>Thumbnail <input type="file" onChange={(e) => uploadImage(e, "image")} accept='image/*'/></div>
-                        <div>Video <input type="file" onChange={(e) => uploadImage(e, "video")} accept='video/mp4, video/webm, video/*'/></div>
                     </div>
                     <div className="uploadBtns">
                         <div className="uploadBtn-form fw-bold fs-6 form-floating w-100 position-relative" onClick={handleUploadVideo}>Upload</div>

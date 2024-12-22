@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './likedVideoPage.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../../Utils/apiClient.js';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,6 +13,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   const toggleVideoFunction = (videoId, event) => {
     event.stopPropagation();
@@ -135,8 +136,22 @@ const LikedVideoPage = ({ sideNavbar }) => {
     }
   };
   const handleFunctionItemClick = (event) => {
-    event.stopPropagation();
     event.preventDefault();
+    event.stopPropagation();
+  };
+  const handleDeleteVideo = async (videoId, e) => {
+    e.stopPropagation();
+    try {
+      await apiClient.delete(`http://localhost:4000/api/video/${videoId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true
+      });
+      setData(prevData => prevData.filter(video => video._id !== videoId));
+      toast.success("Video deleted successfully");
+    } catch (error) {
+      toast.error("Error deleting video");
+      console.error("Error deleting video:", error);
+    }
   };
   return (
     <div className={sideNavbar ? 'likedVideoPage' : 'fullLikedVideoPage'}>
@@ -194,26 +209,42 @@ const LikedVideoPage = ({ sideNavbar }) => {
                     </div>
                     {showVideoFunction[video._id] && (
                       <div className="videoFunction">
-                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
-                          <i className="fa-solid fa-plus"></i>
-                          Add to queue
-                        </div>
-                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
-                          <i className="fa-solid fa-clock"></i>
-                          Save to Watch later
-                        </div>
-                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
-                          <i className="fa-solid fa-list"></i>
-                          Save to playlist
-                        </div>
-                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);}}>
-                          <i className="fa-solid fa-share"></i>
-                          Share
-                        </div>
-                        <div className="videoFunctionItem" onClick={(e) => {e.stopPropagation();handleFunctionItemClick(e);handleLikeDislike(video._id, "like");}}>
-                          <i className="fa-solid fa-trash"></i>
-                          Remove from liked videos
-                        </div>
+                        {video.user._id === userId ? (
+                          <>
+                            <div className="commentReply" onClick={(e) => { handleFunctionItemClick(e); handleDeleteVideo(video._id, e); }}>
+                              <i className="fa-solid fa-trash"></i>
+                              Delete
+                            </div>
+                            <div className='commentReply' onClick={(e) => { handleFunctionItemClick(e); navigate(`/${video._id}/edit`); }}>
+                              <i className="fa-solid fa-pen-to-square"></i>
+                              Edit
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
+                              <i className="fa-solid fa-plus"></i>
+                              Add to queue
+                            </div>
+                            <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
+                              <i className="fa-solid fa-clock"></i>
+                              Save to Watch later
+                            </div>
+                            <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
+                              <i className="fa-solid fa-list"></i>
+                              Save to playlist
+                            </div>
+                            <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
+                              <i className="fa-solid fa-share"></i>
+                              Share
+                            </div>
+                            <hr className="header-modal-separator" />
+                            <div className="videoFunctionItem" onClick={(e) => { handleFunctionItemClick(e); handleLikeDislike(video._id, "like"); }}>
+                              <i className="fa-solid fa-trash"></i>
+                              Remove from liked videos
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
