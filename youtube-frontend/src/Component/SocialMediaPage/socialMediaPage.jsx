@@ -188,6 +188,10 @@ const SocialMediaPage = ({ sideNavbar }) => {
         setIsChatVisible(true);
     };
 
+    const closeChat = () => {
+        setIsChatVisible(false); // Hide the chat
+      };
+    
     return (
         <div className={sideNavbar ? 'socialMediaPage' : 'fullSocialMediaPage'}>
             <div className="main-content">
@@ -348,7 +352,7 @@ const SocialMediaPage = ({ sideNavbar }) => {
                 ))}
             </div>
         </div>
-        {isChatVisible && <Chat friendId={friendId} />}
+        {isChatVisible && <Chat friendId={friendId} closeChat={closeChat} />}
         </div>
     );
 };

@@ -53,6 +53,7 @@ function App() {
         <Route path="/subscription" element={<Subscription sideNavbar={sideNavbar} />} />
         <Route path="/likedVideo" element={<LikedVideo sideNavbar={sideNavbar} />} />
         <Route path="/search" element={<Search sideNavbar={sideNavbar} />} />
+        <Route path="/history" element={<History sideNavbar={sideNavbar}/>}/>
       </Routes>
       {selectedFriendId && <Chat friendId={selectedFriendId} closeChat={closeChat} />}
     </div>
