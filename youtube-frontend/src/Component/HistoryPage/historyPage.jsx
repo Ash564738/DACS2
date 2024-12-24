@@ -1,66 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import './historyPage.css';
+import apiClient from '../../Utils/apiClient';
 
-const historyPage = ({}) => {
+const HistoryPage = ({ sideNavbar }) => {
+  const [historyVideos, setHistoryVideos] = useState([]);
+  const token = localStorage.getItem('token');
 
-    return(
-        <div class="container-history">
-        <div class="main-content">
-            <h1>Nhật ký xem</h1>
-            <h2>Hôm nay</h2>
-            <div class="video-item">
-                <img alt="Fairy Tail - Nhiệm vụ 100 năm - Tập 24 [Việt sub]" height="94" src="https://storage.googleapis.com/a1aa/image/01y0B7RQmbZvOVMejAq48tRsf3ik96LetolVIe60bXMVvp1PB.jpg" width="168"/>
-                <div class="video-info">
-                    <h3>Fairy Tail - Nhiệm vụ 100 năm - Tập 24 [Việt sub]</h3>
-                    <p>Muse Việt Nam • 10 N lượt xem</p>
-                    <p>Danh sách phát đầy đủ các tập: https://www.youtube.com/playlist?list=PLdM751AKK4aN6zH2fnfJBG9cByDFjR6UW フェアリーテイル</p>
-                </div>
-                <div class="video-actions">
-                    <span class="time">23:51</span>
-                    <i class="fas fa-times"></i>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
+  useEffect(() => {
+    const fetchHistory = async () => {
+      console.log("Fetching history...");
+      try {
+        const res = await apiClient.get('http://localhost:4000/history/getHistory', {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        console.log("History fetched successfully:", res.data.history);
+        setHistoryVideos(res.data.history || []);
+      } catch (err) {
+        console.error('Error fetching history:', err);
+      }
+    };
+
+    fetchHistory();
+  }, [token]);
+
+  const handleDeleteVideo = async (historyId) => {
+    try {
+      await apiClient.delete(`http://localhost:4000/history/deleteHistory/${historyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
+      setHistoryVideos(historyVideos.filter(historyItem => historyItem._id !== historyId));
+    } catch (err) {
+      console.error('Error deleting video from history:', err);
+    }
+  };
+
+  return (
+    <div className={sideNavbar ? 'historyPage' : 'fullHistoryPage'}>
+      <div className={"history_mainPage"}>
+        <h1>History</h1>
+        {historyVideos.length > 0 ? (
+          historyVideos.map((historyItem) => (
+            <div key={historyItem._id} className="video-item">
+              <video
+                controls
+                width="200"
+                height="200"
+                poster={historyItem.video.thumbnail}
+              >
+                <source src={historyItem.video.videoLink} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div className="video-info">
+                <h3>{historyItem.video.title}</h3>
+                <p>
+                  {historyItem.video.user?.name || 'Unknown Channel'} • {historyItem.video.views} views
+                </p>
+              </div>
+              <div className="video-actions">
+                <i className="fas fa-times" onClick={() => handleDeleteVideo(historyItem._id)}></i>
+                <i className="fas fa-ellipsis-v"></i>
+              </div>
             </div>
-            <div class="video-item">
-                <img alt="TẤT TẦN TẬT VỀ BROADCAST 2.0!! - 2 NHÂN VẬT &amp; TRANG..." height="94" src="https://storage.googleapis.com/a1aa/image/Yt7QzSLSeRzbISQYuOIJ4zxKLQoHdmHxcNXGmVTuleo3ba9TA.jpg" width="168"/>
-                <div class="video-info">
-                    <h3>TẤT TẦN TẬT VỀ BROADCAST 2.0!! - 2 NHÂN VẬT &amp; TRANG...</h3>
-                    <p>MsicB • 790 lượt xem</p>
-                    <p>- Nếu thấy hữu ích bạn chỉ cần ủng hộ mình bằng cách thả 1 like &amp; subscribe nha !!!...</p>
-                </div>
-                <div class="video-actions">
-                    <span class="time">14:04</span>
-                    <i class="fas fa-times"></i>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
-            </div>
-            <div class="video-item">
-                <img alt="This song SHUT me DOWN! First time Reaction to BLACKPINK -..." height="94" src="https://storage.googleapis.com/a1aa/image/M7C77oafKzUGVCbsa57OVJwqHGNgXJWLa3PtPQvv32r8NteTA.jpg" width="168"/>
-                <div class="video-info">
-                    <h3>This song SHUT me DOWN! First time Reaction to BLACKPINK -...</h3>
-                    <p>NAMEBER1 • 403 lượt xem</p>
-                    <p>Original Link to MV: https://www.youtube.com/watch?v=POe9SOEKotk DISCLOSURE: This video features a musical...</p>
-                </div>
-                <div class="video-actions">
-                    <span class="time">9:15</span>
-                    <i class="fas fa-times"></i>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
-            </div>
-        </div>
-        <div class="sidebar">
-            <input placeholder="Tìm kiếm trong danh sách video ..." type="text"/>
-            <ul>
-                <li><i class="fas fa-trash-alt"></i>Xóa tất cả nhật ký xem</li>
-                <li><i class="fas fa-pause"></i>Tạm dừng lưu nhật ký xem</li>
-                <li><i class="fas fa-cog"></i>Quản lý toàn bộ lịch sử hoạt động</li>
-                <li>Bình luận</li>
-                <li>Bài đăng</li>
-                <li>Trò chuyện trực tiếp</li>
-            </ul>
-        </div>
-        </div>
-    );
+          ))
+        ) : (
+          <p>No videos in history.</p>
+        )}
+      </div>
+      <div className="sidebar">
+        <input placeholder="Search in video list..." type="text" />
+        <ul>
+          <li>
+            <i className="fas fa-trash-alt"></i> Delete all watch history
+          </li>
+          <li>
+            <i className="fas fa-pause"></i> Pause watch history
+          </li>
+          <li>
+            <i className="fas fa-cog"></i> Manage all activity history
+          </li>
+          <li>Comments</li>
+          <li>Posts</li>
+          <li>Live chats</li>
+        </ul>
+      </div>
+    </div>
+  );
 };
 
-export default historyPage;
+export default HistoryPage;

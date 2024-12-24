@@ -17,6 +17,7 @@ const PostRoutes = require('./Routes/post')
 const ChatRoutes = require('./Routes/chat')
 const OtpRoutes = require('./Routes/otp');
 const NotificationRoutes = require('./Routes/notification');
+const historyRoutes = require('./Routes/history');
 app.use('/notification',NotificationRoutes);
 app.use('/otp',OtpRoutes);
 app.use('/auth',AuthRoutes);
@@ -24,4 +25,5 @@ app.use('/api',VideoRoutes);
 app.use('/commentApi',CommentRoutes);
 app.use('/posts', PostRoutes)
 app.use('/chat', ChatRoutes);
+app.use('/history', historyRoutes);
 app.listen(port,()=>{console.log("Our backend project is running on Port 4000")});

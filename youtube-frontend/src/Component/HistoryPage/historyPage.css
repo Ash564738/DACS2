@@ -1,60 +1,55 @@
+/* General Styles */
+.fullHistoryPage {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.historyPage {
+    display: flex;
+    margin-left: 260px;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.history_mainPage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background-color: #0F0F0F;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    gap: 25px;
+    padding: 20px 320px 20px 20px;
+    width: 100%;
+}
+
+/* Container Styles */
 .container-history {
     display: flex;
     flex-direction: row;
     padding: 20px;
 }
-.main-content {
+
+.main-content-history {
     flex: 3;
     margin-left: 260px;
 }
+
+/* Sidebar Styles */
 .sidebar {
     flex: 1;
-    padding-left: 20px;
-    margin-right: 50px;
-    margin-top: 70px;
+    margin-right: 20px;
+    margin-top: 86px;
+    width: 300px;
+    position: fixed; /* Fixed sidebar */
+    top: 0; /* Align top of sidebar with top of window */
+    right: 0;
 }
-h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
-}
-h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-.video-item {
-    display: flex;
-    margin-bottom: 20px;
-}
-.video-item img {
-    width: 168px;
-    height: 94px;
-    border-radius: 8px;
-}
-.video-info {
-    margin-left: 10px;
-    flex: 1;
-}
-.video-info h3 {
-    font-size: 1em;
-    margin: 0;
-}
-.video-info p {
-    font-size: 0.9em;
-    color: #fff;
-    margin: 5px 0;
-}
-.video-info .time {
-    font-size: 0.9em;
-    color: #fff;
-}
-.video-actions {
-    display: flex;
-    align-items: center;
-}
-.video-actions i {
-    margin-left: 10px;
-    cursor: pointer;
-}
+
 .sidebar input {
     width: 100%;
     padding: 10px;
@@ -64,19 +59,83 @@ h2 {
     color: #fff;
     margin-bottom: 20px;
 }
+
 .sidebar ul {
     list-style: none;
     padding: 0;
+    color: #fff;
 }
+
 .sidebar ul li {
-    display: flex;
-    align-items: center;
+    display: flex; /* Keep items in the same line */
+    align-items: center; /* Center vertically */
     margin-bottom: 15px;
     cursor: pointer;
+    padding: 10px 15px; /* Add inner spacing for better appearance */
+    border-radius: 10px; /* Ensure rounded corners for background */
+    transition: background-color 0.3s;
 }
+
 .sidebar ul li i {
     margin-right: 10px;
 }
+
 .sidebar ul li:hover {
+    background-color: #838181;
+    border-radius: 10px;
+}
+
+/* Typography Styles */
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+/* Video Item Styles */
+.video-item {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.video-item video{
+    width: 353px;
+    height: 200px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.video-info {
+    margin-left: 10px;
+    flex: 1;
+}
+
+.video-info h3 {
+    font-size: 18px;
+    margin: 0;
+    color: #fff;
+}
+
+.video-info p {
+    font-size: 16px;
+    color: #838181;
+    margin: 5px 0;
+}
+
+/* Video Actions Styles */
+.video-actions {
+    font-size: 18px;
+    margin-right: 100px;
+}
+
+.video-actions i {
+    margin-left: 10px;
+    cursor: pointer;
     color: #fff;
 }

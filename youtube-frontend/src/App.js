@@ -14,6 +14,7 @@ import LikedVideo from './Pages/LikedVideo/likedVideo';
 import Chat from '../src/Component/Chat/chat.jsx';
 import Search from './Pages/Search/search';
 import VideoEdit from './Pages/VideoEdit/videoEdit';
+import History from './Pages/History/history';
 function App() {
   const [sideNavbar, setSideNavbar] = useState(true);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
