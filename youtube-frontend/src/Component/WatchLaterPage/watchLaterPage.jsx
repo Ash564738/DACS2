@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import apiClient from '../../Utils/apiClient.js';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,6 +13,7 @@ const WatchLaterPage = ({ sideNavbar }) => {
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const [playlistId, setPlaylistId] = useState(null);
 
   const toggleVideoFunction = (videoId, event) => {
     event.stopPropagation();
@@ -24,27 +25,28 @@ const WatchLaterPage = ({ sideNavbar }) => {
   };
 
   useEffect(() => {
-    const fetchLikedVideos = async (userId) => {
+    const fetchWatchLaterVideos = async () => {
       try {
-        const response = await apiClient.get(`http://localhost:4000/api/getLikedVideos/${userId}`, {
+        const response = await apiClient.get(`http://localhost:4000/playlist/getPlaylistByTitle/Watch Later`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
-        if (response.data && response.data.likedVideos) {
-          setData(response.data.likedVideos);
+        if (response.data && response.data.playlist) {
+          setData(response.data.playlist.videos);
+          setPlaylistId(response.data.playlist._id);
         } else {
-          console.warn("No liked videos found in response.");
+          console.warn("No videos found in Watch Later playlist.");
         }
       } catch (err) {
-        console.error("Error fetching liked videos:", err);
-        setError("Failed to load liked videos.");
+        console.error("Error fetching Watch Later playlist:", err);
+        setError("Failed to load Watch Later playlist.");
       } finally {
         setLoading(false);
       }
     };
 
     if (userId) {
-      fetchLikedVideos(userId);
+      fetchWatchLaterVideos();
     }
   }, [userId, token]);
 
@@ -107,7 +109,7 @@ const WatchLaterPage = ({ sideNavbar }) => {
     'Recently Uploaded',
     'Watched',
     'New to you',
-];
+  ];
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -117,31 +119,33 @@ const WatchLaterPage = ({ sideNavbar }) => {
     ? data 
     : data.filter((video) => video.category === selectedCategory);
 
-  const firstVideoThumbnail = data.length > 0 && data[0]?.thumbnail ? data[0].thumbnail : '';
+  const firstVideoThumbnail = data.length > 0 && data[0]?.thumbnail ? data[0].thumbnail : null;
   const lastUpdated = data.length > 0 ? new Date(data[0].updatedAt).toLocaleDateString() : '';
   const ownerName = data.length > 0 ? data[0].user?.name : '';
-  const handleLikeDislike = async (videoId, action) => {
+
+  const handleRemoveFromWatchLater = async (videoId) => {
     try {
-      await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${videoId}?action=${action}`, {}, {
+      await apiClient.post(`http://localhost:4000/playlist/removeVideoFromPlaylist/${playlistId}`, { videoId }, {
         headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true
+        withCredentials: true,
       });
-      if (action === "like") {
-        setData(prevData => prevData.filter(video => video._id !== videoId));
-      }
+      setData(prevData => prevData.filter(video => video._id !== videoId));
+      toast.success("Video removed from Watch Later");
     } catch (error) {
-      toast.error("Please login first to like/dislike");
-      console.error("Error in like/dislike video:", error);
+      toast.error("Error removing video from Watch Later");
+      console.error("Error removing video from Watch Later:", error);
     }
   };
+
   const handleFunctionItemClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
   };
+
   const handleDeleteVideo = async (videoId, e) => {
     e.stopPropagation();
     try {
-      await apiClient.delete(`http://localhost:4000/api/video/${videoId}`, {
+      await apiClient.delete(`http://localhost:4000/api/deleteVideo/${videoId}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true
       });
@@ -152,15 +156,17 @@ const WatchLaterPage = ({ sideNavbar }) => {
       console.error("Error deleting video:", error);
     }
   };
+
   return (
     <div className={sideNavbar ? 'likedVideoPage' : 'fullLikedVideoPage'}>
+      <ToastContainer />
       <div className={sideNavbar ? "likedVideo_mainPage" : "likedVideo_mainPageWithoutLink"}>
         <div className="likedVideoCard">
           <div className="likedVideoCardOverlay" style={{ backgroundImage: `url(${firstVideoThumbnail})` }}></div>
           <div className= "likedVideoCardContent">
-            <img className="likedVideoCardImg" src={firstVideoThumbnail || ''} alt="First Video Thumbnail" />
+            <img className="likedVideoCardImg" src={firstVideoThumbnail || null} alt="First Video Thumbnail" />
             <div className="likedVideoCardInfo">
-              <h3 className="likedVideoCardTitle">Liked videos</h3>
+              <h3 className="likedVideoCardTitle">Watch Later</h3>
               <span className="likedVideoCardOwner">{ownerName}</span>
               <span className="likedVideoCardStats">{data.length} videos · No views · Updated {lastUpdated}</span>
             </div>
@@ -186,7 +192,7 @@ const WatchLaterPage = ({ sideNavbar }) => {
           </div>
           <div className="likedVideoList">
             {loading ? (
-              <p className="loadingMessage">Loading liked videos...</p>
+              <p className="loadingMessage">Loading Watch Later videos...</p>
             ) : error ? (
               <p className="errorMessage">{error}</p>
             ) : filteredVideos.length > 0 ? (
@@ -196,7 +202,7 @@ const WatchLaterPage = ({ sideNavbar }) => {
                     <span>{index + 1}</span>
                   </div>
                   <div className="likedVideoContent">
-                    <img src={video?.thumbnail || ''} alt={video?.title || 'Video Thumbnail'} className="likedVideoThumbnail" />
+                    <img src={video?.thumbnail || null} alt={video?.title || 'Video Thumbnail'} className="likedVideoThumbnail" />
                     <div className="likedVideoDetails">
                       <span className="likedVideoTitle">{video?.title}</span>
                       <span className="likedVideoInfo">{video?.user?.name} · {video?.views} views · {new Date(video?.createdAt).toLocaleDateString()}</span>
@@ -226,8 +232,8 @@ const WatchLaterPage = ({ sideNavbar }) => {
                               Add to queue
                             </div>
                             <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
-                              <i className="fa-solid fa-clock"></i>
-                              Save to Watch later
+                              <i className="fa-solid fa-download"></i>
+                              Download
                             </div>
                             <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
                               <i className="fa-solid fa-list"></i>
@@ -238,9 +244,9 @@ const WatchLaterPage = ({ sideNavbar }) => {
                               Share
                             </div>
                             <hr className="header-modal-separator" />
-                            <div className="videoFunctionItem" onClick={(e) => { handleFunctionItemClick(e); handleLikeDislike(video._id, "like"); }}>
+                            <div className="videoFunctionItem" onClick={(e) => { handleFunctionItemClick(e); handleRemoveFromWatchLater(video._id); }}>
                               <i className="fa-solid fa-trash"></i>
-                              Remove from liked videos
+                              Remove from Watch Later
                             </div>
                           </>
                         )}
@@ -250,7 +256,7 @@ const WatchLaterPage = ({ sideNavbar }) => {
                 </Link>
               ))
             ) : (
-              <p className="noVideosMessage">No liked videos available.</p>
+              <p className="noVideosMessage">No videos available in Watch Later.</p>
             )}
           </div>
         </div>

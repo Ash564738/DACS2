@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const NewPlaylistModal = ({ onClose, token, onCreate }) => {
+const NewPlaylistModal = ({ onClose, token, onCreate, videoId }) => {
   const [title, setTitle] = useState('');
   const [visibility, setVisibility] = useState('Private');
   const [collaborate, setCollaborate] = useState(false);
@@ -36,6 +36,12 @@ const NewPlaylistModal = ({ onClose, token, onCreate }) => {
       setPlaylistId(newPlaylistId);
       setInviteLink(`http://localhost:3000/collaboratePlaylist/${newPlaylistId}`);
       onCreate(res.data.playlist);
+      if (videoId) {
+        await apiClient.post(`http://localhost:4000/playlist/addVideoToPlaylist/${newPlaylistId}`, { videoId }, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+      }
       toast.success('New playlist created successfully');
       if (collaborate) {
         setShowCollaborateModal(true);

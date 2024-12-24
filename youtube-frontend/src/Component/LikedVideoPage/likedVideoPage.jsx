@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './likedVideoPage.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import apiClient from '../../Utils/apiClient.js';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,6 +14,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const [watchLaterPlaylistId, setWatchLaterPlaylistId] = useState(null);
 
   const toggleVideoFunction = (videoId, event) => {
     event.stopPropagation();
@@ -44,8 +45,25 @@ const LikedVideoPage = ({ sideNavbar }) => {
       }
     };
 
+    const fetchWatchLaterPlaylistId = async () => {
+      try {
+        const response = await apiClient.get(`http://localhost:4000/playlist/getPlaylistByTitle/Watch Later`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        if (response.data && response.data.playlist) {
+          setWatchLaterPlaylistId(response.data.playlist._id);
+        } else {
+          console.warn("Watch Later playlist not found.");
+        }
+      } catch (err) {
+        console.error("Error fetching Watch Later playlist ID:", err);
+      }
+    };
+
     if (userId) {
       fetchLikedVideos(userId);
+      fetchWatchLaterPlaylistId();
     }
   }, [userId, token]);
 
@@ -108,7 +126,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
     'Recently Uploaded',
     'Watched',
     'New to you',
-];
+  ];
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -118,9 +136,10 @@ const LikedVideoPage = ({ sideNavbar }) => {
     ? data 
     : data.filter((video) => video.category === selectedCategory);
 
-  const firstVideoThumbnail = data.length > 0 && data[0]?.thumbnail ? data[0].thumbnail : '';
+  const firstVideoThumbnail = data.length > 0 && data[0]?.thumbnail ? data[0].thumbnail : null;
   const lastUpdated = data.length > 0 ? new Date(data[0].updatedAt).toLocaleDateString() : '';
   const ownerName = data.length > 0 ? data[0].user?.name : '';
+
   const handleLikeDislike = async (videoId, action) => {
     try {
       await apiClient.put(`http://localhost:4000/api/video/toggleLikeDislike/${videoId}?action=${action}`, {}, {
@@ -130,19 +149,39 @@ const LikedVideoPage = ({ sideNavbar }) => {
       if (action === "like") {
         setData(prevData => prevData.filter(video => video._id !== videoId));
       }
+      toast.success(`Video ${action === "like" ? "removed from" : "added to"} liked videos`);
     } catch (error) {
       toast.error("Please login first to like/dislike");
       console.error("Error in like/dislike video:", error);
     }
   };
+
+  const handleAddToWatchLater = async (videoId) => {
+    try {
+      if (!watchLaterPlaylistId) {
+        toast.error("Watch Later playlist not found");
+        return;
+      }
+      await apiClient.post(`http://localhost:4000/playlist/addVideoToPlaylist/${watchLaterPlaylistId}`, { videoId }, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
+      toast.success("Video added to Watch Later");
+    } catch (error) {
+      toast.error("Error adding video to Watch Later");
+      console.error("Error adding video to Watch Later:", error);
+    }
+  };
+
   const handleFunctionItemClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
   };
+
   const handleDeleteVideo = async (videoId, e) => {
     e.stopPropagation();
     try {
-      await apiClient.delete(`http://localhost:4000/api/video/${videoId}`, {
+      await apiClient.delete(`http://localhost:4000/api/deleteVideo/${videoId}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true
       });
@@ -153,13 +192,15 @@ const LikedVideoPage = ({ sideNavbar }) => {
       console.error("Error deleting video:", error);
     }
   };
+
   return (
     <div className={sideNavbar ? 'likedVideoPage' : 'fullLikedVideoPage'}>
+      <ToastContainer />
       <div className={sideNavbar ? "likedVideo_mainPage" : "likedVideo_mainPageWithoutLink"}>
         <div className="likedVideoCard">
           <div className="likedVideoCardOverlay" style={{ backgroundImage: `url(${firstVideoThumbnail})` }}></div>
           <div className= "likedVideoCardContent">
-            <img className="likedVideoCardImg" src={firstVideoThumbnail || ''} alt="First Video Thumbnail" />
+            <img className="likedVideoCardImg" src={firstVideoThumbnail || null} alt="First Video Thumbnail" />
             <div className="likedVideoCardInfo">
               <h3 className="likedVideoCardTitle">Liked videos</h3>
               <span className="likedVideoCardOwner">{ownerName}</span>
@@ -197,7 +238,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
                     <span>{index + 1}</span>
                   </div>
                   <div className="likedVideoContent">
-                    <img src={video?.thumbnail || ''} alt={video?.title || 'Video Thumbnail'} className="likedVideoThumbnail" />
+                    <img src={video?.thumbnail || null} alt={video?.title || 'Video Thumbnail'} className="likedVideoThumbnail" />
                     <div className="likedVideoDetails">
                       <span className="likedVideoTitle">{video?.title}</span>
                       <span className="likedVideoInfo">{video?.user?.name} · {video?.views} views · {new Date(video?.createdAt).toLocaleDateString()}</span>
@@ -226,7 +267,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
                               <i className="fa-solid fa-plus"></i>
                               Add to queue
                             </div>
-                            <div className="videoFunctionItem" onClick={handleFunctionItemClick}>
+                            <div className="videoFunctionItem" onClick={(e) => { handleFunctionItemClick(e); handleAddToWatchLater(video._id); }}>
                               <i className="fa-solid fa-clock"></i>
                               Save to Watch later
                             </div>

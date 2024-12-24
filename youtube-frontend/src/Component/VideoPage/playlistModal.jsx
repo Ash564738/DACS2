@@ -3,6 +3,8 @@ import './playlistModal.css';
 import apiClient from '../../Utils/apiClient.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NewPlaylistModal from './newPlaylistModal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PlaylistModal = ({ videoId, token, onClose }) => {
   const [playlists, setPlaylists] = useState([]);
@@ -100,6 +102,7 @@ const PlaylistModal = ({ videoId, token, onClose }) => {
           onClose={handleCloseNewPlaylistModal}
           onCreate={handleCreateNewPlaylist}
           token={token}
+          videoId={videoId} // Pass the videoId prop
         />
       )}
     </>

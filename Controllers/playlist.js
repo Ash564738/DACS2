@@ -7,11 +7,6 @@ exports.createPlaylist = async (req, res) => {
     const { name, visibility, collaborate } = req.body;
     const userId = req.user.userId;
 
-    const existingPlaylist = await Playlist.findOne({ title: name });
-    if (existingPlaylist) {
-      return res.status(400).json({ error: 'A playlist with this title already exists' });
-    }
-
     const newPlaylist = new Playlist({
       user: userId,
       title: name,
@@ -77,7 +72,7 @@ exports.getUserPlaylists = async (req, res) => {
     res.status(200).json({ success: true, playlists });
   } catch (error) {
     console.error("Error fetching user playlists:", error);
-    res.status(500).json({ error: 'Server error' });
+    res.status500().json({ error: 'Server error' });
   }
 };
 
@@ -159,6 +154,7 @@ exports.updatePlaylist = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 exports.deletePlaylist = async (req, res) => {
   try {
     const { playlistId } = req.params;
@@ -182,6 +178,7 @@ exports.deletePlaylist = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 exports.getPlaylistById = async (req, res) => {
   try {
     const { playlistId } = req.params;
@@ -194,6 +191,49 @@ exports.getPlaylistById = async (req, res) => {
     res.status(200).json({ success: true, playlist });
   } catch (error) {
     console.error("Error fetching playlist:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.getPlaylistByTitle = async (req, res) => {
+  try {
+    const { title } = req.params;
+    const userId = req.user.userId;
+    const playlist = await Playlist.findOne({ title, user: userId }).populate({
+      path: 'videos',
+      populate: {
+        path: 'user',
+        model: 'user'
+      }
+    });
+
+    if (!playlist) {
+      return res.status(404).json({ error: 'Playlist not found' });
+    }
+
+    res.status(200).json({ success: true, playlist });
+  } catch (error) {
+    console.error("Error fetching playlist by title:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.removeVideoFromWatchLater = async (req, res) => {
+  try {
+    const { videoId } = req.body;
+    const userId = req.user.userId;
+    const playlist = await Playlist.findOne({ title: 'Watch Later', user: userId });
+
+    if (!playlist) {
+      return res.status(404).json({ error: 'Watch Later playlist not found' });
+    }
+
+    playlist.videos.pull(videoId);
+    await playlist.save();
+
+    res.status(200).json({ success: true, playlist });
+  } catch (error) {
+    console.error("Error removing video from Watch Later playlist:", error);
     res.status(500).json({ error: 'Server error' });
   }
 };
