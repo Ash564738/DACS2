@@ -118,7 +118,6 @@ const HomePage = ({ sideNavbar }) => {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-      console.log('Delete response:', response);
       setData((prevData) => prevData.filter((video) => video._id !== videoId));
     } catch (err) {
       console.error("Error deleting video:", err);

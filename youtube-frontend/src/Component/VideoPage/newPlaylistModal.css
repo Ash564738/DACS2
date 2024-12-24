@@ -1,0 +1,91 @@
+.newPlaylistModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.newPlaylistModalContent {
+    background-color: #282828;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.newPlaylistModalHeader {
+  margin-bottom: 20px;
+  color: white;
+}
+
+.newPlaylistModalHeader .fa-times {
+  cursor: pointer;
+}
+.newPlaylistModalBody{
+  color: white;
+}
+.newPlaylistModalBody .form-group {
+  margin-bottom: 15px;
+}
+
+.newPlaylistModalFooter {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 5px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.newPlaylistModalBody .form-control option {
+  background-color: #3a3a3a;
+  color: white;
+}
+
+/* collaboratePanel */
+.collaborateModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.collaborateModalContent {
+  background-color: #282828;
+  padding: 20px;
+  border-radius: 10px;
+}
+.collaborateModal .form-group {
+  margin-bottom: 15px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.userInfo label{
+  color:rgba(255, 255, 255, 0.5);
+  font-size: 0.8em;
+}
+.collaborateModalCopyLink{
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.userProfilePic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}

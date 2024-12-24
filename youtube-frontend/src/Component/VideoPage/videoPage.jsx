@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import CommentSection from './commentSection.jsx';
 import VideoSuggestion from './videoSuggestion.jsx';
+import PlaylistModal from './playlistModal.jsx';
 import apiClient from '../../Utils/apiClient.js';
 import axios from 'axios';
 import './videoPage.css';
-const VideoPage = ({sideNavbar}) => {
+
+const VideoPage = ({ sideNavbar }) => {
     const [like, setLike] = useState(0);
     const [dislike, setDislike] = useState(0);
     const [userLiked, setUserLiked] = useState(false);
@@ -22,8 +24,11 @@ const VideoPage = ({sideNavbar}) => {
     const [hasIncremented, setHasIncremented] = useState(false);
     const [userPic, setUserPic] = useState("https://th.bing.com/th/id/OIP.x-zcK4XvIdKjt7s4wJTWAgAAAA?w=360&h=360&rs=1&pid=ImgDetMain");
     const [loading, setLoading] = useState(true);
+    const [showVideoFunction, setShowVideoFunction] = useState(false);
+    const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
+    const navigate = useNavigate();
 
     const fetchUserProfile = useCallback(async (userId) => {
         try {
@@ -193,38 +198,65 @@ const VideoPage = ({sideNavbar}) => {
         }
     };
 
+    const handleToggleVideoFunction = () => {
+        setShowVideoFunction(!showVideoFunction);
+    };
+
+    const handleDeleteVideo = async (videoId) => {
+        try {
+            await apiClient.delete(`http://localhost:4000/api/deleteVideo/${videoId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
+            });
+            toast.success("Video deleted successfully");
+            navigate('/');
+        } catch (error) {
+            toast.error("Error deleting video");
+            console.error("Error deleting video:", error);
+        }
+    };
+
+    const handleShowPlaylistModal = () => {
+        setShowPlaylistModal(true);
+    };
+
+    const handleClosePlaylistModal = () => {
+        setShowPlaylistModal(false);
+    };
+
     if (loading) {
         return <p>Loading video...</p>;
     }
 
     return (
-        <div className= 'videoPage'>
+        <div className='videoPage'>
             <div className="videoPostSection">
-                        {data && (
-                            <video controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
-                                <source src={videoUrl} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        )}
-                    <div className="video_youtubeAbout">
-                        <div className="video_uTubeTitle">{data?.title}</div>
-                        <div className="youtube_video_ProfileBlock">
-                            <div className="youtube_video_ProfileBlock_left">
-                                <Link to={`/user/${data?.user?._id}`} className="youtube_video_ProfileBlock_left_img">
-                                    <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} alt={`User Profile of ${data?.user?.name}`} />
-                                </Link>
-                                <Link to={`/user/${data?.user?._id}`} className="youtubeVideo_subsView">
-                                    <div className="youtubePostProfileName">{data?.user?.name}</div>
-                                    <div className="youtubePostProfileSubs">
-                                        {data?.user?.subscribers ? `${data.user.subscribers} subscribers` : "No subscribers"}
-                                    </div>
-                                </Link>
-                                {data?.user?._id !== userId && (
-                                    <div className="subscribeBtnYoutube" onClick={handleSubscribe}>
-                                        {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
-                                    </div>
-                                )}
-                            </div>
+                {data && (
+                    <video controls autoPlay onPlay={handleViewIncrement} className="video_youtube_video">
+                        <source src={videoUrl} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                )}
+                <div className="video_youtubeAbout">
+                    <div className="video_uTubeTitle">{data?.title}</div>
+                    <div className="youtube_video_ProfileBlock">
+                        <div className="youtube_video_ProfileBlock_left">
+                            <Link to={`/user/${data?.user?._id}`} className="youtube_video_ProfileBlock_left_img">
+                                <img className='youtube_video_ProfileBlock_left_image' src={data?.user?.profilePic} alt={`User Profile of ${data?.user?.name}`} />
+                            </Link>
+                            <Link to={`/user/${data?.user?._id}`} className="youtubeVideo_subsView">
+                                <div className="youtubePostProfileName">{data?.user?.name}</div>
+                                <div className="youtubePostProfileSubs">
+                                    {data?.user?.subscribers ? `${data.user.subscribers} subscribers` : "No subscribers"}
+                                </div>
+                            </Link>
+                            {data?.user?._id !== userId && (
+                                <div className="subscribeBtnYoutube" onClick={handleSubscribe}>
+                                    {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+                                </div>
+                            )}
+                        </div>
+                        <div className="youtube_video_ProfileBlock_right">
                             <div className="youtube_video_likeBlock">
                                 <div className="youtube_video_likeBlock_Like" onClick={() => handleLikeDislike("like")}>
                                     <i className={userLiked ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up"}></i>
@@ -236,19 +268,65 @@ const VideoPage = ({sideNavbar}) => {
                                     <div className="youtube_video_likeBlock_NoOfDislikes">{dislike}</div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="youtube_video_About">
-                            <div className="youtube_video_Info">
-                                <div>{data?.createdAt ? data.createdAt.slice(0, 10) : "Date not available"}</div>
-                                <div>{data?.views} views</div>
+                            <div className="youtube_video_likeBlock">
+                                <i className="fa-solid fa-share"></i>
+                                <div>Share</div>
                             </div>
-                            <div>{data?.description}</div>
+                            <div className="youtube_video_likeBlock">
+                                <i className="fa-solid fa-download"></i>
+                                <div>Download</div>
+                            </div>
+                            <div className="commentFuntionSectionBox">
+                                <div className="youtube_video_likeBlock" onClick={handleToggleVideoFunction}>
+                                    <i className="fa-solid fa-ellipsis-h"></i>
+                                </div>
+                                {showVideoFunction && (
+                                    <div className='videoFunction'>
+                                        {data?.user?._id === userId ? (
+                                            <>
+                                                <div className="videoFunctionItem" onClick={() => handleDeleteVideo(data._id)}>
+                                                    <i className="fa-solid fa-trash"></i>
+                                                    Delete
+                                                </div>
+                                                <div className="videoFunctionItem" onClick={() => navigate(`/${data._id}/edit`)}>
+                                                    <i className="fa-solid fa-pen-to-square"></i>
+                                                    Edit
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="videoFunctionItem">
+                                                    <i className="fa-solid fa-cut"></i>
+                                                    Clip
+                                                </div>
+                                                <div className="videoFunctionItem" onClick={handleShowPlaylistModal}>
+                                                    <i className="fa-solid fa-save"></i>
+                                                    Save
+                                                </div>
+                                                <div className="videoFunctionItem">
+                                                    <i className="fa-solid fa-flag"></i>
+                                                    Report
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                    <CommentSection id={id} comments={comments} setComments={setComments} fetchComments={fetchComments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} data={data} handleComment={handleComment} handleCommentLikeDislike={handleCommentLikeDislike} token={token} />
+                    <div className="youtube_video_About">
+                        <div className="youtube_video_Info">
+                            <div>{data?.createdAt ? data.createdAt.slice(0, 10) : "Date not available"}</div>
+                            <div>{data?.views} views</div>
+                        </div>
+                        <div>{data?.description}</div>
+                    </div>
+                </div>
+                <CommentSection id={id} comments={comments} setComments={setComments} fetchComments={fetchComments} userId={userId} userPic={userPic} message={message} setMessage={setMessage} data={data} handleComment={handleComment} handleCommentLikeDislike={handleCommentLikeDislike} token={token} />
             </div>
             <VideoSuggestion id={id} />
             <ToastContainer />
+            {showPlaylistModal && <PlaylistModal videoId={id} token={token} onClose={handleClosePlaylistModal} />}
         </div>
     );
 };

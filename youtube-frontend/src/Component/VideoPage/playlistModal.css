@@ -1,0 +1,61 @@
+.playlistModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.playlistModalContent {
+    background-color: #282828;
+    padding: 20px;
+    border-radius: 10px;
+    max-height: 80%;
+    overflow-y: auto;
+}
+.playlistModalHeader{
+    gap: 5px;
+    margin-bottom: 20px;
+}
+.playlistModalHeader .fa-times {
+    cursor: pointer;
+}
+.playlistList {
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.playlistItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playlistItem input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.playlistItem span {
+  flex-grow: 1;
+}
+
+.playlistItem i {
+  margin-left: 10px;
+}
+
+.newPlaylist {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  border-radius: 20px;
+  padding: 5px;
+  overflow: hidden;
+  gap: 5px;
+  cursor: pointer;
+}

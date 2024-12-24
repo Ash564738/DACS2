@@ -4,9 +4,10 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    margin-top: 20px;
 }
 .videoPostSection {
-    width: 60%;
+    width: 65%;
     padding: 0 20px;
     gap: 20px;
     display: flex;
@@ -28,7 +29,7 @@
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
-    gap: 15px;
+    gap: 10px;
 }
 .youtube_video_ProfileBlock_left {
     display: flex;
@@ -55,6 +56,7 @@
 }
 .youtubePostProfileSubs {
     color: #AAAAAA;
+    font-size: 0.8em;
 }
 .subscribeBtnYoutube {
     background-color: white;
@@ -68,7 +70,10 @@
     align-self: center;
     cursor: pointer;
 }
-
+.youtube_video_ProfileBlock_right{
+    display: flex;
+    gap: 10px;
+}
 .youtube_video_likeBlock {
     display: flex;
     gap: 10px;
@@ -232,7 +237,7 @@
 }
 /* ------------------------------------ */
 .videoSuggestions {
-    width: 40%;
+    width: 35%;
     color: white;
     display: flex;
     flex-direction: column;
