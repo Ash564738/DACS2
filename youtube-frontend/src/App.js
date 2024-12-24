@@ -56,6 +56,7 @@ function App() {
         <Route path="/subscription" element={<Subscription sideNavbar={sideNavbar} />} />
         <Route path="/likedVideo" element={<LikedVideo sideNavbar={sideNavbar} />} />
         <Route path="/search" element={<Search sideNavbar={sideNavbar} />} />
+        <Route path="/history" element={<History sideNavbar={sideNavbar}/>}/>
         <Route path = "/playlist" element = {<Playlist sideNavbar={sideNavbar}/>} />
         <Route path = "/watchLater" element = {<WatchLater sideNavbar={sideNavbar}/>} />
       </Routes>

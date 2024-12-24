@@ -1,0 +1,82 @@
+.container-history {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+}
+.main-content {
+    flex: 3;
+    margin-left: 260px;
+}
+.sidebar {
+    flex: 1;
+    padding-left: 20px;
+    margin-right: 50px;
+    margin-top: 70px;
+}
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+.video-item {
+    display: flex;
+    margin-bottom: 20px;
+}
+.video-item img {
+    width: 168px;
+    height: 94px;
+    border-radius: 8px;
+}
+.video-info {
+    margin-left: 10px;
+    flex: 1;
+}
+.video-info h3 {
+    font-size: 1em;
+    margin: 0;
+}
+.video-info p {
+    font-size: 0.9em;
+    color: #fff;
+    margin: 5px 0;
+}
+.video-info .time {
+    font-size: 0.9em;
+    color: #fff;
+}
+.video-actions {
+    display: flex;
+    align-items: center;
+}
+.video-actions i {
+    margin-left: 10px;
+    cursor: pointer;
+}
+.sidebar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    margin-bottom: 20px;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar ul li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+.sidebar ul li i {
+    margin-right: 10px;
+}
+.sidebar ul li:hover {
+    color: #fff;
+}
