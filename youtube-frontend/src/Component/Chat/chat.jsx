@@ -4,6 +4,8 @@ import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faVideo, faExpand, faImage, faSmile, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import UserMessage from './userMessage';
+import FriendMessage from './friendMessage';
 
 const Chat = ({ friendId, closeChat }) => {
     const [messages, setMessages] = useState([]);
@@ -82,15 +84,17 @@ const Chat = ({ friendId, closeChat }) => {
                 </div>
                 <div className="chat-body">
                     {messages.map((msg, index) => (
-                        <div key={index} className={`message ${msg.senderId === userId ? 'user-message' : 'friend-message'}`}>
-                            {msg.message}
-                        </div>
+                        msg.senderId === userId ? (
+                            <UserMessage key={index} message={msg.message} />
+                        ) : (
+                            <FriendMessage key={index} message={msg.message} friendPic={friendPic} />
+                        )
                     ))}
                 </div>
                 <div className="chat-footer">
                     <button><FontAwesomeIcon icon={faImage} /></button>
                     <button><FontAwesomeIcon icon={faSmile} /></button>
-                    <textarea type="text" placeholder="Aa"value={newMessage}onChange={(e) => setNewMessage(e.target.value)}/>
+                    <textarea type="text" placeholder="Aa" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
                     <button onClick={handleSendMessage}>Send</button>
                     <button><FontAwesomeIcon icon={faThumbsUp} /></button>
                 </div>

@@ -149,6 +149,7 @@ const HomePage = ({ sideNavbar }) => {
               key={item._id}
               item={item}
               userId={userId}
+              token = {token}
               showVideoFunction={showVideoFunction}
               handleToggleVideoFunction={handleToggleVideoFunction}
               handleDeleteVideo={handleDeleteVideo}
@@ -163,10 +164,40 @@ const HomePage = ({ sideNavbar }) => {
   );
 };
 
-const VideoItem = ({ item, userId, showVideoFunction, handleToggleVideoFunction, handleDeleteVideo, handleEvent }) => {
+const VideoItem = ({ item, userId, token, showVideoFunction, handleToggleVideoFunction, handleDeleteVideo, handleEvent }) => {
   const navigate = useNavigate();
-  const handleVideoClick = () => {
+  // const handleVideoClick = () => {
+  //   navigate(`/watch/${item._id}`);
+  // };
+    
+  const handleVideoClick = async () => {
+    console.log("Navigating to video:", item._id);
     navigate(`/watch/${item._id}`);
+    try {
+      console.log("Adding video to history:", {
+        videoId: item._id,
+        title: item.title,
+        thumbnail: item.thumbnail,
+        views: item.views,
+        user: item.user,
+        duration: item.duration,
+      });
+      const response = await apiClient.post('http://localhost:4000/history/addHistory', {
+        videoId: item._id,
+        title: item.title,
+        thumbnail: item.thumbnail,
+        views: item.views,
+        user: { _id: item.user._id },
+        duration: item.duration,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
+      console.log("Video added to history successfully:", response.data);
+    } catch (err) {
+      console.error("Error adding to history:", err);
+    }
   };
   return (
     <div className="youtube_Video" onClick={handleVideoClick}>
