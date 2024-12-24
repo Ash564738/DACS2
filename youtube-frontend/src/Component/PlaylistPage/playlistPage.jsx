@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EditPlaylistModal from './EditPlaylistModal';
+import { Link } from 'react-router-dom';
 
 const PlaylistPage = ({ sideNavbar }) => {
   const [playlists, setPlaylists] = useState([]);
@@ -76,10 +77,12 @@ const PlaylistPage = ({ sideNavbar }) => {
   const handleSavePlaylist = (updatedPlaylist) => {
     setPlaylists(playlists.map(playlist => playlist._id === updatedPlaylist._id ? updatedPlaylist : playlist));
   };
+
   const handleEvent = (event) => {
     event.preventDefault();
     event.stopPropagation();
   };
+
   const sortedPlaylists = [...playlists].sort((a, b) => {
     if (sortOption === "a-z") {
       return a.title.localeCompare(b.title);
@@ -111,42 +114,49 @@ const PlaylistPage = ({ sideNavbar }) => {
             <p>{error}</p>
           ) : sortedPlaylists.length > 0 ? (
             sortedPlaylists.map((playlist) => (
-              <div className="youtube_Video" key={playlist._id}>
-                <div className='youtube_thumbnailBox'>
-                  <img className = "youtube_thumbnailPic" src={playlist.videos.length > 0 ? playlist.videos[0].thumbnail : "https://via.placeholder.com/250x140"} alt={`${playlist.title} thumbnail`} />
-                  <div className="youtube_timingThumbnail">
-                    {playlist.videos.length || "0"} videos
-                  </div>
-                </div>
-                <div className="d-flex flex-row mt-2 w-100 justify-content-between">
-                  <div className="d-flex flex-column">
-                    <div className="youtube_videoTitle">{playlist.title}</div>
-                    <div className="youtubeVideo_views">{playlist.visibility} • {playlist.videos.length} videos</div>
-                    <a href={`/playlist/${playlist._id}`} className="youtubeVideo_views">View full playlist</a>
-                  </div>
-                  <div className="commentFuntionSectionBox">
-                    <div className="commentFuntionToggle" onClick={(e) => handleTogglePlaylistFunction(playlist._id, e)}>
-                      <i className="fa-solid fa-ellipsis-vertical"></i>
+              playlist.videos.length > 0 ? (
+                <Link
+                  to={`/watch/${playlist.videos[0]._id}`}
+                  state={{ playlistId: playlist._id, fromPlaylistPage: true }}
+                  className="youtube_Video"
+                  key={playlist._id}
+                >
+                  <div className='youtube_thumbnailBox'>
+                    <img className="youtube_thumbnailPic" src={playlist.videos.length > 0 ? playlist.videos[0].thumbnail : "https://via.placeholder.com/250x140"} alt={`${playlist.title} thumbnail`} />
+                    <div className="youtube_timingThumbnail">
+                      {playlist.videos.length || "0"} videos
                     </div>
-                    {showPlaylistFunction[playlist._id] && (
-                      <div className='playlistFunction'>
-                        {playlist.user.toString() === userId ? (
-                          <>
-                            <div className="commentReply" onClick={(e) => { handleEvent(e); handleDeletePlaylist(playlist._id); }}>
-                              <i className="fa-solid fa-trash"></i>
-                              Delete
-                            </div>
-                            <div className='commentReply' onClick={(e) => { handleEvent(e); handleEditPlaylist(playlist); }}>
-                              <i className="fa-solid fa-pen-to-square"></i>
-                              Edit
-                            </div>
-                          </>
-                        ) : null}
-                      </div>
-                    )}
                   </div>
-                </div>
-              </div>
+                  <div className="d-flex flex-row mt-2 w-100 justify-content-between">
+                    <div className="d-flex flex-column">
+                      <div className="youtube_videoTitle">{playlist.title}</div>
+                      <div className="youtubeVideo_views">{playlist.visibility} • {playlist.videos.length} videos</div>
+                      <div className="youtubeVideo_views" onClick={(e) => { e.preventDefault(); navigate(`/playlist/${playlist._id}`); }}>View full playlist</div>
+                    </div>
+                    <div className="commentFuntionSectionBox">
+                      <div className="commentFuntionToggle" onClick={(e) => handleTogglePlaylistFunction(playlist._id, e)}>
+                        <i className="fa-solid fa-ellipsis-vertical"></i>
+                      </div>
+                      {showPlaylistFunction[playlist._id] && (
+                        <div className='playlistFunction'>
+                          {playlist.user.toString() === userId ? (
+                            <>
+                              <div className="commentReply" onClick={(e) => { handleEvent(e); handleDeletePlaylist(playlist._id); }}>
+                                <i className="fa-solid fa-trash"></i>
+                                Delete
+                              </div>
+                              <div className='commentReply' onClick={(e) => { handleEvent(e); handleEditPlaylist(playlist); }}>
+                                <i className="fa-solid fa-pen-to-square"></i>
+                                Edit
+                              </div>
+                            </>
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ) : null
             ))
           ) : (
             <p>No playlists available.</p>

@@ -134,7 +134,7 @@ exports.removeCollaborator = async (req, res) => {
 exports.updatePlaylist = async (req, res) => {
   try {
     const { playlistId } = req.params;
-    const { collaborate } = req.body;
+    const { title, visibility, collaborate } = req.body;
     const userId = req.user.userId;
 
     const playlist = await Playlist.findById(playlistId);
@@ -146,10 +146,14 @@ exports.updatePlaylist = async (req, res) => {
       return res.status(403).json({ error: 'You do not have permission to update this playlist' });
     }
 
+    playlist.title = title;
+    playlist.visibility = visibility;
     playlist.collaborate = collaborate;
     await playlist.save();
 
-    res.status(200).json({ success: true, playlist });
+    const updatedPlaylist = await Playlist.findById(playlistId).populate('videos');
+
+    res.status(200).json({ success: true, playlist: updatedPlaylist });
   } catch (error) {
     console.error("Error updating playlist:", error);
     res.status(500).json({ error: 'Server error' });
@@ -175,6 +179,21 @@ exports.deletePlaylist = async (req, res) => {
     res.status(200).json({ success: true, message: 'Playlist deleted successfully' });
   } catch (error) {
     console.error("Error deleting playlist:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+exports.getPlaylistById = async (req, res) => {
+  try {
+    const { playlistId } = req.params;
+    const playlist = await Playlist.findById(playlistId).populate('videos');
+
+    if (!playlist) {
+      return res.status(404).json({ error: 'Playlist not found' });
+    }
+
+    res.status(200).json({ success: true, playlist });
+  } catch (error) {
+    console.error("Error fetching playlist:", error);
     res.status(500).json({ error: 'Server error' });
   }
 };

@@ -8,7 +8,7 @@
 }
 .videoPostSection {
     width: 65%;
-    padding: 0 20px;
+    padding: 0 15px;
     gap: 20px;
     display: flex;
     flex-direction: column;
@@ -237,7 +237,7 @@
 }
 /* ------------------------------------ */
 .videoSuggestions {
-    width: 35%;
+    width: 100%;
     color: white;
     display: flex;
     flex-direction: column;
@@ -336,9 +336,6 @@
     .videoPostSection {
         min-width: 700px;
     }
-    .videoSuggestions {
-        padding: 0 15px 0 0;
-    }
 }
 @media (max-width: 950px) {
     .videoPage {
@@ -350,10 +347,6 @@
     }
     .videoPostSection {
         padding: 0;
-        width: 100%;
-    }
-    .videoSuggestions {
-        padding: 20px 0 0 0;
         width: 100%;
     }
 }

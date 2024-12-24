@@ -15,6 +15,7 @@ import Chat from '../src/Component/Chat/chat.jsx';
 import Search from './Pages/Search/search';
 import VideoEdit from './Pages/VideoEdit/videoEdit';
 import Playlist from './Pages/Playlist/playlist';
+import WatchLater from './Pages/WatchLater/watchLater';
 function App() {
   const [sideNavbar, setSideNavbar] = useState(true);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
@@ -56,6 +57,7 @@ function App() {
         <Route path="/likedVideo" element={<LikedVideo sideNavbar={sideNavbar} />} />
         <Route path="/search" element={<Search sideNavbar={sideNavbar} />} />
         <Route path = "/playlist" element = {<Playlist sideNavbar={sideNavbar}/>} />
+        <Route path = "/watchLater" element = {<WatchLater sideNavbar={sideNavbar}/>} />
       </Routes>
       {selectedFriendId && <Chat friendId={selectedFriendId} closeChat={closeChat} />}
     </div>

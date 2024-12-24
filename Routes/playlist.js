@@ -11,4 +11,5 @@ router.post('/addCollaborator/:playlistId', auth, playlistController.addCollabor
 router.post('/removeCollaborator/:playlistId', auth, playlistController.removeCollaborator);
 router.put('/updatePlaylist/:playlistId', auth, playlistController.updatePlaylist);
 router.delete('/deletePlaylist/:playlistId', auth, playlistController.deletePlaylist);
+router.get('/getPlaylistById/:playlistId', auth, playlistController.getPlaylistById);
 module.exports = router;

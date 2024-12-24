@@ -19,7 +19,7 @@ const PlaylistModal = ({ videoId, token, onClose }) => {
         if (res.data && res.data.playlists) {
           setPlaylists(res.data.playlists);
           const selected = res.data.playlists
-            .filter(playlist => playlist.videos.includes(videoId))
+            .filter(playlist => playlist.videos.some(video => video._id === videoId))
             .map(playlist => playlist._id);
           setSelectedPlaylists(selected);
         } else {

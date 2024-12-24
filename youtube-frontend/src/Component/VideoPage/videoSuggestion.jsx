@@ -4,7 +4,6 @@ import axios from 'axios';
 
 const VideoSuggestion = ({ id }) => {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -21,8 +20,6 @@ const VideoSuggestion = ({ id }) => {
             } catch (err) {
                 console.error("Error fetching videos:", err);
                 setError("Failed to load videos.");
-            } finally {
-                setLoading(false);
             }
         };
         fetchVideos();
@@ -70,6 +67,7 @@ const VideoSuggestion = ({ id }) => {
             slider.removeEventListener('mousemove', handleMouseMove);
         };
     }, [data]);
+
     const options = [
         'All',
         'Music',
@@ -94,10 +92,6 @@ const VideoSuggestion = ({ id }) => {
 
     const filteredVideos = selectedCategory === 'All' ? data : data.filter((video) => video.videoType === selectedCategory);
 
-    if (loading) {
-        return <p>Loading videos...</p>;
-    }
-
     if (error) {
         return <p>{error}</p>;
     }
@@ -106,7 +100,7 @@ const VideoSuggestion = ({ id }) => {
         <div className="videoSuggestions">
             <div className="videoSuggestions_options">
                 {options.map((item, index) => (
-                    <div key={index} className={`videoSuggestions_option ${selectedCategory === item ? 'active' : ''}`}onClick={() => handleCategoryClick(item)}>
+                    <div key={index} className={`videoSuggestions_option ${selectedCategory === item ? 'active' : ''}`} onClick={() => handleCategoryClick(item)}>
                         {item}
                     </div>
                 ))}
