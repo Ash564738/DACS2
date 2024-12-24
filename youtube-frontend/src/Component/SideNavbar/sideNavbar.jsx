@@ -68,8 +68,8 @@ const SideNavbar = ({ sideNavbar }) => {
             "/subscription": "subscriptions",
             "/history": "history",
             "/playlist": "playlist",
-            "/your-videos": "yourVideos",
-            "/watch-later": "watchLater",
+            "/yourVideos": "yourVideos",
+            "/watchLater": "watchLater",
             "/likedVideo": "likedVideos",
             "/trending": "trending",
             "/music": "music",
@@ -77,9 +77,9 @@ const SideNavbar = ({ sideNavbar }) => {
             "/news": "news",
             "/sports": "sports",
             "/settings": "settings",
-            "/report-history": "reportHistory",
+            "/reportHistory": "reportHistory",
             "/help": "help",
-            "/send-feedback": "sendFeedback"
+            "/sendFeedback": "sendFeedback"
         };
         const activeIcon = pathToIcon[location.pathname];
         setActiveIcons((prevIcons) => ({
@@ -125,8 +125,8 @@ const SideNavbar = ({ sideNavbar }) => {
     const middleOptions = [
         { icon: activeIcons.history ? <History /> : <History />, label: "History", link: "/history", name: "history" },
         { icon: activeIcons.playlist ? <PlaylistAdd /> : <PlaylistAdd />, label: "Playlist", link: "/playlist", name: "playlist" },
-        { icon: activeIcons.yourVideos ? <SmartDisplayRounded /> : <SmartDisplayOutlined />, label: "Your Videos", link: "/your-videos", name: "yourVideos" },
-        { icon: activeIcons.watchLater ? <WatchLaterRounded /> : <WatchLaterOutlined />, label: "Watch Later", link: "/watch-later", name: "watchLater" },
+        { icon: activeIcons.yourVideos ? <SmartDisplayRounded /> : <SmartDisplayOutlined />, label: "Your Videos", link: "/yourVideos", name: "yourVideos" },
+        { icon: activeIcons.watchLater ? <WatchLaterRounded /> : <WatchLaterOutlined />, label: "Watch Later", link: "/watchLater", name: "watchLater" },
         { icon: activeIcons.likedVideos ? <ThumbUpAltRounded /> : <ThumbUpAltOutlined />, label: "Liked Videos", link: "/likedVideo", name: "likedVideos" }
     ];
 
@@ -140,9 +140,9 @@ const SideNavbar = ({ sideNavbar }) => {
 
     const footerOptions = [
         { icon: activeIcons.settings ? <Settings /> : <SettingsOutlinedIcon />, label: "Settings", link: "/settings", name: "settings" },
-        { icon: activeIcons.reportHistory ? <FlagRounded /> : <EmojiFlagsIcon />, label: "Report History", link: "/report-history", name: "reportHistory" },
+        { icon: activeIcons.reportHistory ? <FlagRounded /> : <EmojiFlagsIcon />, label: "Report History", link: "/reportHistory", name: "reportHistory" },
         { icon: activeIcons.help ? <HelpOutlineOutlined /> : <HelpOutlineOutlined />, label: "Help", link: "/help", name: "help" },
-        { icon: activeIcons.sendFeedback ? <FeedbackOutlined /> : <FeedbackOutlined />, label: "Send Feedback", link: "/send-feedback", name: "sendFeedback" }
+        { icon: activeIcons.sendFeedback ? <FeedbackOutlined /> : <FeedbackOutlined />, label: "Send Feedback", link: "/sendFeedback", name: "sendFeedback" }
     ];
 
     const footerLinks = [

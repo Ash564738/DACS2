@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import './likedVideoPage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../../Utils/apiClient.js';
 import 'react-toastify/dist/ReactToastify.css';
 
-const LikedVideoPage = ({ sideNavbar }) => {
+const WatchLaterPage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -260,4 +259,4 @@ const LikedVideoPage = ({ sideNavbar }) => {
   );
 };
 
-export default LikedVideoPage;
+export default WatchLaterPage;

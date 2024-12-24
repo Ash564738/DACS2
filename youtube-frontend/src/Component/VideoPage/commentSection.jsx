@@ -159,6 +159,20 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
         return comments.reduce((total, comment) => total + 1 + (comment.replies ? comment.replies.length : 0), 0);
     };
 
+    const handleKeyPress = (event, commentId) => {
+        if (event.key === 'Enter') {
+            if (commentId) {
+                handleReply(commentId);
+            } else {
+                handleComment();
+            }
+        }
+    };
+    const handleEditKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSaveEdit();
+        }
+    };
     return (
         <div className="youtubeCommentSection">
             <div className="youtubeCommentSectionTitle">{getTotalCommentsAndReplies()} Comments</div>
@@ -167,7 +181,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                     <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />
                 </Link>
                 <div className="addAComment">
-                    <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} />
+                    <input type="text" className="addAcommentInput" placeholder="Add a comment..." value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={handleKeyPress} />
                     <div className="cancelSubmitComment">
                         <div className="cancelComment" onClick={() => setMessage("")}>Cancel</div>
                         <div className="cancelComment" onClick={handleComment}>Comment</div>
@@ -191,8 +205,8 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                 <div className="otherCommentSectionComment">
                                     {editCommentData.id === item._id ? (
                                         <>
-                                            <input className="addAcommentInput" type="text" value={editCommentData.message} onChange={(e) => setEditCommentData({ ...editCommentData, message: e.target.value })}/>
-                                            <div className="cancelSubmitComment">
+                                            <input className="addAcommentInput" type="text" value={editCommentData.message} onChange={(e) => setEditCommentData({ ...editCommentData, message: e.target.value })} onKeyPress={(e) => handleEditKeyPress(e)} />
+                                                <div className="cancelSubmitComment">
                                                 <div className = "cancelComment" onClick={() => { setEditCommentData({ id: null, message: "" }); setEditReplyData({ commentId: null, replyId: null, message: "" }); }}>Cancel</div>
                                                 <div className = "cancelComment" onClick={handleSaveEdit}>Save</div>
                                             </div>
@@ -223,7 +237,7 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                     <div>
                                         <div className="youtubeSelfComment">
                                             <img className='video_youtubeSelfCommentProfile' src={userPic} alt="User Profile" />
-                                            <input type="text" className="addAcommentInput" placeholder="Add a reply..." value={replyMessage} onChange={(e) => setReplyMessage(e.target.value)} />
+                                            <input type="text" className="addAcommentInput" placeholder="Add a reply..." value={replyMessage} onChange={(e) => setReplyMessage(e.target.value)} onKeyPress={(e) => handleKeyPress(e, item._id)} />
                                         </div>
                                         <div className="addAComment">
                                             <div className="cancelSubmitComment">
@@ -253,8 +267,8 @@ const CommentSection = ({ id, comments, setComments, fetchComments, userId, user
                                                                 <div className="otherCommentSectionComment">
                                                                     {editReplyData.replyId === reply._id ? (
                                                                         <>
-                                                                            <input className="addAcommentInput" type="text" value={editReplyData.message} onChange={(e) => setEditReplyData({ ...editReplyData, message: e.target.value })}/>
-                                                                            <div className="cancelSubmitComment">
+                                                                            <input className="addAcommentInput" type="text" value={editReplyData.message} onChange={(e) => setEditReplyData({ ...editReplyData, message: e.target.value })} onKeyPress={(e) => handleEditKeyPress(e)} />
+                                                                                <div className="cancelSubmitComment">
                                                                                 <div className = "cancelComment"onClick={() => { setEditCommentData({ id: null, message: "" }); setEditReplyData({ commentId: null, replyId: null, message: "" }); }}>Cancel</div>
                                                                                 <div className = "cancelComment" onClick={handleSaveEdit}>Save</div>
                                                                             </div>
