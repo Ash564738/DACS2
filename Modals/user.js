@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
   subscriptions: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
+  }],
+  playlists: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'playlist'
   }]
 }, { timestamps: true });
 module.exports = mongoose.model('user', userSchema);

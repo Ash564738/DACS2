@@ -1,0 +1,66 @@
+.videoRightSideBar{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 35%;
+    padding: 0 15px 0 0;
+}
+/* Playlist Container */
+.videoPlaylistSidebar {
+    width: 100%;
+    background-color: transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgb(255, 255, 255,0.1);
+}
+
+/* Header */
+.videoPlaylistSidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: rgb(255, 255, 255,0.1);
+  font-weight: bold;
+}
+.collapsed{
+  display: none;
+}
+/* Playlist List */
+.videoPlaylistSidebarList {
+  overflow-y: auto;
+}
+
+.videoPlaylistSidebarItem {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.videoPlaylistSidebarItem img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.videoPlaylistSidebarTitle {
+  flex: 1;
+  font-size: 14px;
+}
+
+.videoPlaylistSidebarDuration {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.videoPlaylistSidebarItem.active {
+  background-color: #6a0f6a;
+}
+@media (max-width: 950px) {
+    .videoRightSideBar {
+        padding: 20px 0 0 0;
+        width: 100%;
+    }
+}

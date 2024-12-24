@@ -3,6 +3,7 @@ import './homePage.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
+
 const HomePage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,9 +98,13 @@ const HomePage = ({ sideNavbar }) => {
     setSelectedCategory(category);
   };
 
-  const handleToggleVideoFunction = (videoId, event) => {
-    event.stopPropagation();
+  const handleEvent = (event) => {
     event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleToggleVideoFunction = (videoId, event) => {
+    handleEvent(event);
     setShowVideoFunction((prev) => ({
       ...prev,
       [videoId]: !prev[videoId]
@@ -107,25 +112,17 @@ const HomePage = ({ sideNavbar }) => {
   };
 
   const handleDeleteVideo = async (itemId, videoId, event) => {
-    event.stopPropagation();
-    event.preventDefault();
+    handleEvent(event);
     try {
       const response = await apiClient.delete(`http://localhost:4000/api/deleteVideo/${videoId}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-      console.log('Delete response:', response);
       setData((prevData) => prevData.filter((video) => video._id !== videoId));
     } catch (err) {
       console.error("Error deleting video:", err);
       console.error("Error response:", err.response);
     }
-  };
-
-  const handleFunctionItemClick = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    // Add your logic here
   };
 
   const filteredVideos = selectedCategory === "All"
@@ -155,7 +152,7 @@ const HomePage = ({ sideNavbar }) => {
               showVideoFunction={showVideoFunction}
               handleToggleVideoFunction={handleToggleVideoFunction}
               handleDeleteVideo={handleDeleteVideo}
-              handleFunctionItemClick={handleFunctionItemClick}
+              handleEvent={handleEvent}
             />
           ))
         ) : (
@@ -165,7 +162,8 @@ const HomePage = ({ sideNavbar }) => {
     </div>
   );
 };
-const VideoItem = ({ item, userId, showVideoFunction, handleToggleVideoFunction, handleDeleteVideo, handleFunctionItemClick }) => {
+
+const VideoItem = ({ item, userId, showVideoFunction, handleToggleVideoFunction, handleDeleteVideo, handleEvent }) => {
   const navigate = useNavigate();
   const handleVideoClick = () => {
     navigate(`/watch/${item._id}`);
@@ -196,50 +194,50 @@ const VideoItem = ({ item, userId, showVideoFunction, handleToggleVideoFunction,
           <div className="youtubeVideo_views">{item.views ? `${item.views} views` : "0 views"}</div>
         </div>
         <div className="commentFuntionSectionBox">
-          <div className="commentFuntionToggle" onClick={(e) => { e.stopPropagation(); handleToggleVideoFunction(item._id, e); }}>
+          <div className="commentFuntionToggle" onClick={(e) => handleToggleVideoFunction(item._id, e)}>
             <i className="fa-solid fa-ellipsis-vertical"></i>
           </div>
           {showVideoFunction[item._id] && (
             <div className='videoFunction'>
               {item.user._id === userId ? (
                 <>
-                  <div className="commentReply" onClick={(e) => { e.stopPropagation(); handleDeleteVideo(item._id, item._id, e); }}>
+                  <div className="commentReply" onClick={(e) => { handleEvent(e); handleDeleteVideo(item._id, item._id, e); }}>
                     <i className="fa-solid fa-trash"></i>
                     Delete
                   </div>
-                  <div className='commentReply' onClick={(e) => { e.stopPropagation(); navigate(`/${item._id}/edit`); }}>
+                  <div className='commentReply' onClick={(e) => { handleEvent(e); navigate(`/${item._id}/edit`); }}>
                     <i className="fa-solid fa-pen-to-square"></i>
                     Edit
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-plus"></i>
                     Add to queue
                   </div>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-clock"></i>
                     Save to Watch later
                   </div>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-list"></i>
                     Save to playlist
                   </div>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-download"></i>
                     Download
                   </div>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-share"></i>
                     Share
                   </div>
                   <hr className="header-modal-separator" />
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-ban"></i>
                     Not interested
                   </div>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlnsXlink="http://www.w3.org/1999/xlink" width="1.0em" height="1.0em" x="0" y="0" viewBox="0 0 512 512" style={{ enableBackground: "new 0 0 512 512" }} xmlSpace="preserve" className="">
                       <g>
                         <path d="M256 512c140.61 0 256-115.39 256-256S396.61 0 256 0 0 115.39 0 256s115.39 256 256 256zM76 211h360v90H76v-90z" fill="#ffffff" opacity="1" data-original="#ffffff" className=""></path>
@@ -247,7 +245,7 @@ const VideoItem = ({ item, userId, showVideoFunction, handleToggleVideoFunction,
                     </svg>
                     Don't recommend channel
                   </div>
-                  <div className="videoFunctionItem" onClick={(e) => { e.stopPropagation(); handleFunctionItemClick(e); }}>
+                  <div className="videoFunctionItem" onClick={handleEvent}>
                     <i className="fa-solid fa-flag"></i>
                     Report
                   </div>
