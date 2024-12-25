@@ -1,5 +1,6 @@
 const User = require('../Modals/user');
 const Video = require('../Modals/video');
+const Playlist = require('../Modals/playlist');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieOptions = {
@@ -22,8 +23,23 @@ exports.signUp = async (req, res) => {
       let updatedPass = await bcrypt.hash(password, 10);
       const user = new User({ name, userName, about, profilePic, gender, dob, password: updatedPass });
       await user.save();
-      res.status(201).json({ message: 'User registered successfully', success: "yes", data: user });
       console.log("User registered successfully:", user);
+      const watchLaterPlaylist = new Playlist({
+        user: user._id,
+        title: "Watch Later",
+        visibility: "Private",
+        collaborate: false
+      });
+      const likedVideoPlaylist = new Playlist({
+        user: user._id,
+        title: "Liked Video",
+        visibility: "Private",
+        collaborate: false
+      });
+      await watchLaterPlaylist.save();
+      await likedVideoPlaylist.save();
+      res.status(201).json({ message: 'User registered successfully', success: "yes", data: user });
+      console.log("Default playlists created successfully for user:", user._id);
     }
   } catch (error) {
     console.error("Error in signUp:", error);
@@ -111,7 +127,7 @@ exports.getSubscriptions = async (req, res) => {
       if (!user) {
           return res.status(404).json({ error: 'User not found' });
       }
-      console.log(user.subscriptions);  // Log the subscriptions field
+      console.log(user.subscriptions);
       const subscribedUserIds = user.subscriptions.map((sub) => sub._id);
       const videos = await Video.find({ user: { $in: subscribedUserIds } }).populate('user');
       res.json({

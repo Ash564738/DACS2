@@ -3,13 +3,16 @@ import './homePage.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import apiClient from '../../Utils/apiClient.js';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const HomePage = ({ sideNavbar }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showVideoFunction, setShowVideoFunction] = useState({});
+  const [watchLaterPlaylistId, setWatchLaterPlaylistId] = useState(null);
+
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem("userId");
 
@@ -30,8 +33,27 @@ const HomePage = ({ sideNavbar }) => {
       }
     };
 
-    fetchVideos();
-  }, []);
+    const fetchWatchLaterPlaylistId = async () => {
+      try {
+        const response = await apiClient.get(`http://localhost:4000/playlist/getPlaylistByTitle/Watch Later`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        if (response.data && response.data.playlist) {
+          setWatchLaterPlaylistId(response.data.playlist._id);
+        } else {
+          console.warn("Watch Later playlist not found.");
+        }
+      } catch (err) {
+        console.error("Error fetching Watch Later playlist ID:", err);
+      }
+    };
+
+    if (userId) {
+      fetchVideos();
+      fetchWatchLaterPlaylistId();
+    }
+  }, [userId, token]);
 
   useEffect(() => {
     if (data.length === 0) return;
@@ -110,7 +132,22 @@ const HomePage = ({ sideNavbar }) => {
       [videoId]: !prev[videoId]
     }));
   };
-
+  const handleAddToWatchLater = async (videoId) => {
+    try {
+      if (!watchLaterPlaylistId) {
+        toast.error("Watch Later playlist not found");
+        return;
+      }
+      await apiClient.post(`http://localhost:4000/playlist/addVideoToPlaylist/${watchLaterPlaylistId}`, { videoId }, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
+      toast.success("Video added to Watch Later");
+    } catch (error) {
+      toast.error("Error adding video to Watch Later");
+      console.error("Error adding video to Watch Later:", error);
+    }
+  };
   const handleDeleteVideo = async (itemId, videoId, event) => {
     handleEvent(event);
     try {
@@ -131,6 +168,7 @@ const HomePage = ({ sideNavbar }) => {
 
   return (
     <div className={sideNavbar ? 'homePage' : 'fullHomePage'}>
+            <ToastContainer />
       <div className="homePage_options">
         {options.map((item, index) => (
           <div key={index} className={`homePage_option ${selectedCategory === item ? "active" : ""}`} onClick={() => handleCategoryClick(item)}>
@@ -154,6 +192,7 @@ const HomePage = ({ sideNavbar }) => {
               handleToggleVideoFunction={handleToggleVideoFunction}
               handleDeleteVideo={handleDeleteVideo}
               handleEvent={handleEvent}
+              handleAddToWatchLater ={handleAddToWatchLater}
             />
           ))
         ) : (
@@ -164,12 +203,9 @@ const HomePage = ({ sideNavbar }) => {
   );
 };
 
-const VideoItem = ({ item, userId, token, showVideoFunction, handleToggleVideoFunction, handleDeleteVideo, handleEvent }) => {
+const VideoItem = ({ item, userId, token, showVideoFunction, handleToggleVideoFunction, handleDeleteVideo, handleEvent, handleAddToWatchLater }) => {
   const navigate = useNavigate();
-  // const handleVideoClick = () => {
-  //   navigate(`/watch/${item._id}`);
-  // };
-    
+
   const handleVideoClick = async () => {
     console.log("Navigating to video:", item._id);
     navigate(`/watch/${item._id}`);
@@ -199,6 +235,7 @@ const VideoItem = ({ item, userId, token, showVideoFunction, handleToggleVideoFu
       console.error("Error adding to history:", err);
     }
   };
+
   return (
     <div className="youtube_Video" onClick={handleVideoClick}>
       <div className="youtube_thumbnailBox">
@@ -247,7 +284,7 @@ const VideoItem = ({ item, userId, token, showVideoFunction, handleToggleVideoFu
                     <i className="fa-solid fa-plus"></i>
                     Add to queue
                   </div>
-                  <div className="videoFunctionItem" onClick={handleEvent}>
+                  <div className="videoFunctionItem" onClick={(e) => { handleEvent(e); handleAddToWatchLater(item._id); }}>
                     <i className="fa-solid fa-clock"></i>
                     Save to Watch later
                   </div>
