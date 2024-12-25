@@ -2,6 +2,7 @@ const Notification = require('../Modals/notification');
 const User = require('../Modals/user');
 const Video = require('../Modals/video');
 const Comment = require('../Modals/comment');
+const Playlist = require('../Modals/playlist');
 const ffmpeg = require('fluent-ffmpeg');
 exports.uploadVideo = async (req, res) => {
     console.log("In uploadVideo Function");
@@ -111,12 +112,26 @@ exports.toggleLikeDislike = async (req, res) => {
         }
         if (!Array.isArray(video.like)) video.like = [];
         if (!Array.isArray(video.dislike)) video.dislike = [];
+
+        let likedPlaylist = await Playlist.findOne({ title: 'Liked Video', user: userId });
+        if (!likedPlaylist) {
+            likedPlaylist = new Playlist({
+                user: userId,
+                title: 'Liked Video',
+                visibility: 'Private',
+                collaborate: false
+            });
+            await likedPlaylist.save();
+        }
+
         if (action === "like") {
             if (video.like.includes(userId)) {
                 video.like.pull(userId);
+                likedPlaylist.videos.pull(videoId);
             } else {
                 video.like.push(userId);
                 video.dislike.pull(userId);
+                likedPlaylist.videos.addToSet(videoId);
             }
         } else if (action === "dislike") {
             if (video.dislike.includes(userId)) {
@@ -124,12 +139,16 @@ exports.toggleLikeDislike = async (req, res) => {
             } else {
                 video.dislike.push(userId);
                 video.like.pull(userId);
+                likedPlaylist.videos.pull(videoId);
             }
         } else {
             console.log("Invalid action:", action);
             return res.status(400).json({ error: "Invalid action" });
         }
+
         await video.save();
+        await likedPlaylist.save();
+
         res.status(200).json({ like: video.like.length, dislike: video.dislike.length });
     } catch (error) {
         console.error("Error in toggleLikeDislike:", error);

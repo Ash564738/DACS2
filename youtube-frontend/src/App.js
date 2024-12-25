@@ -17,6 +17,7 @@ import VideoEdit from './Pages/VideoEdit/videoEdit';
 import History from './Pages/History/history';
 import Playlist from './Pages/Playlist/playlist';
 import WatchLater from './Pages/WatchLater/watchLater';
+import YourVideos from './Pages/YourVideos/yourVideos';
 function App() {
   const [sideNavbar, setSideNavbar] = useState(true);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
@@ -60,6 +61,7 @@ function App() {
         <Route path="/history" element={<History sideNavbar={sideNavbar}/>}/>
         <Route path = "/playlist" element = {<Playlist sideNavbar={sideNavbar}/>} />
         <Route path = "/watchLater" element = {<WatchLater sideNavbar={sideNavbar}/>} />
+        <Route path = "/yourVideos" element = {<YourVideos sideNavbar={sideNavbar}/>} />
       </Routes>
       {selectedFriendId && <Chat friendId={selectedFriendId} closeChat={closeChat} />}
     </div>

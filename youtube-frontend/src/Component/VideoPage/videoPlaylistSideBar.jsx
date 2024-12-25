@@ -55,13 +55,31 @@ const VideoPlaylistSideBar = ({ playlistId, token }) => {
         </div>
       </div>
       <div className={`videoPlaylistSidebarList ${collapsed ? 'collapsed' : ''}`} id="videoList">
-        {videos.map((video) => (
-          <Link to={`/watch/${video._id}`} key={video._id} className="videoPlaylistSidebarItem" state={{ playlistId, fromPlaylistPage: true }}>
-            <img src={video.thumbnail || 'https://via.placeholder.com/40'} alt="Video Thumbnail" />
-            <div className="videoPlaylistSidebarTitle">{video.title}</div>
-            <div className="videoPlaylistSidebarDuration">{video.duration || 'Unknown'}</div>
-          </Link>
-        ))}
+        {videos.map((video) => {
+          console.log(video);
+          return (
+            <Link 
+              to={`/watch/${video._id}`} 
+              key={video._id} 
+              className="videoPlaylistSidebarItem" 
+              state={{ playlistId, fromPage: 'playlistPage' }}
+            >
+              <div>
+                <i className="fas fa-bars"></i>
+              </div>
+              <div className='videoPlaylistSidebarThumbnailBox'>
+                <img src={video.thumbnail || 'https://via.placeholder.com/40'} alt="Video Thumbnail" className="videoPlaylistSidebarItemImg"/>
+                <div className="videoPlaylistSidebarDuration">{video.duration || 'Unknown'}</div>
+              </div>
+              <div>
+                <div className="videoPlaylistSidebarTitle">{video.title}</div>
+                <div className="videoPlaylistSidebarChannel">
+                  {video.user?.name || 'Unknown Channel'} • {video.views} views
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

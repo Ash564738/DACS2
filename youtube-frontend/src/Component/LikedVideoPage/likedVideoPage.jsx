@@ -15,6 +15,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [watchLaterPlaylistId, setWatchLaterPlaylistId] = useState(null);
+  const [likedVideoPlaylistId, setLikedVideoPlaylistId] = useState(null);
 
   const toggleVideoFunction = (videoId, event) => {
     event.stopPropagation();
@@ -26,14 +27,15 @@ const LikedVideoPage = ({ sideNavbar }) => {
   };
 
   useEffect(() => {
-    const fetchLikedVideos = async (userId) => {
+    const fetchLikedVideos = async () => {
       try {
-        const response = await apiClient.get(`http://localhost:4000/api/getLikedVideos/${userId}`, {
+        const response = await apiClient.get(`http://localhost:4000/playlist/getPlaylistByTitle/Liked Video`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
-        if (response.data && response.data.likedVideos) {
-          setData(response.data.likedVideos);
+        if (response.data && response.data.playlist) {
+          setData(response.data.playlist.videos);
+          setLikedVideoPlaylistId(response.data.playlist._id);
         } else {
           console.warn("No liked videos found in response.");
         }
@@ -62,7 +64,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
     };
 
     if (userId) {
-      fetchLikedVideos(userId);
+      fetchLikedVideos();
       fetchWatchLaterPlaylistId();
     }
   }, [userId, token]);
@@ -193,6 +195,12 @@ const LikedVideoPage = ({ sideNavbar }) => {
     }
   };
 
+  const handlePlayAll = () => {
+    if (data.length > 0) {
+      navigate(`/watch/${data[0]._id}`, { state: { playlistId: likedVideoPlaylistId, fromPage: 'likedVideoPage' } });
+    }
+  };
+
   return (
     <div className={sideNavbar ? 'likedVideoPage' : 'fullLikedVideoPage'}>
       <ToastContainer />
@@ -208,7 +216,7 @@ const LikedVideoPage = ({ sideNavbar }) => {
             </div>
           </div>
           <div className="likedVideoCardControl">
-              <div className="likedVideoCardControlButton">
+              <div className="likedVideoCardControlButton" onClick={handlePlayAll}>
                 <i className="fa fa-play"></i>
                 <span>Play all</span>
               </div>

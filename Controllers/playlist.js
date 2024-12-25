@@ -182,7 +182,13 @@ exports.deletePlaylist = async (req, res) => {
 exports.getPlaylistById = async (req, res) => {
   try {
     const { playlistId } = req.params;
-    const playlist = await Playlist.findById(playlistId).populate('videos');
+    const playlist = await Playlist.findById(playlistId).populate({
+      path: 'videos',
+      populate: {
+        path: 'user',
+        model: 'user'
+      }
+    });
 
     if (!playlist) {
       return res.status(404).json({ error: 'Playlist not found' });

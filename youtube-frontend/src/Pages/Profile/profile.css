@@ -124,6 +124,9 @@
     color: #ababab;
     font-size: 13px;
 }
+.gap-10 {
+  gap: 10px;
+}
 /* Responsive Styles */
 @media (max-width: 1200px) {
     .profile_top_section_About_Name {

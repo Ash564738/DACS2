@@ -117,7 +117,7 @@ const PlaylistPage = ({ sideNavbar }) => {
               playlist.videos.length > 0 ? (
                 <Link
                   to={`/watch/${playlist.videos[0]._id}`}
-                  state={{ playlistId: playlist._id, fromPlaylistPage: true }}
+                  state={{ playlistId: playlist._id, fromPage: 'playlistPage' }}
                   className="youtube_Video"
                   key={playlist._id}
                 >

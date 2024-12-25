@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './profile.css';
 import SideNavbar from '../../Component/SideNavbar/sideNavbar';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { Link, useParams } from 'react-router-dom';
@@ -10,8 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Profile = ({ sideNavbar }) => {
-    const { id } = useParams();
+const YourVideosPage = ({ sideNavbar }) => {
     const [data, setData] = useState([]);
     const [user, setUser] = useState(null);
     const token = localStorage.getItem("token");
@@ -23,11 +21,11 @@ const Profile = ({ sideNavbar }) => {
 
     const fetchProfileData = async () => {
         try {
-            const userResponse = await apiClient.get(`http://localhost:4000/auth/getUserById/${id}`, {},{
+            const userResponse = await apiClient.get(`http://localhost:4000/auth/getUserById/${userId}`, {},{
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true
             });
-            const videosResponse = await axios.get(`http://localhost:4000/auth/getVideosByUserId/${id}`);
+            const videosResponse = await axios.get(`http://localhost:4000/auth/getVideosByUserId/${userId}`);
             setUser(userResponse.data.user);
             setData(videosResponse.data.videos);
         } catch (error) {
@@ -36,11 +34,11 @@ const Profile = ({ sideNavbar }) => {
     };
     useEffect(() => {
         fetchProfileData();
-    }, [id]);
+    }, [userId]);
     const handleEvent = (event) => {
         event.preventDefault();
         event.stopPropagation();
-      };
+    };
     const handleToggleVideoFunction = (videoId, event) => {
         handleEvent(event);
         setShowVideoFunction((prev) => ({
@@ -60,43 +58,43 @@ const Profile = ({ sideNavbar }) => {
       console.error("Error deleting video:", err);
       console.error("Error response:", err.response);
     }
-  };
-  const handleAddToWatchLater = async (videoId) => {
-    try {
-      if (!watchLaterPlaylistId) {
-        toast.error("Watch Later playlist not found");
-        return;
-      }
-      await apiClient.post(`http://localhost:4000/playlist/addVideoToPlaylist/${watchLaterPlaylistId}`, { videoId }, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-      toast.success("Video added to Watch Later");
-    } catch (error) {
-      toast.error("Error adding video to Watch Later");
-      console.error("Error adding video to Watch Later:", error);
-    }
-  };
-  useEffect(() => {
-  const fetchWatchLaterPlaylistId = async () => {
-    try {
-      const response = await apiClient.get(`http://localhost:4000/playlist/getPlaylistByTitle/Watch Later`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-      if (response.data && response.data.playlist) {
-        setWatchLaterPlaylistId(response.data.playlist._id);
-      } else {
-        console.warn("Watch Later playlist not found.");
-      }
-    } catch (err) {
-      console.error("Error fetching Watch Later playlist ID:", err);
-    }
-  };
+    };
+    const handleAddToWatchLater = async (videoId) => {
+        try {
+        if (!watchLaterPlaylistId) {
+            toast.error("Watch Later playlist not found");
+            return;
+        }
+        await apiClient.post(`http://localhost:4000/playlist/addVideoToPlaylist/${watchLaterPlaylistId}`, { videoId }, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+        });
+        toast.success("Video added to Watch Later");
+        } catch (error) {
+        toast.error("Error adding video to Watch Later");
+        console.error("Error adding video to Watch Later:", error);
+        }
+    };
+    useEffect(() => {
+    const fetchWatchLaterPlaylistId = async () => {
+        try {
+        const response = await apiClient.get(`http://localhost:4000/playlist/getPlaylistByTitle/Watch Later`, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+        });
+        if (response.data && response.data.playlist) {
+            setWatchLaterPlaylistId(response.data.playlist._id);
+        } else {
+            console.warn("Watch Later playlist not found.");
+        }
+        } catch (err) {
+        console.error("Error fetching Watch Later playlist ID:", err);
+        }
+    };
 
-  if (userId) {
-    fetchWatchLaterPlaylistId();
-  }
+    if (userId) {
+        fetchWatchLaterPlaylistId();
+    }
     }, [userId, token]);
 
     return (
@@ -106,7 +104,7 @@ const Profile = ({ sideNavbar }) => {
             <div className={sideNavbar ? "profile_page" : "profile_page_inactive"}>
                 <div className="profile_top_section">
                     <div className="profile_top_section_profile">
-                        <img className='profile_top_section_img' src={user?.profilePic} alt="Profile" />
+                        <img className='profile_top_section_img' src={user?.profilePic} alt="Profile" onError={(e) => { e.target.src = 'defaultProfilePic.jpg'; }} />
                     </div>
                     <div className="profile_top_section_About">
                         <div className="profile_top_section_About_Name">{user?.name}</div>
@@ -125,7 +123,7 @@ const Profile = ({ sideNavbar }) => {
                             data.map((item, key) => (
                                 <Link to={`/watch/${item._id}`} className="youtube_Video" key={item._id}>
                                     <div className="youtube_thumbnailBox">
-                                        <img src={item.thumbnail} alt="thumbnail" className="youtube_thumbnailPic" />
+                                        <img src={item.thumbnail} alt="thumbnail" className="youtube_thumbnailPic" onError={(e) => { e.target.src = 'defaultThumbnail.jpg'; }} />
                                         <div className="youtube_timingThumbnail">{item.duration || "00:00"}</div>
                                     </div>
                                     <div className = "youtubeTitleBox">
@@ -191,4 +189,4 @@ const Profile = ({ sideNavbar }) => {
         </div>
     );
 }
-export default Profile;
+export default YourVideosPage;

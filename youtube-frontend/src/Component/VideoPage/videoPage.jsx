@@ -96,8 +96,9 @@ const VideoPage = ({ sideNavbar }) => {
         fetchVideoData();
     }, [id, fetchVideoData, setData, setVideoURL]);
 
-    const fromPlaylistPage = location.state?.fromPlaylistPage;
+    const fromPage = location.state?.fromPage;
     const playlistId = location.state?.playlistId;
+
     return (
         <div className='videoPage'>
             <VideoPostSection
@@ -122,7 +123,9 @@ const VideoPage = ({ sideNavbar }) => {
                 fetchComments={fetchComments}
             />
             <div className="videoRightSideBar">
-                {fromPlaylistPage && playlistId && <VideoPlaylistSideBar playlistId={playlistId} token={token} />}
+                {(fromPage === 'playlistPage' || fromPage === 'likedVideoPage' || fromPage === 'watchLaterPage') && playlistId && (
+                    <VideoPlaylistSideBar playlistId={playlistId} token={token} />
+                )}
                 <VideoSuggestion id={id} />
             </div>
             <ToastContainer />

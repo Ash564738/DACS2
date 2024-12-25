@@ -157,6 +157,12 @@ const WatchLaterPage = ({ sideNavbar }) => {
     }
   };
 
+  const handlePlayAll = () => {
+    if (data.length > 0) {
+      navigate(`/watch/${data[0]._id}`, { state: { playlistId, fromPage: 'watchLaterPage' } });
+    }
+  };
+
   return (
     <div className={sideNavbar ? 'likedVideoPage' : 'fullLikedVideoPage'}>
       <ToastContainer />
@@ -172,7 +178,7 @@ const WatchLaterPage = ({ sideNavbar }) => {
             </div>
           </div>
           <div className="likedVideoCardControl">
-              <div className="likedVideoCardControlButton">
+              <div className="likedVideoCardControlButton" onClick={handlePlayAll}>
                 <i className="fa fa-play"></i>
                 <span>Play all</span>
               </div>
