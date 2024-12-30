@@ -1,5 +1,5 @@
-
 const Post = require('../Modals/post');
+const User = require('../Modals/user');
 
 // Create a new post
 exports.createPost = async (req, res) => {

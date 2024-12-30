@@ -11,8 +11,43 @@ const VideoPostSection = ({ id, userId, token, data, setData, videoUrl, setVideo
     const [hasIncremented, setHasIncremented] = useState(false);
     const [showVideoFunction, setShowVideoFunction] = useState(false);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
-    const navigate = useNavigate();
+    const [message, setMessage] = useState("");
 
+    const navigate = useNavigate();
+    const handleComment = async () => {
+        const body = { message, video: id, user: data.userId };
+        try {
+            const resp = await apiClient.post('http://localhost:4000/commentApi/addComment', body, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const newComment = resp.data.comment;
+            setComments([newComment, ...comments]);
+            setMessage("");
+        } catch (err) {
+            console.error("Error in handleComment:", err);
+            toast.error("Please login first to comment");
+        }
+    };
+    const handleCommentLikeDislike = async (commentId, action) => {
+        try {
+            const response = await apiClient.put(`http://localhost:4000/commentApi/toggleCommentLikeDislike/${commentId}?action=${action}`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true
+            });
+            const { like, dislike } = response.data;
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment._id === commentId
+                        ? { ...comment, like, dislike }
+                        : comment
+                )
+            );
+        } catch (error) {
+            toast.error("Please login first to like/dislike");
+            console.error("Error in like/dislike comment:", error);
+        }
+    };
     const fetchVideoData = useCallback(async () => {
         try {
             const videoResponse = await axios.get(`http://localhost:4000/api/getVideoById/${id}`);
@@ -216,7 +251,7 @@ const VideoPostSection = ({ id, userId, token, data, setData, videoUrl, setVideo
                     <div>{data?.description}</div>
                 </div>
             </div>
-            <CommentSection id={id} comments={comments} setComments={setComments} fetchComments={fetchComments} userId={userId} userPic={userPic} data={data} token={token} />
+            <CommentSection id={id} comments={comments} setComments={setComments} message = {message} setMessage = {setMessage} handleComment ={handleComment} handleCommentLikeDislike ={handleCommentLikeDislike} fetchComments={fetchComments} userId={userId} userPic={userPic} data={data} token={token} />
             {showPlaylistModal && <PlaylistModal videoId={id} token={token} onClose={handleClosePlaylistModal} />}
         </div>
     );
